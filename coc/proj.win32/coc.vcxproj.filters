@@ -10,6 +10,12 @@
     <Filter Include="src">
       <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\GameWorld">
+      <UniqueIdentifier>{6b278991-674d-45a0-8c3d-025ce4a99c64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\GameUI">
+      <UniqueIdentifier>{8f81eea5-08a5-4245-bdb5-c5be7177aa51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,6 +30,15 @@
     <ClCompile Include="..\Classes\Base.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\GameWorld.cpp">
+      <Filter>src\GameWorld</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameUI.cpp">
+      <Filter>src\GameUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MapManager.cpp">
+      <Filter>src\GameWorld</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -37,6 +52,15 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Base.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameWorld.h">
+      <Filter>src\GameWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameUI.h">
+      <Filter>src\GameUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MapManager.h">
+      <Filter>src\GameWorld</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

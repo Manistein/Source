@@ -28,26 +28,29 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        //int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-        //int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+        glview = GLViewImpl::createWithFullScreen("My Game");
+		glview->setFrameSize(1280, 720);
+		auto windowHandle = glview->getWin32Window();
+		MoveWindow(windowHandle, 0, 0, 1280, 720, false);
 
-        glview = GLViewImpl::create("My Game");
-        glview->setFrameSize(1024, 768);
+		RECT windowRect;
+		GetWindowRect(windowHandle, &windowRect);
+		::ClipCursor(&windowRect);
 
         director->setOpenGLView(glview);
     }
+
+    vector<string> searchPaths;
+    searchPaths.push_back("Resources");
+    searchPaths.push_back("Resources/building");
+    searchPaths.push_back("Resources/map");
+    FileUtils::getInstance()->setSearchPaths(searchPaths);
 
     director->setDisplayStats(true);
     director->setAnimationInterval(1.0 / 60);
 
     auto scene = GameScene::createScene();
     director->runWithScene(scene);
-
-    vector<string> searchPaths;
-    searchPaths.push_back("../Resources");
-    searchPaths.push_back("../Resources/Building");
-    searchPaths.push_back("../Resources/Map");
-    FileUtils::getInstance()->setSearchPaths(searchPaths);
 
     return true;
 }
