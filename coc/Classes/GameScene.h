@@ -15,6 +15,12 @@ private:
     bool init() override;
     void update(float deltaTime) override;
 
+    void onMouseMove(Event* event);
+    void onMouseDown(Event* event);
+    void onMouseUp(Event* event);
+
     GameWorld* _gameWorld = nullptr;
     GameUI* _gameUI = nullptr;
+
+    Vec2 _cursorPosition;
 };

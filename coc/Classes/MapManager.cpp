@@ -1,7 +1,7 @@
 #include "Base.h"
 #include "MapManager.h"
 
-const float MAP_MOVE_SPEED = 10.0f;
+const float MAP_MOVE_SPEED = 20.0f;
 const float MAP_BORDER_MARGIN = 50.0f;
 const float MAP_MIN_SCALE = 0.5f;
 const float MAP_MAX_SCALE = 1.0f;
@@ -15,6 +15,8 @@ bool MapManager::init(Node* parentNode, const std::string& titleMapFileName)
     _titleMap = TMXTiledMap::create(titleMapFileName);
     _titleMap->setScale(_mapScale);
     parentNode->addChild(_titleMap);
+
+    resolveMapShakeWhenMove();
 
     return true;
 }
@@ -76,16 +78,17 @@ void MapManager::updateMapScale(Event* event)
     _titleMap->setScale(_mapScale);
 }
 
-void MapManager::updateCursorPosition(Event* event)
+void MapManager::syncCursorPosition(const Vec2& cursorPosition)
 {
-    auto mouseEvent = static_cast<EventMouse*>(event);
-    auto clientHeight = _clientRect.bottom - _clientRect.top;
-
-    _cursorPosition.x = mouseEvent->getCursorX();
-    _cursorPosition.y = clientHeight + mouseEvent->getCursorY();
+    _cursorPosition = cursorPosition;
 }
 
-cocos2d::Vec2 MapManager::getCursorPosition()
+void MapManager::resolveMapShakeWhenMove()
 {
-    return _cursorPosition;
+    auto& children = _titleMap->getChildren();
+    for (auto& child : children)
+    {
+        auto title = static_cast<SpriteBatchNode*>(child);
+        title->getTexture()->setAntiAliasTexParameters();
+    }
 }

@@ -39,6 +39,9 @@
     <ClCompile Include="..\Classes\MapManager.cpp">
       <Filter>src\GameWorld</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\DebugInfoLayer.cpp">
+      <Filter>src\GameUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -61,6 +64,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\MapManager.h">
       <Filter>src\GameWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\DebugInfoLayer.h">
+      <Filter>src\GameUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

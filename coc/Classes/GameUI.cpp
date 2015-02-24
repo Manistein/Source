@@ -1,5 +1,6 @@
 #include "Base.h"
 #include "GameUI.h"
+#include "DebugInfoLayer.h"
 
 bool GameUI::init()
 {
@@ -8,9 +9,8 @@ bool GameUI::init()
         return false;
     }
 
-    _cursorPositionLabel = Label::create();
-    _cursorPositionLabel->setPosition(Vec2(100.0f, 600.0f));
-    addChild(_cursorPositionLabel);
+    _debugInfoLayer = DebugInfoLayer::create();
+    addChild(_debugInfoLayer);
 
     scheduleUpdate();
 
@@ -19,18 +19,12 @@ bool GameUI::init()
 
 void GameUI::update(float deltaTime)
 {
-    updateCursorPosition();
+
 }
 
-void GameUI::updateCursorPosition()
-{
-    auto xPositionString = StringUtils::format("%f", _cursorPosition.x);
-    auto yPositionString = StringUtils::format("%f", _cursorPosition.y);
-
-    _cursorPositionLabel->setString("X = " + xPositionString + ", Y = " + yPositionString);
-}
-
-void GameUI::setCursorPosition(const Vec2& cursorPosition)
+void GameUI::syncCursorPosition(const Vec2& cursorPosition)
 {
     _cursorPosition = cursorPosition;
+
+    _debugInfoLayer->updateCusorPositionLabel(_cursorPosition);
 }
