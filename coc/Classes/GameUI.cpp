@@ -22,9 +22,7 @@ void GameUI::update(float deltaTime)
 
 }
 
-void GameUI::syncCursorPosition(const Vec2& cursorPosition)
+void GameUI::syncCursorPoint(const Vec2& cursorPoint)
 {
-    _cursorPosition = cursorPosition;
-
-    _debugInfoLayer->updateCusorPositionLabel(_cursorPosition);
+    _cursorPoint = cursorPoint;
 }

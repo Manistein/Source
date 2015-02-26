@@ -28,7 +28,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLViewImpl::createWithFullScreen("COC_PC");
+        glview = GLViewImpl::create("COC_PC");
 		glview->setFrameSize(1280, 720);
 		auto windowHandle = glview->getWin32Window();
 		MoveWindow(windowHandle, 0, 0, 1280, 720, false);

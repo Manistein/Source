@@ -1,18 +1,20 @@
 #pragma once
 
+struct DebugInfo;
+
 class DebugInfoLayer : public Layer
 {
 public:
     CREATE_FUNC(DebugInfoLayer);
 
-    void updateCusorPositionLabel(const Vec2& cusorPosition);
+    void updateInfo(const DebugInfo& debugInfo);
 private:
     bool init() override;
     Label* createLabel(int fontSize, const Vec2& position, const std::string& text);
 
-    Label* _cursorPositionLabel = nullptr;
-    Label* _titleCoodinateLabel = nullptr;
-    Label* _currentHoverTitleTextureNameLabel = nullptr;
-    Label* _currentHoverTitleGIDLabel = nullptr;
-    Label* _currentTitleMapLayerNameLabel = nullptr;
+    Label* _cursorPointLabel = nullptr;
+    Label* _tileSubscriptLabel = nullptr;
+    Label* _currentHoverTileTextureNameLabel = nullptr;
+    Label* _currentHoverTileGIDLabel = nullptr;
+    Label* _currentTileMapLayerNameLabel = nullptr;
 };

@@ -3,6 +3,7 @@
 #include "GameWorld.h"
 #include "GameUI.h"
 #include "MapManager.h"
+#include "DebugInfoLayer.h"
 
 Scene* GameScene::createScene()
 {
@@ -45,7 +46,7 @@ bool GameScene::init()
 
 void GameScene::update(float deltaTime)
 {
-    
+    updateDebugInfoLayer();
 }
 
 void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
@@ -61,11 +62,11 @@ void GameScene::onMouseMove(Event* event)
     auto mouseEvent = static_cast<EventMouse*>(event);
     auto clientHeight = Director::getInstance()->getVisibleSize().height;
 
-    _cursorPosition.x = mouseEvent->getCursorX();
-    _cursorPosition.y = clientHeight + mouseEvent->getCursorY();
+    _cursorPoint.x = mouseEvent->getCursorX();
+    _cursorPoint.y = clientHeight + mouseEvent->getCursorY();
 
-    _gameWorld->_mapManager->syncCursorPosition(_cursorPosition);
-    _gameUI->syncCursorPosition(_cursorPosition);
+    _gameWorld->_mapManager->syncCursorPoint(_cursorPoint);
+    _gameUI->syncCursorPoint(_cursorPoint);
 }
 
 void GameScene::onMouseDown(Event* event)
@@ -76,4 +77,13 @@ void GameScene::onMouseDown(Event* event)
 void GameScene::onMouseUp(Event* event)
 {
 
+}
+
+void GameScene::updateDebugInfoLayer()
+{
+    if (_gameUI->_debugInfoLayer->isVisible())
+    {
+        auto debugInfo = _gameWorld->_mapManager->getDebugInfo(TileMapLayerType::RoadblockLayer);
+        _gameUI->_debugInfoLayer->updateInfo(debugInfo);
+    }
 }

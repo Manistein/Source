@@ -19,8 +19,10 @@ private:
     void onMouseDown(Event* event);
     void onMouseUp(Event* event);
 
+    void updateDebugInfoLayer();
+
     GameWorld* _gameWorld = nullptr;
     GameUI* _gameUI = nullptr;
 
-    Vec2 _cursorPosition;
+    Vec2 _cursorPoint;
 };

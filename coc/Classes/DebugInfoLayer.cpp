@@ -1,4 +1,5 @@
 #include "Base.h"
+#include "MapManager.h"
 #include "DebugInfoLayer.h"
 
 
@@ -9,17 +10,13 @@ bool DebugInfoLayer::init()
         return false;
     }
 
-    _cursorPositionLabel = createLabel(20, Vec2(10.0f, 690.0f), "");
+    _cursorPointLabel = createLabel(20, Vec2(10.0f, 690.0f), "");
+    _tileSubscriptLabel = createLabel(20, Vec2(10.0f, 670.0f), "");
+    _currentTileMapLayerNameLabel = createLabel(20, Vec2(10.0f, 650.0f), "");
+    _currentHoverTileTextureNameLabel = createLabel(20, Vec2(10.0f, 630.0f), "");
+    _currentHoverTileGIDLabel = createLabel(20, Vec2(10.0f, 610.0f), "");
 
     return true;
-}
-
-void DebugInfoLayer::updateCusorPositionLabel(const Vec2& cusorPosition)
-{
-    auto xPositionString = StringUtils::format("%.2f", cusorPosition.x);
-    auto yPositionString = StringUtils::format("%.2f", cusorPosition.y);
-
-    _cursorPositionLabel->setString("CX = " + xPositionString + ", CY = " + yPositionString);
 }
 
 Label* DebugInfoLayer::createLabel(int fontSize, const Vec2& position, const std::string& text)
@@ -31,4 +28,19 @@ Label* DebugInfoLayer::createLabel(int fontSize, const Vec2& position, const std
     addChild(label);
 
     return label;
+}
+
+void DebugInfoLayer::updateInfo(const DebugInfo& debugInfo)
+{
+    auto cursorXString = StringUtils::format("%.2f", debugInfo.cursorPoint.x);
+    auto cursorYString = StringUtils::format("%.2f", debugInfo.cursorPoint.y);
+    _cursorPointLabel->setString("CX = " + cursorXString + ", CY = " + cursorYString);
+
+    auto tileXSubscriptString = StringUtils::format("%.2f", debugInfo.tileSubscript.x);
+    auto tileYSubscriptString = StringUtils::format("%.2f", debugInfo.tileSubscript.y);
+    _tileSubscriptLabel->setString("TileXSubscript = " + tileXSubscriptString + ", TileYSubscript = " + tileYSubscriptString);
+
+    _currentTileMapLayerNameLabel->setString("TileMapLayerName = " + debugInfo.tileMapLayerName);
+    _currentHoverTileTextureNameLabel->setString("TileTextureName = " + debugInfo.tileTextureName);
+    _currentHoverTileGIDLabel->setString("Tile gid = " + StringUtils::format("%d", debugInfo.gid));
 }
