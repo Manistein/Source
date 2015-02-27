@@ -71,16 +71,24 @@ void MapManager::updateMapPosition()
 
 void MapManager::updateMapScale(Event* event)
 {
+    auto lastMapScale = _mapScale;
+
     auto mouseEvent = static_cast<EventMouse*>(event);
     if (mouseEvent->getScrollY() == 1)
     {
-        _mapScale = std::min(_mapScale + 0.1f, MAP_MAX_SCALE);
+        _mapScale = std::max(_mapScale - 0.1f, MAP_MIN_SCALE);
     }
     else
     {
-        _mapScale = std::max(_mapScale - 0.1f, MAP_MIN_SCALE);
+        _mapScale = std::min(_mapScale + 0.1f, MAP_MAX_SCALE);
     }
 
+    auto cursorPointInMap = _tileMap->convertToNodeSpace(_cursorPoint);
+    auto cursorScalePointInMap = cursorPointInMap * _mapScale;
+    auto moveDelta = cursorPointInMap * lastMapScale - cursorScalePointInMap;
+
+    auto tileMapPosition = _tileMap->getPosition();
+    _tileMap->setPosition(tileMapPosition + moveDelta);
     _tileMap->setScale(_mapScale);
 }
 
