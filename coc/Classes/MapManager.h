@@ -6,7 +6,6 @@ enum class TileMapLayerType
 
     BackgroundLayer,
     GameObjcetLayer,
-    RoadblockLayer,
 
     Total
 };
@@ -23,6 +22,8 @@ struct DebugInfo
 class MapManager
 {
 public:
+    ~MapManager();
+
     bool init(Node* parentNode, const std::string& titleMapFileName);
 
     void updateMapPosition();
@@ -35,7 +36,7 @@ public:
 private:
     void resolveMapShakeWhenMove();
 
-    TMXTiledMap* _tileMap = nullptr;
+    cocos2d::experimental::TMXTiledMap* _tileMap = nullptr;
     float _mapScale = 0.5f;
 
     RECT _clientRect;

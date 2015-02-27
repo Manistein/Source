@@ -3,14 +3,21 @@
 
 const float MAP_MOVE_SPEED = 20.0f;
 const float MAP_BORDER_MARGIN = 50.0f;
-const float MAP_MIN_SCALE = 0.5f;
+const float MAP_MIN_SCALE = 0.1f;
 const float MAP_MAX_SCALE = 1.0f;
 
 static std::map<TileMapLayerType, std::string> s_tileMapLayerTypeToString = {
     { TileMapLayerType::BackgroundLayer, "backgroundLayer" },
     { TileMapLayerType::GameObjcetLayer, "gameObjectLayer" },
-    { TileMapLayerType::RoadblockLayer, "roadblockLayer" },
 };
+
+
+MapManager::~MapManager()
+{
+    Director::getInstance()->setProjection(Director::Projection::DEFAULT);
+    Director::getInstance()->setDepthTest(false);
+}
+
 
 bool MapManager::init(Node* parentNode, const std::string& titleMapFileName)
 {
@@ -18,11 +25,14 @@ bool MapManager::init(Node* parentNode, const std::string& titleMapFileName)
     auto windowHandle = glView->getWin32Window();
     GetWindowRect(windowHandle, &_clientRect);
 
-    _tileMap = TMXTiledMap::create(titleMapFileName);
+    _tileMap = cocos2d::experimental::TMXTiledMap::create(titleMapFileName);
     _tileMap->setScale(_mapScale);
     parentNode->addChild(_tileMap);
 
-    resolveMapShakeWhenMove();
+    Director::getInstance()->setProjection(Director::Projection::_2D);
+    Director::getInstance()->setDepthTest(true);
+
+    //resolveMapShakeWhenMove();
 
     return true;
 }
@@ -83,6 +93,13 @@ void MapManager::updateMapScale(Event* event)
         _mapScale = std::min(_mapScale + 0.1f, MAP_MAX_SCALE);
     }
 
+    auto tileMapContentSize = _tileMap->getContentSize();
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    if (tileMapContentSize.width * _mapScale < visibleSize.width || tileMapContentSize.height * _mapScale < visibleSize.height)
+    {
+        return;
+    }
+
     auto cursorPointInMap = _tileMap->convertToNodeSpace(_cursorPoint);
     auto cursorScalePointInMap = cursorPointInMap * _mapScale;
     auto moveDelta = cursorPointInMap * lastMapScale - cursorScalePointInMap;
@@ -102,8 +119,12 @@ void MapManager::resolveMapShakeWhenMove()
     auto& children = _tileMap->getChildren();
     for (auto& child : children)
     {
-        auto title = static_cast<SpriteBatchNode*>(child);
-        title->getTexture()->setAntiAliasTexParameters();
+        auto tile = static_cast<Sprite*>(child);
+        auto tileTexture = tile->getTexture();
+        if (tileTexture)
+        {
+            tileTexture->setAntiAliasTexParameters();
+        }
     }
 }
 

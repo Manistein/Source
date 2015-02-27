@@ -83,7 +83,7 @@ void GameScene::updateDebugInfoLayer()
 {
     if (_gameUI->_debugInfoLayer->isVisible())
     {
-        auto debugInfo = _gameWorld->_mapManager->getDebugInfo(TileMapLayerType::RoadblockLayer);
+        auto debugInfo = _gameWorld->_mapManager->getDebugInfo(TileMapLayerType::GameObjcetLayer);
         _gameUI->_debugInfoLayer->updateInfo(debugInfo);
     }
 }
