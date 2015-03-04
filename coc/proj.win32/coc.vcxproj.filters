@@ -16,6 +16,9 @@
     <Filter Include="src\GameUI">
       <UniqueIdentifier>{8f81eea5-08a5-4245-bdb5-c5be7177aa51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Utils">
+      <UniqueIdentifier>{88d985ec-d9d8-476d-a5f8-38c18fc773da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -45,6 +48,12 @@
     <ClCompile Include="..\Classes\GameObject.cpp">
       <Filter>src\GameWorld</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\TabFileReader.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TemplatesManager.cpp">
+      <Filter>src\GameWorld</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -72,6 +81,12 @@
       <Filter>src\GameUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameObject.h">
+      <Filter>src\GameWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TabFileReader.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TemplatesManager.h">
       <Filter>src\GameWorld</Filter>
     </ClInclude>
   </ItemGroup>
