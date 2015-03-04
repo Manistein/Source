@@ -42,6 +42,9 @@
     <ClCompile Include="..\Classes\DebugInfoLayer.cpp">
       <Filter>src\GameUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\GameObject.cpp">
+      <Filter>src\GameWorld</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -67,6 +70,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\DebugInfoLayer.h">
       <Filter>src\GameUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameObject.h">
+      <Filter>src\GameWorld</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
