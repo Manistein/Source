@@ -4,6 +4,7 @@
 #include "GameUI.h"
 #include "MapManager.h"
 #include "DebugInfoLayer.h"
+#include "TemplatesManager.h"
 
 Scene* GameScene::createScene()
 {

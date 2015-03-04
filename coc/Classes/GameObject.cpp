@@ -6,7 +6,7 @@ GameObject::~GameObject()
 
 }
 
-GameObject* GameObject::create(GameObjectType type, const string& jobName)
+GameObject* GameObject::create(GameObjectType type, const string& jobName, const Vec2& position)
 {
     GameObject* gameObject = nullptr;
 

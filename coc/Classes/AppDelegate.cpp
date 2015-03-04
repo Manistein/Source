@@ -28,7 +28,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLViewImpl::createWithFullScreen("COC_PC");
+        glview = GLViewImpl::create("COC_PC");
 		glview->setFrameSize(1280, 720);
 		auto windowHandle = glview->getWin32Window();
 		MoveWindow(windowHandle, 0, 0, 1280, 720, false);
@@ -42,9 +42,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     vector<string> searchPaths;
     searchPaths.push_back("Resources");
-    searchPaths.push_back("Resources/building");
-    searchPaths.push_back("Resources/map");
-    searchPaths.push_back("Resources/fonts");
+    searchPaths.push_back("Resources/publish");
+    searchPaths.push_back("Resources/publish/map");
+    searchPaths.push_back("Resources/publish/fonts");
+    searchPaths.push_back("Resources/publish/data");
     FileUtils::getInstance()->setSearchPaths(searchPaths);
 
     director->setDisplayStats(true);
