@@ -155,6 +155,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\GameUI.cpp" />
     <ClCompile Include="..\Classes\GameWorld.cpp" />
     <ClCompile Include="..\Classes\MapManager.cpp" />
+    <ClCompile Include="..\Classes\Npc.cpp" />
     <ClCompile Include="..\Classes\TabFileReader.cpp" />
     <ClCompile Include="..\Classes\TemplatesManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -168,6 +169,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\GameUI.h" />
     <ClInclude Include="..\Classes\GameWorld.h" />
     <ClInclude Include="..\Classes\MapManager.h" />
+    <ClInclude Include="..\Classes\Npc.h" />
     <ClInclude Include="..\Classes\TabFileReader.h" />
     <ClInclude Include="..\Classes\TemplatesManager.h" />
     <ClInclude Include="main.h" />

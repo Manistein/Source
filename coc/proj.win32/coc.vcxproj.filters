@@ -54,6 +54,9 @@
     <ClCompile Include="..\Classes\TemplatesManager.cpp">
       <Filter>src\GameWorld</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Npc.cpp">
+      <Filter>src\GameWorld</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -87,6 +90,9 @@
       <Filter>src\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\TemplatesManager.h">
+      <Filter>src\GameWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Npc.h">
       <Filter>src\GameWorld</Filter>
     </ClInclude>
   </ItemGroup>
