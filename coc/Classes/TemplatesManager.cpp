@@ -27,7 +27,7 @@ TemplateManager* TemplateManager::getInstance()
     return s_templateManager;
 }
 
-NpcTemplate* TemplateManager::getNpcTemplateBy(const string& jobName)
+const NpcTemplate* TemplateManager::getNpcTemplateBy(const string& jobName)
 {
     NpcTemplate* npcTemplate = nullptr;
 

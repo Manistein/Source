@@ -18,7 +18,7 @@ public:
     ~TemplateManager();
 
     static TemplateManager* getInstance();
-    NpcTemplate* getNpcTemplateBy(const string& jobName);
+    const NpcTemplate* getNpcTemplateBy(const string& jobName);
 private:
     bool init();
 

@@ -5,6 +5,7 @@
 #include "MapManager.h"
 #include "DebugInfoLayer.h"
 #include "TemplatesManager.h"
+#include "GameObject.h"
 
 Scene* GameScene::createScene()
 {
@@ -39,6 +40,8 @@ bool GameScene::init()
     mouseListener->onMouseUp = CC_CALLBACK_1(GameScene::onMouseUp, this);
     mouseListener->onMouseDown = CC_CALLBACK_1(GameScene::onMouseDown, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
+
+    GameObjectFactory::create(GameObjectType::Npc, "BlueArcher", Vec2::ZERO);
 
     scheduleUpdate();
 
