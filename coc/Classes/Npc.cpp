@@ -5,7 +5,7 @@
 
 Npc::~Npc()
 {
-
+    clear();
 }
 
 Npc* Npc::create(const string& jobName, const Vec2& position, int uniqueID)
@@ -48,14 +48,63 @@ bool Npc::init(const string& jobName, const Vec2& position, int uniqueID)
     return true;
 }
 
+void Npc::clear()
+{
+    if (_moveToEastAnimate)
+    {
+        CC_SAFE_RELEASE(_moveToEastAnimate);
+    }
+
+    if (_moveToNorthEastAnimate)
+    {
+        CC_SAFE_RELEASE(_moveToNorthEastAnimate);
+    }
+
+    if (_moveToNorthWestAnimate)
+    {
+        CC_SAFE_RELEASE(_moveToNorthWestAnimate);
+    }
+
+    if (_moveToSouthEastAnimate)
+    {
+        CC_SAFE_RELEASE(_moveToSouthEastAnimate);
+    }
+
+    if (_moveToSouthWestAnimate)
+    {
+        CC_SAFE_RELEASE(_moveToSouthWestAnimate);
+    }
+
+    if (_moveToWestAnimate)
+    {
+        CC_SAFE_RELEASE(_moveToWestAnimate);
+    }
+
+    if (_dieAnimate)
+    {
+        CC_SAFE_RELEASE(_dieAnimate);
+    }
+
+    if (_standAnimate)
+    {
+        CC_SAFE_RELEASE(_standAnimate);
+    }
+}
+
 RepeatForever* Npc::createAnimateWidthPList(const string& plist)
 {
+    auto fileUtils = FileUtils::getInstance();
+    CCASSERT(fileUtils->isFileExist(plist), StringUtils::format("%s is invalid file name", plist.c_str()).c_str());
+
     auto spriteFrameCache = SpriteFrameCache::getInstance();
     spriteFrameCache->addSpriteFramesWithFile(plist);
 
     auto animation = Animation::create();
 
-    auto dictMap = FileUtils::getInstance()->getValueMapFromFile(plist);
+    auto dictMap = fileUtils->getValueMapFromFile(plist);
+    auto framesIter = dictMap.find("frames");
+    CCASSERT(framesIter != dictMap.end(), StringUtils::format("frames key is invalid in %s", plist.c_str()).c_str());
+
     auto framesMap = dictMap["frames"].asValueMap();
     for (auto& iter : framesMap)
     {

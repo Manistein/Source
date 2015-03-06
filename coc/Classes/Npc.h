@@ -18,6 +18,7 @@ public:
     static Npc* create(const string& jobName, const Vec2& position, int uniqueID);
 private:
     bool init(const string& jobName, const Vec2& position, int uniqueID);
+    void clear();
 
     RepeatForever* createAnimateWidthPList(const string& plist);
 
@@ -31,5 +32,4 @@ private:
     RepeatForever* _standAnimate = nullptr;
 
     NpcStatus _oldStatus = NpcStatus::Stand;
-    NpcStatus _newStatus = NpcStatus::Stand;
 };
