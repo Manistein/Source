@@ -163,3 +163,14 @@ DebugInfo MapManager::getDebugInfo(TileMapLayerType tileMapLayerType)
 
     return tileDebugInfo;
 }
+
+cocos2d::Vec2 MapManager::convertCursorPositionToTileMapSpace()
+{
+    return _tileMap->convertToNodeSpace(_cursorPoint);
+}
+
+void MapManager::addChildInGameObjectLayer(Node* gameObject)
+{
+    auto gameObjectLayer = _tileMap->getLayer("gameObjectLayer");
+    gameObjectLayer->addChild(gameObject, 1);
+}

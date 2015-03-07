@@ -41,8 +41,6 @@ bool GameScene::init()
     mouseListener->onMouseDown = CC_CALLBACK_1(GameScene::onMouseDown, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
 
-    GameObjectFactory::create(GameObjectType::Npc, "BlueArcher", Vec2::ZERO);
-
     scheduleUpdate();
 
     return true;
@@ -75,7 +73,7 @@ void GameScene::onMouseMove(Event* event)
 
 void GameScene::onMouseDown(Event* event)
 {
-
+    _gameWorld->onMouseRightButtonDownEvent();
 }
 
 void GameScene::onMouseUp(Event* event)

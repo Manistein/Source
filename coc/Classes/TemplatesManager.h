@@ -8,8 +8,15 @@ struct NpcTemplate
     string moveToSouthWestAnimationPList;
     string moveToWestAnimationPList;
     string moveToNorthWestAnimationPList;
+
     string dieAnimationPList;
-    string standAnimationPList;
+
+    string standAndFaceToNorthEastAnimationPList;
+    string standAndFaceToEastAnimationPList;
+    string standAndFaceToSouthEastAnimationPList;
+    string standAndFaceToSouthWestAnimationPList;
+    string standAndFaceToWestAnimationPList;
+    string standAndFaceToNorthWestAnimationPList;
 };
 
 class TemplateManager

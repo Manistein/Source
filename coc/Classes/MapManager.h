@@ -1,5 +1,7 @@
 #pragma once
 
+class GameObject;
+
 enum class TileMapLayerType
 {
     Invalid = 0,
@@ -33,6 +35,9 @@ public:
 
     Point getTileSubscript();
     DebugInfo getDebugInfo(TileMapLayerType tileMapLayerType);
+
+    Vec2 convertCursorPositionToTileMapSpace();
+    void addChildInGameObjectLayer(Node* gameObject);
 private:
     void resolveMapShakeWhenMove();
 

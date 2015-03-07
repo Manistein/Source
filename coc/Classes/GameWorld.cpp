@@ -1,6 +1,8 @@
 #include "Base.h"
 #include "GameWorld.h"
 #include "MapManager.h"
+#include "GameObject.h"
+#include "Npc.h"
 
 GameWorld::~GameWorld()
 {
@@ -24,6 +26,9 @@ bool GameWorld::init()
     mouseListener->onMouseScroll = CC_CALLBACK_1(GameWorld::onMouseScroll, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
 
+    _testNpc = static_cast<Npc*>(GameObjectFactory::create(GameObjectType::Npc, "BlueArcher", Vec2(2000.0f, 2000.0f)));
+    _mapManager->addChildInGameObjectLayer(_testNpc);
+
     scheduleUpdate();
 
     return true;
@@ -37,4 +42,10 @@ void GameWorld::update(float deltaTime)
 void GameWorld::onMouseScroll(Event* event)
 {
     _mapManager->updateMapScale(event);
+}
+
+void GameWorld::onMouseRightButtonDownEvent()
+{
+    auto targetPosition = _mapManager->convertCursorPositionToTileMapSpace();
+    _testNpc->moveTo(targetPosition);
 }
