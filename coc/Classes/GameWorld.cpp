@@ -37,6 +37,7 @@ bool GameWorld::init()
 void GameWorld::update(float deltaTime)
 {
     _mapManager->updateMapPosition();
+    _testNpc->depthSort(_mapManager->getTileSize());
 }
 
 void GameWorld::onMouseScroll(Event* event)

@@ -25,6 +25,8 @@ bool GameScene::init()
         return false;
     }
 
+    TemplateManager::getInstance();
+
     _gameWorld = GameWorld::create();
     addChild(_gameWorld);
 

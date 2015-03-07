@@ -189,7 +189,7 @@ RepeatForever* Npc::createAnimateWidthPList(const string& plist)
         }
     }
 
-    animation->setDelayPerUnit(0.2f);
+    animation->setDelayPerUnit(0.1f);
     animation->setRestoreOriginalFrame(true);
 
     auto repeatForeverAnimate = RepeatForever::create(Animate::create(animation));
@@ -400,6 +400,14 @@ void Npc::moveTo(const Vec2& targetPosition)
 {
     _moveToPosition = targetPosition;
     updateStatus(NpcStatus::Move);
+}
+
+void Npc::depthSort(const Size& tileSize)
+{
+    auto position = getPosition();
+    position = CC_POINT_POINTS_TO_PIXELS(position);
+    float newZ = -(position.y + tileSize.height / 3.0f) / (tileSize.height / 2.0f);
+    setPositionZ(newZ);
 }
 
 FaceDirection Npc::getFaceToDirection(const Vec2& moveToPosition)

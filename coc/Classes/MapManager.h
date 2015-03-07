@@ -33,6 +33,7 @@ public:
 
     void syncCursorPoint(const Vec2& cursorPoint);
 
+    Size getTileSize();
     Point getTileSubscript();
     DebugInfo getDebugInfo(TileMapLayerType tileMapLayerType);
 

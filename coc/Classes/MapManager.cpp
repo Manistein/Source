@@ -128,6 +128,11 @@ void MapManager::resolveMapShakeWhenMove()
     }
 }
 
+Size MapManager::getTileSize()
+{
+    return _tileMap->getTileSize();
+}
+
 Point MapManager::getTileSubscript()
 {
     Point tileSubscript;

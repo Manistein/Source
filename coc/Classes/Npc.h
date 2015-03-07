@@ -34,6 +34,7 @@ public:
     static Npc* create(const string& jobName, const Vec2& position, int uniqueID);
 
     void moveTo(const Vec2& targetPosition);
+    void depthSort(const Size& tileSize);
 private:
     bool init(const string& jobName, const Vec2& position, int uniqueID);
     void clear();
