@@ -48,6 +48,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     searchPaths.push_back("Resources/publish/data");
     searchPaths.push_back("Resources/publish/npc");
     searchPaths.push_back("Resources/publish/npc/archer");
+    searchPaths.push_back("Resources/publish/npc/common");
     FileUtils::getInstance()->setSearchPaths(searchPaths);
 
     director->setDisplayStats(true);

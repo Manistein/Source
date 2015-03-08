@@ -4,6 +4,16 @@
 #include "TemplatesManager.h"
 #include <math.h>
 
+const float MOVE_ANIMATE_DELAY_PER_UNIT = 0.1f;
+const float STAND_ANIMATE_DELAY_PER_UNIT = 3.0f;
+const float DIE_ANIMATE_DELAY_PER_UNIT = 0.1f;
+
+const string SHADOW_TEXTURE_NAME = "Shadow.png";
+const string HP_BAR_BACKGROUND_TEXTURE_NAME = "HPBarBackground.png";
+const string PLAYER_HP_BAR_TEXTURE_NAME = "PlayerHPBar.png";
+
+const int MOVE_TO_ACTION_TAG = 1;
+
 Npc::~Npc()
 {
     clear();
@@ -33,6 +43,8 @@ bool Npc::init(const string& jobName, const Vec2& position, int uniqueID)
 
     initAnimates(jobName);
     initSwitchStatusFunctions();
+    initShadow();
+    initHPBar();
 
     setPosition(position);
     _uniqueID = uniqueID;
@@ -65,21 +77,21 @@ void Npc::initAnimates(const string& jobName)
     auto npcTempalte = TemplateManager::getInstance()->getNpcTemplateBy(jobName);
     CCASSERT(npcTempalte, StringUtils::format("%s is not a npc type", jobName.c_str()).c_str());
 
-    _moveAnimateMap[FaceDirection::FaceToEast] = createAnimateWidthPList(npcTempalte->moveToEastAnimationPList);
-    _moveAnimateMap[FaceDirection::FaceToNorthEast] = createAnimateWidthPList(npcTempalte->moveToNorthEastAnimationPList);
-    _moveAnimateMap[FaceDirection::FaceToNorthWest] = createAnimateWidthPList(npcTempalte->moveToNorthWestAnimationPList);
-    _moveAnimateMap[FaceDirection::FaceToSouthEast] = createAnimateWidthPList(npcTempalte->moveToSouthEastAnimationPList);
-    _moveAnimateMap[FaceDirection::FaceToSouthWest] = createAnimateWidthPList(npcTempalte->moveToSouthWestAnimationPList);
-    _moveAnimateMap[FaceDirection::FaceToWest] = createAnimateWidthPList(npcTempalte->moveToWestAnimationPList);
+    _moveAnimateMap[FaceDirection::FaceToEast] = createAnimateWidthPList(npcTempalte->moveToEastAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT);
+    _moveAnimateMap[FaceDirection::FaceToNorthEast] = createAnimateWidthPList(npcTempalte->moveToNorthEastAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT);
+    _moveAnimateMap[FaceDirection::FaceToNorthWest] = createAnimateWidthPList(npcTempalte->moveToNorthWestAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT);
+    _moveAnimateMap[FaceDirection::FaceToSouthEast] = createAnimateWidthPList(npcTempalte->moveToSouthEastAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT);
+    _moveAnimateMap[FaceDirection::FaceToSouthWest] = createAnimateWidthPList(npcTempalte->moveToSouthWestAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT);
+    _moveAnimateMap[FaceDirection::FaceToWest] = createAnimateWidthPList(npcTempalte->moveToWestAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT);
 
-    _dieAnimate = createAnimateWidthPList(npcTempalte->dieAnimationPList);
+    _dieAnimate = createAnimateWidthPList(npcTempalte->dieAnimationPList, DIE_ANIMATE_DELAY_PER_UNIT);
 
-    _standAnimateMap[FaceDirection::FaceToEast] = createAnimateWidthPList(npcTempalte->standAndFaceToEastAnimationPList);
-    _standAnimateMap[FaceDirection::FaceToNorthEast] = createAnimateWidthPList(npcTempalte->standAndFaceToNorthEastAnimationPList);
-    _standAnimateMap[FaceDirection::FaceToNorthWest] = createAnimateWidthPList(npcTempalte->standAndFaceToNorthWestAnimationPList);
-    _standAnimateMap[FaceDirection::FaceToSouthEast] = createAnimateWidthPList(npcTempalte->standAndFaceToSouthEastAnimationPList);
-    _standAnimateMap[FaceDirection::FaceToSouthWest] = createAnimateWidthPList(npcTempalte->standAndFaceToSouthWestAnimationPList);
-    _standAnimateMap[FaceDirection::FaceToWest] = createAnimateWidthPList(npcTempalte->standAndFaceToWestAnimationPList);
+    _standAnimateMap[FaceDirection::FaceToEast] = createAnimateWidthPList(npcTempalte->standAndFaceToEastAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT);
+    _standAnimateMap[FaceDirection::FaceToNorthEast] = createAnimateWidthPList(npcTempalte->standAndFaceToNorthEastAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT);
+    _standAnimateMap[FaceDirection::FaceToNorthWest] = createAnimateWidthPList(npcTempalte->standAndFaceToNorthWestAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT);
+    _standAnimateMap[FaceDirection::FaceToSouthEast] = createAnimateWidthPList(npcTempalte->standAndFaceToSouthEastAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT);
+    _standAnimateMap[FaceDirection::FaceToSouthWest] = createAnimateWidthPList(npcTempalte->standAndFaceToSouthWestAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT);
+    _standAnimateMap[FaceDirection::FaceToWest] = createAnimateWidthPList(npcTempalte->standAndFaceToWestAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT);
 
     _faceDirection = FaceDirection::FaceToSouthEast;
     runAction(_standAnimateMap[_faceDirection]);
@@ -152,6 +164,35 @@ void Npc::initSwitchStatusFunctions()
         std::bind(&Npc::switchDieToStand, this));
 }
 
+void Npc::initShadow()
+{
+    auto contentSize = getContentSize();
+    auto position = getPosition();
+
+    auto shadowSprite = Sprite::create(SHADOW_TEXTURE_NAME);
+    shadowSprite->setPosition(Vec2(contentSize.width / 2.0f, contentSize.height / 4.0f));
+    shadowSprite->setScale(2.0f);
+    addChild(shadowSprite, -1);
+}
+
+void Npc::initHPBar()
+{
+    auto contentSize = getContentSize();
+    auto position = getPosition();
+
+    _hpBar = ui::LoadingBar::create(PLAYER_HP_BAR_TEXTURE_NAME);
+    _hpBar->setAnchorPoint(Vec2::ZERO);
+    _hpBar->setPercent(100.0f);
+
+    auto hpBarBackground = Sprite::create(HP_BAR_BACKGROUND_TEXTURE_NAME);
+    hpBarBackground->setPosition(Vec2(contentSize.width / 2.0f, contentSize.height + _hpBar->getContentSize().height * 1.2f));
+    hpBarBackground->setCascadeOpacityEnabled(true);
+    hpBarBackground->setScale(0.5f);
+    hpBarBackground->addChild(_hpBar);
+
+    addChild(hpBarBackground);
+}
+
 void Npc::updateStatus(NpcStatus newStatus)
 {
     auto& canSwitch = _switchStatusFunctions[(int)_oldStatus][(int)newStatus].canSwitch;
@@ -160,12 +201,11 @@ void Npc::updateStatus(NpcStatus newStatus)
     if (canSwitch())
     {
         switchFunction();
+        _oldStatus = newStatus;
     }
-
-    _oldStatus = newStatus;
 }
 
-RepeatForever* Npc::createAnimateWidthPList(const string& plist)
+RepeatForever* Npc::createAnimateWidthPList(const string& plist, float animateDelayPerUnit)
 {
     auto fileUtils = FileUtils::getInstance();
     CCASSERT(fileUtils->isFileExist(plist), StringUtils::format("%s is invalid", plist.c_str()).c_str());
@@ -185,11 +225,17 @@ RepeatForever* Npc::createAnimateWidthPList(const string& plist)
         auto spriteFrame = spriteFrameCache->getSpriteFrameByName(iter.first);
         if (spriteFrame)
         {
+            auto& contentSize = getContentSize();
+            if (contentSize.width == 0.0f || contentSize.height == 0.0f)
+            {
+                setContentSize(spriteFrame->getOriginalSizeInPixels());
+            }
+
             animation->addSpriteFrame(spriteFrame);
         }
     }
 
-    animation->setDelayPerUnit(0.1f);
+    animation->setDelayPerUnit(animateDelayPerUnit);
     animation->setRestoreOriginalFrame(true);
 
     auto repeatForeverAnimate = RepeatForever::create(Animate::create(animation));
@@ -318,7 +364,7 @@ bool Npc::canSwitchAttackToStand()
 {
     bool result = true;
 
-    return result; 
+    return result;
 }
 
 bool Npc::canSwitchAttackToDie()
@@ -410,6 +456,18 @@ void Npc::depthSort(const Size& tileSize)
     setPositionZ(newZ);
 }
 
+void Npc::showHPBar()
+{
+    auto hpBarBackground = _hpBar->getParent();
+    hpBarBackground->setVisible(false);
+}
+
+void Npc::hideHPBar()
+{
+    auto hpBarBackground = _hpBar->getParent();
+    hpBarBackground->setVisible(true);
+}
+
 FaceDirection Npc::getFaceToDirection(const Vec2& moveToPosition)
 {
     FaceDirection faceToDirection = FaceDirection::Invalid;
@@ -450,7 +508,7 @@ FaceDirection Npc::getFaceToDirection(const Vec2& moveToPosition)
 float Npc::getMoveToDuration(const Vec2& moveToPosition)
 {
     auto position = getPosition();
-    float distance = sqrt((moveToPosition.x - position.x) * (moveToPosition.x - position.x) + 
+    float distance = sqrt((moveToPosition.x - position.x) * (moveToPosition.x - position.x) +
         (moveToPosition.y - position.y) * (moveToPosition.y - position.y));
 
     return distance / _perSecondMoveSpeedByPixel;
@@ -458,19 +516,32 @@ float Npc::getMoveToDuration(const Vec2& moveToPosition)
 
 void Npc::onMoveToEvent()
 {
-    stopAllActions();
+    if (_oldStatus == NpcStatus::Die)
+    {
+        return;
+    }
 
-    _faceDirection = getFaceToDirection(_moveToPosition);
+    auto currentFaceDirection = getFaceToDirection(_moveToPosition);
     float moveToDuration = getMoveToDuration(_moveToPosition);
 
-    auto animateIter = _moveAnimateMap.find(_faceDirection);
+    auto animateIter = _moveAnimateMap.find(currentFaceDirection);
     if (animateIter != _moveAnimateMap.end())
     {
-        runAction(animateIter->second);
+        if ((_oldStatus == NpcStatus::Move && _faceDirection != currentFaceDirection) ||
+            _oldStatus != NpcStatus::Move)
+        {
+            stopAllActions();
+
+            _faceDirection = currentFaceDirection;
+            runAction(animateIter->second);
+        }
+
+        stopActionByTag(MOVE_TO_ACTION_TAG);
 
         auto moveTo = MoveTo::create(moveToDuration, _moveToPosition);
         auto onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::onStandEvent, this));
         auto sequenceAction = Sequence::create(moveTo, onMoveEndEvent, nullptr);
+        sequenceAction->setTag(MOVE_TO_ACTION_TAG);
 
         runAction(sequenceAction);
     }
@@ -478,6 +549,11 @@ void Npc::onMoveToEvent()
 
 void Npc::onStandEvent()
 {
+    if (_oldStatus == NpcStatus::Die)
+    {
+        return;
+    }
+
     stopAllActions();
 
     auto standIter = _standAnimateMap.find(_faceDirection);

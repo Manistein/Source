@@ -35,12 +35,17 @@ public:
 
     void moveTo(const Vec2& targetPosition);
     void depthSort(const Size& tileSize);
+
+    void showHPBar();
+    void hideHPBar();
 private:
     bool init(const string& jobName, const Vec2& position, int uniqueID);
     void clear();
 
     void initAnimates(const string& jobName);
     void initSwitchStatusFunctions();
+    void initShadow();
+    void initHPBar();
 
     void updateStatus(NpcStatus newStatus);
 
@@ -52,6 +57,8 @@ private:
     SwitchStatusFunction _switchStatusFunctions[(int)NpcStatus::Total][(int)NpcStatus::Total];
 
     void registerSwitchStatusFunction(SwitchStatusFunction& switchStatusFunctions, std::function<bool()> canSwitch, std::function<void()> switchFunction);
+
+    NpcStatus _oldStatus = NpcStatus::Stand;
 
     bool canSwitchMoveToMove();
     bool canSwitchMoveToStand();
@@ -92,7 +99,7 @@ private:
     void onMoveToEvent();
     void onStandEvent();
 
-    RepeatForever* createAnimateWidthPList(const string& plist);
+    RepeatForever* createAnimateWidthPList(const string& plist, float animateDelayPerUnit);
 
     FaceDirection getFaceToDirection(const Vec2& moveToPosition);
     float getMoveToDuration(const Vec2& moveToPosition);
@@ -103,7 +110,8 @@ private:
     unordered_map<FaceDirection, RepeatForever*> _standAnimateMap;
 
     RepeatForever* _dieAnimate = nullptr;
-
-    NpcStatus _oldStatus = NpcStatus::Stand;
     FaceDirection _faceDirection = FaceDirection::Invalid;
+
+
+    ui::LoadingBar* _hpBar = nullptr;
 };

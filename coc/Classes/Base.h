@@ -9,6 +9,7 @@
 #include <functional>
 using namespace std;
 
+#include "ui/CocosGUI.h"
 #include "cocos2d.h"
 using namespace cocos2d;
 
