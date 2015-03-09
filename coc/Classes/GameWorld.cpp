@@ -1,8 +1,8 @@
 #include "Base.h"
-#include "GameWorld.h"
 #include "MapManager.h"
-#include "GameObject.h"
 #include "Npc.h"
+#include "GameObjectManager.h"
+#include "GameWorld.h"
 
 GameWorld::~GameWorld()
 {
@@ -25,6 +25,10 @@ bool GameWorld::init()
     auto mouseListener = EventListenerMouse::create();
     mouseListener->onMouseScroll = CC_CALLBACK_1(GameWorld::onMouseScroll, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
+
+    _gameObjectManager = GameObjectManager::getInstance();
+
+    //createGameObject(GameObjectType::Npc, "BlueArcher", Vec2(2000.0f, 2000.0f));
 
     _testNpc = static_cast<Npc*>(GameObjectFactory::create(GameObjectType::Npc, "BlueArcher", Vec2(2000.0f, 2000.0f)));
     _mapManager->addChildInGameObjectLayer(_testNpc);
@@ -49,4 +53,16 @@ void GameWorld::onMouseRightButtonDownEvent()
 {
     auto targetPosition = _mapManager->convertCursorPositionToTileMapSpace();
     _testNpc->moveTo(targetPosition);
+}
+
+
+void GameWorld::createGameObject(GameObjectType type, const string& jobName, const Vec2& position)
+{
+    auto gameObject = _gameObjectManager->createGameObject(type, jobName, position);
+    _mapManager->addChildInGameObjectLayer(gameObject);
+}
+
+void GameWorld::removeGameObjectBy(int uniqueID)
+{
+    _gameObjectManager->removeGameObjectBy(uniqueID);
 }

@@ -12,7 +12,7 @@ class GameObject : public Sprite
 {
 public:
     virtual ~GameObject();
-
+    int getUniqueID();
 protected:
     int _hp = 100;
     int _maxHp = 100;

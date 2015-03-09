@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GameObject.h"
+
 enum class NpcStatus
 {
     Invalid = 0,

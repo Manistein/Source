@@ -9,6 +9,11 @@ GameObject::~GameObject()
 
 }
 
+int GameObject::getUniqueID()
+{
+    return _uniqueID;
+}
+
 GameObject* GameObjectFactory::create(GameObjectType type, const string& jobName, const Vec2& position)
 {
     GameObject* gameObject = nullptr;

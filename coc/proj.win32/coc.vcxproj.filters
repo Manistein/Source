@@ -57,6 +57,9 @@
     <ClCompile Include="..\Classes\Npc.cpp">
       <Filter>src\GameWorld</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\GameObjectManager.cpp">
+      <Filter>src\GameWorld</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -93,6 +96,9 @@
       <Filter>src\GameWorld</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Npc.h">
+      <Filter>src\GameWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameObjectManager.h">
       <Filter>src\GameWorld</Filter>
     </ClInclude>
   </ItemGroup>
