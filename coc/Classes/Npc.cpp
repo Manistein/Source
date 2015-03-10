@@ -538,7 +538,7 @@ void Npc::onMoveToEvent()
         stopActionByTag(MOVE_TO_ACTION_TAG);
 
         auto moveTo = MoveTo::create(moveToDuration, _moveToPosition);
-        auto onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::onStandEvent, this));
+        auto onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::updateStatus, this, NpcStatus::Stand));
         auto sequenceAction = Sequence::create(moveTo, onMoveEndEvent, nullptr);
         sequenceAction->setTag(MOVE_TO_ACTION_TAG);
 
