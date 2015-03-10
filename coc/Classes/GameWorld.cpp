@@ -3,6 +3,7 @@
 #include "Npc.h"
 #include "GameObjectManager.h"
 #include "GameWorld.h"
+#include "GameObjectSelectBox.h"
 
 GameWorld::~GameWorld()
 {
@@ -28,6 +29,9 @@ bool GameWorld::init()
 
     _gameObjectManager = GameObjectManager::getInstance();
 
+    _gameObjectSelectBox = GameObjectSelectBox::create();
+    addChild(_gameObjectSelectBox);
+
     //createGameObject(GameObjectType::Npc, "BlueArcher", Vec2(2000.0f, 2000.0f));
 
     _testNpc = static_cast<Npc*>(GameObjectFactory::create(GameObjectType::Npc, "BlueArcher", Vec2(2000.0f, 2000.0f)));
@@ -41,6 +45,7 @@ bool GameWorld::init()
 void GameWorld::update(float deltaTime)
 {
     _mapManager->updateMapPosition();
+
     _testNpc->depthSort(_mapManager->getTileSize());
 }
 
@@ -49,12 +54,19 @@ void GameWorld::onMouseScroll(Event* event)
     _mapManager->updateMapScale(event);
 }
 
-void GameWorld::onMouseRightButtonDownEvent()
+void GameWorld::onMouseButtonDown()
 {
     auto targetPosition = _mapManager->convertCursorPositionToTileMapSpace();
     _testNpc->moveTo(targetPosition);
+
+    _gameObjectSelectBox->setMouseDownStatus(true);
+    _gameObjectSelectBox->setMouseDownPoint(_cursorPoint);
 }
 
+void GameWorld::onMouseButtonUp()
+{
+    _gameObjectSelectBox->setMouseDownStatus(false);
+}
 
 void GameWorld::createGameObject(GameObjectType type, const string& jobName, const Vec2& position)
 {
@@ -65,4 +77,11 @@ void GameWorld::createGameObject(GameObjectType type, const string& jobName, con
 void GameWorld::removeGameObjectBy(int uniqueID)
 {
     _gameObjectManager->removeGameObjectBy(uniqueID);
+}
+
+void GameWorld::syncCursorPoint(const Vec2& cursorPoint)
+{
+    _cursorPoint = cursorPoint;
+    _mapManager->syncCursorPoint(cursorPoint);
+    _gameObjectSelectBox->setMouseMovePoint(_cursorPoint);
 }

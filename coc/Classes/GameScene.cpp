@@ -69,18 +69,18 @@ void GameScene::onMouseMove(Event* event)
     _cursorPoint.x = mouseEvent->getCursorX();
     _cursorPoint.y = clientHeight + mouseEvent->getCursorY();
 
-    _gameWorld->_mapManager->syncCursorPoint(_cursorPoint);
+    _gameWorld->syncCursorPoint(_cursorPoint);
     _gameUI->syncCursorPoint(_cursorPoint);
 }
 
 void GameScene::onMouseDown(Event* event)
 {
-    _gameWorld->onMouseRightButtonDownEvent();
+    _gameWorld->onMouseButtonDown();
 }
 
 void GameScene::onMouseUp(Event* event)
 {
-
+    _gameWorld->onMouseButtonUp();
 }
 
 void GameScene::updateDebugInfoLayer()

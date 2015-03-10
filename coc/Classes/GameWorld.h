@@ -4,6 +4,7 @@
 class MapManager;
 class Npc;
 class GameObjectManager;
+class GameObjectSelectBox;
 
 class GameWorld : public Node
 {
@@ -13,7 +14,11 @@ public:
 
     void createGameObject(GameObjectType type, const string& jobName, const Vec2& position);
     void removeGameObjectBy(int uniqueID);
-    void onMouseRightButtonDownEvent();
+
+    void onMouseButtonDown();
+    void onMouseButtonUp();
+
+    void syncCursorPoint(const Vec2& cursorPoint);
 
     MapManager* _mapManager = nullptr;
 private:
@@ -23,4 +28,7 @@ private:
 
     GameObjectManager* _gameObjectManager = nullptr;
     Npc* _testNpc = nullptr;
+
+    GameObjectSelectBox* _gameObjectSelectBox = nullptr;
+    Vec2 _cursorPoint;
 };
