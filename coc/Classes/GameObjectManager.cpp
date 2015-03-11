@@ -1,4 +1,5 @@
 #include "Base.h"
+#include "GameObject.h"
 #include "GameObjectManager.h"
 
 static GameObjectManager* s_gameObjectManager = nullptr;

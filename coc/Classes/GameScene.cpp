@@ -1,11 +1,14 @@
 #include "Base.h"
-#include "GameScene.h"
-#include "GameWorld.h"
-#include "GameUI.h"
 #include "MapManager.h"
 #include "DebugInfoLayer.h"
 #include "TemplatesManager.h"
 #include "GameObject.h"
+#include "GameUI.h"
+#include "GameWorld.h"
+#include "GameScene.h"
+
+const int MOUSE_LEFT_BUTTON = 0;
+const int MOUSE_RIGHT_BUTTON = 1;
 
 Scene* GameScene::createScene()
 {
@@ -34,6 +37,8 @@ bool GameScene::init()
     _gameUI = GameUI::create();
     addChild(_gameUI);
 
+    _gameUI->registerGameWorldCallBackFunctions(_gameWorld);
+
     auto keyboardListener = EventListenerKeyboard::create();
     keyboardListener->onKeyReleased = CC_CALLBACK_2(GameScene::onKeyReleased, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
@@ -51,7 +56,7 @@ bool GameScene::init()
 
 void GameScene::update(float deltaTime)
 {
-    updateDebugInfoLayer();
+
 }
 
 void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
@@ -70,25 +75,31 @@ void GameScene::onMouseMove(Event* event)
     _cursorPoint.x = mouseEvent->getCursorX();
     _cursorPoint.y = clientHeight + mouseEvent->getCursorY();
 
-    _gameWorld->syncCursorPoint(_cursorPoint);
-    _gameUI->syncCursorPoint(_cursorPoint);
+    _director->getEventDispatcher()->dispatchCustomEvent("MouseMove", (void*)&_cursorPoint);
 }
 
 void GameScene::onMouseDown(Event* event)
 {
-    _director->getEventDispatcher()->dispatchCustomEvent("MouseButtonDown");
+    auto mouseEvent = static_cast<EventMouse*>(event);
+    if (mouseEvent->getMouseButton() == MOUSE_LEFT_BUTTON)
+    {
+        _director->getEventDispatcher()->dispatchCustomEvent("MouseLeftButtonDown");
+    }
+    else
+    {
+        _director->getEventDispatcher()->dispatchCustomEvent("MouseRightButtonDown");
+    }
 }
 
 void GameScene::onMouseUp(Event* event)
 {
-    _director->getEventDispatcher()->dispatchCustomEvent("MouseButtonUp");
-}
-
-void GameScene::updateDebugInfoLayer()
-{
-    if (_gameUI->_debugInfoLayer->isVisible())
+    auto mouseEvent = static_cast<EventMouse*>(event);
+    if (mouseEvent->getMouseButton() == MOUSE_LEFT_BUTTON)
     {
-        auto debugInfo = _gameWorld->_mapManager->getDebugInfo(TileMapLayerType::GameObjcetLayer);
-        _gameUI->_debugInfoLayer->updateInfo(debugInfo);
+        _director->getEventDispatcher()->dispatchCustomEvent("MouseLeftButtonUp");
+    }
+    else
+    {
+        _director->getEventDispatcher()->dispatchCustomEvent("MouseRightButtonUp");
     }
 }

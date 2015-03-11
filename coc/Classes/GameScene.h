@@ -19,8 +19,6 @@ private:
     void onMouseDown(Event* event);
     void onMouseUp(Event* event);
 
-    void updateDebugInfoLayer();
-
     GameWorld* _gameWorld = nullptr;
     GameUI* _gameUI = nullptr;
 

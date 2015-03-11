@@ -1,4 +1,5 @@
 #include "Base.h"
+#include "GameObject.h"
 #include "Npc.h"
 #include "TemplatesManager.h"
 #include <math.h>

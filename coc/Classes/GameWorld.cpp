@@ -1,9 +1,10 @@
 #include "Base.h"
+#include "GameObject.h"
 #include "MapManager.h"
-#include "Npc.h"
 #include "GameObjectManager.h"
-#include "GameWorld.h"
 #include "GameObjectSelectBox.h"
+#include "Npc.h"
+#include "GameWorld.h"
 
 GameWorld::~GameWorld()
 {
@@ -34,12 +35,15 @@ bool GameWorld::init()
 
     //createGameObject(GameObjectType::Npc, "BlueArcher", Vec2(2000.0f, 2000.0f));
 
-    _testNpc = static_cast<Npc*>(GameObjectFactory::create(GameObjectType::Npc, "BlueArcher", Vec2(2000.0f, 2000.0f)));
+    _testNpc = static_cast<Npc*>(GameObjectFactory::create(GameObjectType::Npc, "GreenArcher", Vec2(2000.0f, 2000.0f)));
     _mapManager->addChildInGameObjectLayer(_testNpc);
 
     auto director = Director::getInstance();
-    director->getEventDispatcher()->addCustomEventListener("MouseButtonDown", CC_CALLBACK_0(GameWorld::onMouseButtonDown, this));
-    director->getEventDispatcher()->addCustomEventListener("MouseButtonUp", CC_CALLBACK_0(GameWorld::onMouseButtonUp, this));
+    director->getEventDispatcher()->addCustomEventListener("MouseLeftButtonDown", CC_CALLBACK_0(GameWorld::onMouseLeftButtonDown, this));
+    director->getEventDispatcher()->addCustomEventListener("MouseLeftButtonUp", CC_CALLBACK_0(GameWorld::onMouseLeftButtonUp, this));
+    director->getEventDispatcher()->addCustomEventListener("MouseRightButtonDown", CC_CALLBACK_0(GameWorld::onMouseRightButtonDown, this));
+    director->getEventDispatcher()->addCustomEventListener("MouseRightButtonUp", CC_CALLBACK_0(GameWorld::onMouseRightButtonUp, this));
+    director->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameWorld::onMouseMove, this));
 
     scheduleUpdate();
 
@@ -58,18 +62,32 @@ void GameWorld::onMouseScroll(Event* event)
     _mapManager->updateMapScale(event);
 }
 
-void GameWorld::onMouseButtonDown()
+void GameWorld::onMouseLeftButtonDown()
 {
-    auto targetPosition = _mapManager->convertCursorPositionToTileMapSpace();
-    _testNpc->moveTo(targetPosition);
-
     _gameObjectSelectBox->setMouseDownStatus(true);
     _gameObjectSelectBox->setMouseDownPoint(_cursorPoint);
 }
 
-void GameWorld::onMouseButtonUp()
+void GameWorld::onMouseLeftButtonUp()
 {
     _gameObjectSelectBox->setMouseDownStatus(false);
+}
+
+void GameWorld::onMouseRightButtonDown()
+{
+    auto targetPosition = _mapManager->convertCursorPositionToTileMapSpace();
+    _testNpc->moveTo(targetPosition);
+}
+
+void GameWorld::onMouseRightButtonUp()
+{
+
+}
+
+void GameWorld::onMouseMove(EventCustom* eventCustom)
+{
+    Vec2* cursorPointVec = (Vec2*)eventCustom->getUserData();
+    syncCursorPoint(*cursorPointVec);
 }
 
 void GameWorld::createGameObject(GameObjectType type, const string& jobName, const Vec2& position)

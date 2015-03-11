@@ -1,5 +1,4 @@
 #pragma once
-#include "GameObject.h"
 
 class MapManager;
 class Npc;
@@ -15,8 +14,11 @@ public:
     void createGameObject(GameObjectType type, const string& jobName, const Vec2& position);
     void removeGameObjectBy(int uniqueID);
 
-    void onMouseButtonDown();
-    void onMouseButtonUp();
+    void onMouseLeftButtonDown();
+    void onMouseLeftButtonUp();
+    void onMouseRightButtonDown();
+    void onMouseRightButtonUp();
+    void onMouseMove(EventCustom* eventCustom);
 
     void syncCursorPoint(const Vec2& cursorPoint);
 
