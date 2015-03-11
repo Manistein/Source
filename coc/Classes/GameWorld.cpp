@@ -37,6 +37,10 @@ bool GameWorld::init()
     _testNpc = static_cast<Npc*>(GameObjectFactory::create(GameObjectType::Npc, "BlueArcher", Vec2(2000.0f, 2000.0f)));
     _mapManager->addChildInGameObjectLayer(_testNpc);
 
+    auto director = Director::getInstance();
+    director->getEventDispatcher()->addCustomEventListener("MouseButtonDown", CC_CALLBACK_0(GameWorld::onMouseButtonDown, this));
+    director->getEventDispatcher()->addCustomEventListener("MouseButtonUp", CC_CALLBACK_0(GameWorld::onMouseButtonUp, this));
+
     scheduleUpdate();
 
     return true;

@@ -26,6 +26,7 @@ bool GameScene::init()
     }
 
     TemplateManager::getInstance();
+    _director = Director::getInstance();
 
     _gameWorld = GameWorld::create();
     addChild(_gameWorld);
@@ -75,12 +76,12 @@ void GameScene::onMouseMove(Event* event)
 
 void GameScene::onMouseDown(Event* event)
 {
-    _gameWorld->onMouseButtonDown();
+    _director->getEventDispatcher()->dispatchCustomEvent("MouseButtonDown");
 }
 
 void GameScene::onMouseUp(Event* event)
 {
-    _gameWorld->onMouseButtonUp();
+    _director->getEventDispatcher()->dispatchCustomEvent("MouseButtonUp");
 }
 
 void GameScene::updateDebugInfoLayer()

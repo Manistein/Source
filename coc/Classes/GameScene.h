@@ -24,5 +24,7 @@ private:
     GameWorld* _gameWorld = nullptr;
     GameUI* _gameUI = nullptr;
 
+    Director* _director = nullptr;
+
     Vec2 _cursorPoint;
 };
