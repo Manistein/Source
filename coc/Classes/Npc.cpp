@@ -448,14 +448,6 @@ void Npc::moveTo(const Vec2& targetPosition)
     updateStatus(NpcStatus::Move);
 }
 
-void Npc::depthSort(const Size& tileSize)
-{
-    auto position = getPosition();
-    position = CC_POINT_POINTS_TO_PIXELS(position);
-    float newZ = -(position.y + tileSize.height / 3.0f) / (tileSize.height / 2.0f);
-    setPositionZ(newZ);
-}
-
 void Npc::showHPBar()
 {
     auto hpBarBackground = _hpBar->getParent();

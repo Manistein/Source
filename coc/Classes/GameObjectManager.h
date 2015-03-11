@@ -6,9 +6,13 @@ class GameObjectManager
 {
 public:
     static GameObjectManager* getInstance();
+
     GameObject* createGameObject(GameObjectType type, const string& jobName, const Vec2& position);
     void removeGameObjectBy(int uniqueID);
     void removeAllGameObjects();
+
+    void gameObjectsDepthSort(const Size& tileSize);
+    void selectedGameObjectsInPlayerQueueMoveTo(const Vec2& position);
 private:
     unordered_map<int, GameObject*> _gameObjectMap;
 

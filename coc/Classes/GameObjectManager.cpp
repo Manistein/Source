@@ -43,3 +43,16 @@ void GameObjectManager::removeAllGameObjects()
     }
     _gameObjectMap.clear();
 }
+
+void GameObjectManager::gameObjectsDepthSort(const Size& tileSize)
+{
+    for (auto& gameObjectIter : _gameObjectMap)
+    {
+        gameObjectIter.second->depthSort(tileSize);
+    }
+}
+
+void GameObjectManager::selectedGameObjectsInPlayerQueueMoveTo(const Vec2& position)
+{
+
+}

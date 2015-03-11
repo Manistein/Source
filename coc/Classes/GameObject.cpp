@@ -14,6 +14,14 @@ int GameObject::getUniqueID()
     return _uniqueID;
 }
 
+void GameObject::depthSort(const Size& tileSize)
+{
+    auto position = getPosition();
+    position = CC_POINT_POINTS_TO_PIXELS(position);
+    float newZ = -(position.y + tileSize.height / 3.0f) / (tileSize.height / 2.0f);
+    setPositionZ(newZ);
+}
+
 GameObject* GameObjectFactory::create(GameObjectType type, const string& jobName, const Vec2& position)
 {
     GameObject* gameObject = nullptr;

@@ -29,8 +29,6 @@ private:
     void onMouseScroll(Event* event);
 
     GameObjectManager* _gameObjectManager = nullptr;
-    Npc* _testNpc = nullptr;
-
     GameObjectSelectBox* _gameObjectSelectBox = nullptr;
     Vec2 _cursorPoint;
 };

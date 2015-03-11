@@ -13,6 +13,7 @@ class GameObject : public Sprite
 public:
     virtual ~GameObject();
     int getUniqueID();
+    void depthSort(const Size& tileSize);
 protected:
     int _hp = 100;
     int _maxHp = 100;

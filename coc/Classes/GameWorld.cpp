@@ -33,17 +33,14 @@ bool GameWorld::init()
     _gameObjectSelectBox = GameObjectSelectBox::create();
     addChild(_gameObjectSelectBox);
 
-    //createGameObject(GameObjectType::Npc, "BlueArcher", Vec2(2000.0f, 2000.0f));
-
-    _testNpc = static_cast<Npc*>(GameObjectFactory::create(GameObjectType::Npc, "GreenArcher", Vec2(2000.0f, 2000.0f)));
-    _mapManager->addChildInGameObjectLayer(_testNpc);
-
     auto director = Director::getInstance();
     director->getEventDispatcher()->addCustomEventListener("MouseLeftButtonDown", CC_CALLBACK_0(GameWorld::onMouseLeftButtonDown, this));
     director->getEventDispatcher()->addCustomEventListener("MouseLeftButtonUp", CC_CALLBACK_0(GameWorld::onMouseLeftButtonUp, this));
     director->getEventDispatcher()->addCustomEventListener("MouseRightButtonDown", CC_CALLBACK_0(GameWorld::onMouseRightButtonDown, this));
     director->getEventDispatcher()->addCustomEventListener("MouseRightButtonUp", CC_CALLBACK_0(GameWorld::onMouseRightButtonUp, this));
     director->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameWorld::onMouseMove, this));
+
+    createGameObject(GameObjectType::Npc, "BlueArcher", Vec2(2000.0f, 2000.0f));
 
     scheduleUpdate();
 
@@ -53,8 +50,7 @@ bool GameWorld::init()
 void GameWorld::update(float deltaTime)
 {
     _mapManager->updateMapPosition();
-
-    _testNpc->depthSort(_mapManager->getTileSize());
+    _gameObjectManager->gameObjectsDepthSort(_mapManager->getTileSize());
 }
 
 void GameWorld::onMouseScroll(Event* event)
@@ -76,7 +72,6 @@ void GameWorld::onMouseLeftButtonUp()
 void GameWorld::onMouseRightButtonDown()
 {
     auto targetPosition = _mapManager->convertCursorPositionToTileMapSpace();
-    _testNpc->moveTo(targetPosition);
 }
 
 void GameWorld::onMouseRightButtonUp()
