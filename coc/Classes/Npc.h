@@ -34,9 +34,6 @@ public:
     static Npc* create(const string& jobName, const Vec2& position, int uniqueID);
 
     void moveTo(const Vec2& targetPosition);
-
-    void showHPBar();
-    void hideHPBar();
 private:
     bool init(const string& jobName, const Vec2& position, int uniqueID);
     void clear();
@@ -110,7 +107,4 @@ private:
 
     RepeatForever* _dieAnimate = nullptr;
     FaceDirection _faceDirection = FaceDirection::Invalid;
-
-
-    ui::LoadingBar* _hpBar = nullptr;
 };

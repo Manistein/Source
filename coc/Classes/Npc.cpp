@@ -9,8 +9,6 @@ const float STAND_ANIMATE_DELAY_PER_UNIT = 3.0f;
 const float DIE_ANIMATE_DELAY_PER_UNIT = 0.1f;
 
 const string SHADOW_TEXTURE_NAME = "Shadow.png";
-const string HP_BAR_BACKGROUND_TEXTURE_NAME = "HPBarBackground.png";
-const string PLAYER_HP_BAR_TEXTURE_NAME = "PlayerHPBar.png";
 
 const int MOVE_TO_ACTION_TAG = 1;
 
@@ -36,7 +34,7 @@ Npc* Npc::create(const string& jobName, const Vec2& position, int uniqueID)
 
 bool Npc::init(const string& jobName, const Vec2& position, int uniqueID)
 {
-    if (!Sprite::init())
+    if (!GameObject::init())
     {
         return false;
     }
@@ -180,17 +178,8 @@ void Npc::initHPBar()
     auto contentSize = getContentSize();
     auto position = getPosition();
 
-    _hpBar = ui::LoadingBar::create(PLAYER_HP_BAR_TEXTURE_NAME);
-    _hpBar->setAnchorPoint(Vec2::ZERO);
-    _hpBar->setPercent(100.0f);
-
-    auto hpBarBackground = Sprite::create(HP_BAR_BACKGROUND_TEXTURE_NAME);
+    auto hpBarBackground = _hpBar->getParent();
     hpBarBackground->setPosition(Vec2(contentSize.width / 2.0f, contentSize.height + _hpBar->getContentSize().height * 1.2f));
-    hpBarBackground->setCascadeOpacityEnabled(true);
-    hpBarBackground->setScale(0.5f);
-    hpBarBackground->addChild(_hpBar);
-
-    addChild(hpBarBackground);
 }
 
 void Npc::updateStatus(NpcStatus newStatus)
@@ -446,18 +435,6 @@ void Npc::moveTo(const Vec2& targetPosition)
 {
     _moveToPosition = targetPosition;
     updateStatus(NpcStatus::Move);
-}
-
-void Npc::showHPBar()
-{
-    auto hpBarBackground = _hpBar->getParent();
-    hpBarBackground->setVisible(false);
-}
-
-void Npc::hideHPBar()
-{
-    auto hpBarBackground = _hpBar->getParent();
-    hpBarBackground->setVisible(true);
 }
 
 FaceDirection Npc::getFaceToDirection(const Vec2& moveToPosition)

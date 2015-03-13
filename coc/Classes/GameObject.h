@@ -14,9 +14,16 @@ public:
     virtual ~GameObject();
     int getUniqueID();
     void depthSort(const Size& tileSize);
+
+    void showHPBar();
+    void hideHPBar();
 protected:
+    GameObject();
+    bool init() override;
+
     int _hp = 100;
     int _maxHp = 100;
+    ui::LoadingBar* _hpBar = nullptr;
 
     int _level = 1;
     int _maxLevel = 3;
