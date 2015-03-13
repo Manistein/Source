@@ -12,7 +12,8 @@ public:
     void removeAllGameObjects();
 
     void gameObjectsDepthSort(const Size& tileSize);
-    void selectedGameObjectsInPlayerQueueMoveTo(const Vec2& position);
+    void selectGameObjectsBy(Rect rect);
+    void selectedGameObjectsMoveTo(const Vec2& position);
 private:
     unordered_map<int, GameObject*> _gameObjectMap;
 

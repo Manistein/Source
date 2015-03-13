@@ -52,7 +52,15 @@ void GameObjectManager::gameObjectsDepthSort(const Size& tileSize)
     }
 }
 
-void GameObjectManager::selectedGameObjectsInPlayerQueueMoveTo(const Vec2& position)
+void GameObjectManager::selectGameObjectsBy(Rect rect)
+{
+    for (auto& gameObjectIter : _gameObjectMap)
+    {
+        
+    }
+}
+
+void GameObjectManager::selectedGameObjectsMoveTo(const Vec2& position)
 {
 
 }

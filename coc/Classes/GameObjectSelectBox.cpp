@@ -11,9 +11,9 @@ void GameObjectSelectBox::setMouseDownPoint(const Vec2& point)
     _mouseDownPoint = point;
 }
 
-void GameObjectSelectBox::setMouseMovePoint(const Vec2& point)
+void GameObjectSelectBox::syncCursorPoint(const Vec2& point)
 {
-    _mouseMovePoint = point;
+    _cursorPoint = point;
 }
 
 void GameObjectSelectBox::update(float delta)
@@ -22,11 +22,11 @@ void GameObjectSelectBox::update(float delta)
 
     if (_isMouseDown)
     {
-        _leftBottomPoint.x = std::min(_mouseDownPoint.x, _mouseMovePoint.x);
-        _leftBottomPoint.y = std::min(_mouseDownPoint.y, _mouseMovePoint.y);
+        _leftBottomPoint.x = std::min(_mouseDownPoint.x, _cursorPoint.x);
+        _leftBottomPoint.y = std::min(_mouseDownPoint.y, _cursorPoint.y);
 
-        _boxSize.width = std::abs(_mouseDownPoint.x - _mouseMovePoint.x);
-        _boxSize.height = std::abs(_mouseDownPoint.y - _mouseMovePoint.y);
+        _boxSize.width = std::abs(_mouseDownPoint.x - _cursorPoint.x);
+        _boxSize.height = std::abs(_mouseDownPoint.y - _cursorPoint.y);
 
         _rightTopPoint.x = _leftBottomPoint.x + _boxSize.width;
         _rightTopPoint.y = _leftBottomPoint.y + _boxSize.height;
@@ -47,4 +47,9 @@ bool GameObjectSelectBox::init()
     scheduleUpdate();
 
     return true;
+}
+
+Rect GameObjectSelectBox::getRect()
+{
+    return _rect;
 }

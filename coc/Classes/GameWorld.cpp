@@ -100,5 +100,5 @@ void GameWorld::syncCursorPoint(const Vec2& cursorPoint)
 {
     _cursorPoint = cursorPoint;
     _mapManager->syncCursorPoint(cursorPoint);
-    _gameObjectSelectBox->setMouseMovePoint(_cursorPoint);
+    _gameObjectSelectBox->syncCursorPoint(cursorPoint);
 }
