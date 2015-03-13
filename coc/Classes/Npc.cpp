@@ -47,6 +47,8 @@ bool Npc::init(const string& jobName, const Vec2& position, int uniqueID)
     setPosition(position);
     _uniqueID = uniqueID;
 
+    _gameObjectType = GameObjectType::Npc;
+
     return true;
 }
 

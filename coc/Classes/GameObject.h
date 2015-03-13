@@ -8,6 +8,14 @@ enum class GameObjectType
     Building,
 };
 
+enum class ForceType
+{
+    Invalid,
+
+    Player,
+    AI,
+};
+
 class GameObject : public Sprite
 {
 public:
@@ -30,7 +38,8 @@ protected:
 
     int _uniqueID = 0;
 
-    GameObjectType _type = GameObjectType::Invalid;
+    GameObjectType _gameObjectType = GameObjectType::Invalid;
+    ForceType _forceType = ForceType::Invalid;
 };
 
 class GameObjectFactory
