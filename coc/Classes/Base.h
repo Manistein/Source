@@ -14,3 +14,5 @@ using namespace std;
 using namespace cocos2d;
 
 #include <winuser.h>
+
+const int MAX_GAME_OBJECT_COUNT = 1000;

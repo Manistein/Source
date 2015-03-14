@@ -31,6 +31,7 @@ bool GameWorld::init()
     _gameObjectManager->init(this);
 
     _gameObjectSelectBox = GameObjectSelectBox::create();
+    _gameObjectSelectBox->setGlobalZOrder(MAX_GAME_OBJECT_COUNT);
     addChild(_gameObjectSelectBox);
 
     auto mouseListener = EventListenerMouse::create();
@@ -48,6 +49,8 @@ bool GameWorld::init()
     createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2050.0f, 2050.0f));
     createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2100.0f, 2100.0f));
     createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2150.0f, 2150.0f));
+
+    _director->setAlphaBlending(true);
 
     srand(::timeGetTime());
 
