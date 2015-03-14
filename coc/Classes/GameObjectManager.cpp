@@ -5,6 +5,8 @@
 #include "Npc.h"
 
 static GameObjectManager* s_gameObjectManager = nullptr;
+const float MOVE_TO_POINT_X_RANGE = 50.0f;
+const float MOVE_TO_POINT_Y_RANGE = 50.0f;
 
 GameObjectManager* GameObjectManager::getInstance()
 {
@@ -84,6 +86,8 @@ bool GameObjectManager::selectGameObjectsBy(const Point& point)
 {
     bool result = false;
 
+    cancelSelected();
+
     for (auto& gameObjectIter : _gameObjectMap)
     {
         auto parentNode = gameObjectIter.second->getParent();
@@ -114,6 +118,7 @@ void GameObjectManager::cancelSelected()
 
 void GameObjectManager::selectedNpcMoveTo(const Vec2& position)
 {
+    bool hasFindFirstNpc = false;
     for (auto& gameObjectIter : _gameObjectMap)
     {
         if (gameObjectIter.second->getGameObjectType() != GameObjectType::Npc)
@@ -124,7 +129,19 @@ void GameObjectManager::selectedNpcMoveTo(const Vec2& position)
         if (gameObjectIter.second->isSelected() && gameObjectIter.second->getForceType() == ForceType::Player)
         {
             auto npc = static_cast<Npc*>(gameObjectIter.second);
-            npc->moveTo(position);
+
+            if (hasFindFirstNpc)
+            {
+                float xDelta = powf(-1.0f, (float)(rand() % 2)) * (float)(rand() % (int)MOVE_TO_POINT_X_RANGE);
+                float yDelta = powf(-1.0f, (float)(rand() % 2)) * (float)(rand() % (int)MOVE_TO_POINT_Y_RANGE);
+                Vec2 finalPosition(position.x + xDelta, position.y + yDelta);
+                npc->moveTo(finalPosition);
+            }
+            else
+            {
+                npc->moveTo(position);
+                hasFindFirstNpc = true;
+            }
         }
     }
 }

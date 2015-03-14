@@ -45,6 +45,11 @@ bool GameWorld::init()
     director->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameWorld::onMouseMove, this));
 
     createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2000.0f, 2000.0f));
+    createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2050.0f, 2050.0f));
+    createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2100.0f, 2100.0f));
+    createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2150.0f, 2150.0f));
+
+    srand(::timeGetTime());
 
     scheduleUpdate();
 
