@@ -32,6 +32,8 @@ void GameObjectSelectBox::update(float delta)
         _rightTopPoint.y = _leftBottomPoint.y + _boxSize.height;
 
         drawSolidRect(_leftBottomPoint, _rightTopPoint, _color);
+
+        _rect.setRect(_leftBottomPoint.x, _leftBottomPoint.y, _boxSize.width, _boxSize.height);
     }
 }
 

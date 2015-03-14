@@ -31,11 +31,11 @@ class Npc : public GameObject
 public:
     ~Npc();
 
-    static Npc* create(const string& jobName, const Vec2& position, int uniqueID);
+    static Npc* create(ForceType forceType, const string& jobName, const Vec2& position, int uniqueID);
 
     void moveTo(const Vec2& targetPosition);
 private:
-    bool init(const string& jobName, const Vec2& position, int uniqueID);
+    bool init(ForceType forceType, const string& jobName, const Vec2& position, int uniqueID);
     void clear();
 
     void initAnimates(const string& jobName);

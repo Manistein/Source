@@ -1,6 +1,8 @@
 #include "Base.h"
 #include "GameObject.h"
 #include "GameObjectManager.h"
+#include "GameWorld.h"
+#include "Npc.h"
 
 static GameObjectManager* s_gameObjectManager = nullptr;
 
@@ -14,9 +16,14 @@ GameObjectManager* GameObjectManager::getInstance()
     return s_gameObjectManager;
 }
 
-GameObject* GameObjectManager::createGameObject(GameObjectType type, const string& jobName, const Vec2& position)
+void GameObjectManager::init(GameWorld* gameWorld)
 {
-    GameObject* gameObject = GameObjectFactory::create(type, jobName, position);
+    _gameWorld = gameWorld;
+}
+
+GameObject* GameObjectManager::createGameObject(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
+{
+    GameObject* gameObject = GameObjectFactory::create(gameObjectType, forceType, jobName, position);
     if (gameObject)
     {
         _gameObjectMap[gameObject->getUniqueID()] = gameObject;
@@ -52,15 +59,72 @@ void GameObjectManager::gameObjectsDepthSort(const Size& tileSize)
     }
 }
 
-void GameObjectManager::selectGameObjectsBy(Rect rect)
+bool GameObjectManager::selectGameObjectsBy(const Rect& rect)
+{
+    bool result = false;
+
+    for (auto& gameObjectIter : _gameObjectMap)
+    {
+        auto objectParent = gameObjectIter.second->getParent();
+
+        auto objectPosition = gameObjectIter.second->getPosition();
+        auto objectPositionInGameWorld = objectParent->convertToWorldSpace(objectPosition);
+
+        if (rect.containsPoint(objectPositionInGameWorld))
+        {
+            result = true;
+            gameObjectIter.second->setSelected(true);
+        }
+    }
+
+    return result;
+}
+
+bool GameObjectManager::selectGameObjectsBy(const Point& point)
+{
+    bool result = false;
+
+    for (auto& gameObjectIter : _gameObjectMap)
+    {
+        auto parentNode = gameObjectIter.second->getParent();
+        auto worldPosition = parentNode->convertToWorldSpace(gameObjectIter.second->getPosition());
+        auto contentSize = gameObjectIter.second->getContentSize();
+
+        Rect gameObjectRect(worldPosition.x - contentSize.width / 2.0f, worldPosition.y, contentSize.width, contentSize.height);
+
+        if (gameObjectRect.containsPoint(point))
+        {
+            result = true;
+            gameObjectIter.second->setSelected(true);
+
+            break;
+        }
+    }
+
+    return result;
+}
+
+void GameObjectManager::cancelSelected()
 {
     for (auto& gameObjectIter : _gameObjectMap)
     {
-        
+        gameObjectIter.second->setSelected(false);
     }
 }
 
-void GameObjectManager::selectedGameObjectsMoveTo(const Vec2& position)
+void GameObjectManager::selectedNpcMoveTo(const Vec2& position)
 {
+    for (auto& gameObjectIter : _gameObjectMap)
+    {
+        if (gameObjectIter.second->getGameObjectType() != GameObjectType::Npc)
+        {
+            continue;
+        }
 
+        if (gameObjectIter.second->isSelected() && gameObjectIter.second->getForceType() == ForceType::Player)
+        {
+            auto npc = static_cast<Npc*>(gameObjectIter.second);
+            npc->moveTo(position);
+        }
+    }
 }

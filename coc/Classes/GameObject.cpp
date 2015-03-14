@@ -55,25 +55,54 @@ void GameObject::depthSort(const Size& tileSize)
 void GameObject::showHPBar()
 {
     auto hpBarBackground = _hpBar->getParent();
-    hpBarBackground->setVisible(false);
+    hpBarBackground->setVisible(true);
 }
 
 void GameObject::hideHPBar()
 {
     auto hpBarBackground = _hpBar->getParent();
-    hpBarBackground->setVisible(true);
+    hpBarBackground->setVisible(false);
 }
 
-GameObject* GameObjectFactory::create(GameObjectType type, const string& jobName, const Vec2& position)
+void GameObject::setSelected(bool isSelect)
+{
+    if (isSelect)
+    {
+        showHPBar();
+    }
+    else
+    {
+        hideHPBar();
+    }
+
+    _isSelected = isSelect;
+}
+
+bool GameObject::isSelected()
+{
+    return _isSelected;
+}
+
+GameObjectType GameObject::getGameObjectType()
+{
+    return _gameObjectType;
+}
+
+ForceType GameObject::getForceType()
+{
+    return _forceType;
+}
+
+GameObject* GameObjectFactory::create(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
 {
     GameObject* gameObject = nullptr;
 
-    switch (type)
+    switch (gameObjectType)
     {
         case GameObjectType::Npc:
         {
             g_uniqueID++;
-            gameObject = Npc::create(jobName, position, g_uniqueID);
+            gameObject = Npc::create(forceType, jobName, position, g_uniqueID);
         }
         break;
     case GameObjectType::Building:

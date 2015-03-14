@@ -6,6 +6,9 @@
 #include "Npc.h"
 #include "GameWorld.h"
 
+static Vec2 s_mouseDownPoint;
+const float SINGLE_CLICK_AREA = 5.0f;
+
 GameWorld::~GameWorld()
 {
     if (_mapManager != nullptr)
@@ -24,14 +27,15 @@ bool GameWorld::init()
     _mapManager = new MapManager();
     _mapManager->init(this, "isoMap.tmx");
 
-    auto mouseListener = EventListenerMouse::create();
-    mouseListener->onMouseScroll = CC_CALLBACK_1(GameWorld::onMouseScroll, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
-
     _gameObjectManager = GameObjectManager::getInstance();
+    _gameObjectManager->init(this);
 
     _gameObjectSelectBox = GameObjectSelectBox::create();
     addChild(_gameObjectSelectBox);
+
+    auto mouseListener = EventListenerMouse::create();
+    mouseListener->onMouseScroll = CC_CALLBACK_1(GameWorld::onMouseScroll, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
 
     auto director = Director::getInstance();
     director->getEventDispatcher()->addCustomEventListener("MouseLeftButtonDown", CC_CALLBACK_0(GameWorld::onMouseLeftButtonDown, this));
@@ -40,7 +44,7 @@ bool GameWorld::init()
     director->getEventDispatcher()->addCustomEventListener("MouseRightButtonUp", CC_CALLBACK_0(GameWorld::onMouseRightButtonUp, this));
     director->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameWorld::onMouseMove, this));
 
-    createGameObject(GameObjectType::Npc, "BlueArcher", Vec2(2000.0f, 2000.0f));
+    createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2000.0f, 2000.0f));
 
     scheduleUpdate();
 
@@ -62,16 +66,36 @@ void GameWorld::onMouseLeftButtonDown()
 {
     _gameObjectSelectBox->setMouseDownStatus(true);
     _gameObjectSelectBox->setMouseDownPoint(_cursorPoint);
+
+    s_mouseDownPoint = _cursorPoint;
 }
 
 void GameWorld::onMouseLeftButtonUp()
 {
     _gameObjectSelectBox->setMouseDownStatus(false);
+
+    if (std::abs(_cursorPoint.x - s_mouseDownPoint.x) < SINGLE_CLICK_AREA && std::abs(_cursorPoint.y - s_mouseDownPoint.y) < SINGLE_CLICK_AREA)
+    {
+        if (!_gameObjectManager->selectGameObjectsBy(_cursorPoint))
+        {
+            _gameObjectManager->cancelSelected();
+        }
+    }
+    else
+    {
+        auto selectRect = _gameObjectSelectBox->getRect();
+
+        if (!_gameObjectManager->selectGameObjectsBy(selectRect))
+        {
+            _gameObjectManager->cancelSelected();
+        }
+    }
 }
 
 void GameWorld::onMouseRightButtonDown()
 {
     auto targetPosition = _mapManager->convertCursorPositionToTileMapSpace();
+    _gameObjectManager->selectedNpcMoveTo(targetPosition);
 }
 
 void GameWorld::onMouseRightButtonUp()
@@ -85,9 +109,9 @@ void GameWorld::onMouseMove(EventCustom* eventCustom)
     syncCursorPoint(*cursorPointVec);
 }
 
-void GameWorld::createGameObject(GameObjectType type, const string& jobName, const Vec2& position)
+void GameWorld::createGameObject(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
 {
-    auto gameObject = _gameObjectManager->createGameObject(type, jobName, position);
+    auto gameObject = _gameObjectManager->createGameObject(gameObjectType, forceType, jobName, position);
     _mapManager->addChildInGameObjectLayer(gameObject);
 }
 

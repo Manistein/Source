@@ -17,10 +17,10 @@ Npc::~Npc()
     clear();
 }
 
-Npc* Npc::create(const string& jobName, const Vec2& position, int uniqueID)
+Npc* Npc::create(ForceType forceType, const string& jobName, const Vec2& position, int uniqueID)
 {
     auto npc = new Npc();
-    if (npc && npc->init(jobName, position, uniqueID))
+    if (npc && npc->init(forceType, jobName, position, uniqueID))
     {
         npc->autorelease();
     }
@@ -32,7 +32,7 @@ Npc* Npc::create(const string& jobName, const Vec2& position, int uniqueID)
     return npc;
 }
 
-bool Npc::init(const string& jobName, const Vec2& position, int uniqueID)
+bool Npc::init(ForceType forceType, const string& jobName, const Vec2& position, int uniqueID)
 {
     if (!GameObject::init())
     {
@@ -48,6 +48,7 @@ bool Npc::init(const string& jobName, const Vec2& position, int uniqueID)
     _uniqueID = uniqueID;
 
     _gameObjectType = GameObjectType::Npc;
+    _forceType = forceType;
 
     return true;
 }

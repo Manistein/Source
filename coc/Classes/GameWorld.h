@@ -11,7 +11,7 @@ public:
     ~GameWorld();
 	CREATE_FUNC(GameWorld);
 
-    void createGameObject(GameObjectType type, const string& jobName, const Vec2& position);
+    void createGameObject(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position);
     void removeGameObjectBy(int uniqueID);
 
     void onMouseLeftButtonDown();

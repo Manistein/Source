@@ -25,6 +25,12 @@ public:
 
     void showHPBar();
     void hideHPBar();
+
+    void setSelected(bool isSelect);
+    bool isSelected();
+
+    GameObjectType getGameObjectType();
+    ForceType getForceType();
 protected:
     GameObject();
     bool init() override;
@@ -38,6 +44,8 @@ protected:
 
     int _uniqueID = 0;
 
+    bool _isSelected = false;
+
     GameObjectType _gameObjectType = GameObjectType::Invalid;
     ForceType _forceType = ForceType::Invalid;
 };
@@ -45,5 +53,5 @@ protected:
 class GameObjectFactory
 {
 public:
-    static GameObject* create(GameObjectType type, const string& jobName, const Vec2& position);
+    static GameObject* create(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position);
 };
