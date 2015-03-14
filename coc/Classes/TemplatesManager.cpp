@@ -1,8 +1,20 @@
 #include "Base.h"
+#include "GameObject.h"
 #include "TemplatesManager.h"
 #include "TabFileReader.h"
+#include <unordered_map>
 
 static TemplateManager* s_templateManager = nullptr;
+
+static unordered_map<string, AttackType> s_attackTypeStringToEnum = {
+    { "ShortRange", AttackType::ShortRange },
+    { "LongRange", AttackType::LongRange },
+};
+
+static unordered_map<string, DamageType> s_damageTypeStringToEnum = {
+    { "AreaOfEffect", DamageType::AreaOfEffect },
+    { "Normal", DamageType::Normal },
+};
 
 TemplateManager::~TemplateManager()
 {
@@ -67,6 +79,25 @@ bool TemplateManager::init()
             npcTemplate->standAndFaceToSouthEastAnimationPList = tabFileReader.getString(i, "StandAndFaceToSouthEastPList");
             npcTemplate->standAndFaceToSouthWestAnimationPList = tabFileReader.getString(i, "StandAndFaceToSouthWestPList");
             npcTemplate->standAndFaceToWestAnimationPList = tabFileReader.getString(i, "StandAndFaceToWestPList");
+
+            npcTemplate->maxHp = tabFileReader.getInteger(i, "MaxHp");
+            npcTemplate->attackPower = tabFileReader.getInteger(i, "AttackPower");
+            npcTemplate->maxAttackRadius = tabFileReader.getInteger(i, "MaxAttackRadius");
+            npcTemplate->perSecondAttackCount = tabFileReader.getInteger(i, "PerSecondAttackCount");
+
+            auto attackTypeName = tabFileReader.getString(i, "AttackType");
+            auto attackTypeIter = s_attackTypeStringToEnum.find(attackTypeName);
+            if (attackTypeIter != s_attackTypeStringToEnum.end())
+            {
+                npcTemplate->attackType = s_attackTypeStringToEnum[attackTypeName];
+            }
+
+            auto damageTypeName = tabFileReader.getString(i, "DamageType");
+            auto damageTypeIter = s_damageTypeStringToEnum.find(damageTypeName);
+            if (damageTypeIter != s_damageTypeStringToEnum.end())
+            {
+                npcTemplate->damageType = s_damageTypeStringToEnum[damageTypeName];
+            }
 
             _npcTemplatesMap[jobName] = npcTemplate;
         }

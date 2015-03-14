@@ -42,7 +42,9 @@ private:
     void initSwitchStatusFunctions();
     void initShadow();
     void initHPBar();
+    void initBattleData(const string& jobName);
 
+    void update(float delta) override;
     void updateStatus(NpcStatus newStatus);
 
     struct SwitchStatusFunction 

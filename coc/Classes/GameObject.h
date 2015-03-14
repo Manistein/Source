@@ -16,6 +16,22 @@ enum class ForceType
     AI,
 };
 
+enum class AttackType
+{
+    Invalid,
+
+    ShortRange,
+    LongRange,
+};
+
+enum class DamageType
+{
+    Invalid,
+
+    AreaOfEffect,
+    Normal,
+};
+
 class GameObject : public Sprite
 {
 public:
@@ -31,6 +47,8 @@ public:
 
     GameObjectType getGameObjectType();
     ForceType getForceType();
+
+    void updateHP();
 protected:
     GameObject();
     bool init() override;
@@ -39,9 +57,16 @@ protected:
     int _maxHp = 100;
     ui::LoadingBar* _hpBar = nullptr;
 
+    int _attackPower = 10;
+    int _maxAttackRadius = 10;
+    int _perSecondAttackCount = 5;
+    AttackType _attackType = AttackType::Invalid;
+    DamageType _damageType = DamageType::Invalid;
+
     int _level = 1;
     int _maxLevel = 3;
 
+    int _enemyUniqueID = 0;
     int _uniqueID = 0;
 
     bool _isSelected = false;

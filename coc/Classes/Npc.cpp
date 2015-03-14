@@ -43,12 +43,15 @@ bool Npc::init(ForceType forceType, const string& jobName, const Vec2& position,
     initSwitchStatusFunctions();
     initShadow();
     initHPBar();
+    initBattleData(jobName);
 
     setPosition(position);
     _uniqueID = uniqueID;
 
     _gameObjectType = GameObjectType::Npc;
     _forceType = forceType;
+
+    scheduleUpdate();
 
     return true;
 }
@@ -183,6 +186,22 @@ void Npc::initHPBar()
 
     auto hpBarBackground = _hpBar->getParent();
     hpBarBackground->setPosition(Vec2(contentSize.width / 2.0f, contentSize.height + _hpBar->getContentSize().height * 1.2f));
+}
+
+void Npc::initBattleData(const string& jobName)
+{
+    auto npcTemplate = TemplateManager::getInstance()->getNpcTemplateBy(jobName);
+    _maxHp = npcTemplate->maxHp;
+    _attackPower = npcTemplate->attackPower;
+    _maxAttackRadius = npcTemplate->maxAttackRadius;
+    _perSecondAttackCount = npcTemplate->perSecondAttackCount;
+    _attackType = npcTemplate->attackType;
+    _damageType = npcTemplate->damageType;
+}
+
+void Npc::update(float delta)
+{
+    updateHP();
 }
 
 void Npc::updateStatus(NpcStatus newStatus)

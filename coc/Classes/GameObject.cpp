@@ -6,6 +6,7 @@ static int g_uniqueID = 0;
 
 const string HP_BAR_BACKGROUND_TEXTURE_NAME = "HPBarBackground.png";
 const string PLAYER_HP_BAR_TEXTURE_NAME = "PlayerHPBar.png";
+const string AI_HP_BAR_TEXTURE_NAME = "AIHPBar.png";
 
 GameObject::~GameObject()
 {
@@ -92,6 +93,12 @@ GameObjectType GameObject::getGameObjectType()
 ForceType GameObject::getForceType()
 {
     return _forceType;
+}
+
+void GameObject::updateHP()
+{
+    float hpPercent = (float)_hp / (float)_maxHp;
+    _hpBar->setPercent(hpPercent * 100.0f);
 }
 
 GameObject* GameObjectFactory::create(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
