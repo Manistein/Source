@@ -21,6 +21,7 @@ struct NpcTemplate
     int maxHp = 0;
     int attackPower = 0;
     int maxAttackRadius = 0;
+    int maxAlertRadius = 0;
     int perSecondAttackCount = 0;
     AttackType attackType = AttackType::Invalid;
     DamageType damageType = DamageType::Invalid;

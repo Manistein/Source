@@ -3,6 +3,7 @@
 #include "Npc.h"
 #include "TemplatesManager.h"
 #include <math.h>
+#include "GameObjectManager.h"
 
 const float MOVE_ANIMATE_DELAY_PER_UNIT = 0.1f;
 const float STAND_ANIMATE_DELAY_PER_UNIT = 3.0f;
@@ -194,6 +195,7 @@ void Npc::initBattleData(const string& jobName)
     _maxHp = npcTemplate->maxHp;
     _attackPower = npcTemplate->attackPower;
     _maxAttackRadius = npcTemplate->maxAttackRadius;
+    _maxAlertRadius = npcTemplate->maxAlertRadius;
     _perSecondAttackCount = npcTemplate->perSecondAttackCount;
     _attackType = npcTemplate->attackType;
     _damageType = npcTemplate->damageType;
@@ -202,6 +204,7 @@ void Npc::initBattleData(const string& jobName)
 void Npc::update(float delta)
 {
     updateHP();
+    runAI(delta);
 }
 
 void Npc::updateStatus(NpcStatus newStatus)
@@ -214,6 +217,151 @@ void Npc::updateStatus(NpcStatus newStatus)
         switchFunction();
         _oldStatus = newStatus;
     }
+}
+
+void Npc::runAI(float delta)
+{
+    if (_enemyUniqueID != ENEMY_UNIQUE_ID_INVALID)
+    {
+        auto enemy = GameObjectManager::getInstance()->getGameObjectBy(_enemyUniqueID);
+        if (isEnemyInAttackRange(enemy))
+        {
+            switch (_oldStatus)
+            {
+            case NpcStatus::Stand:
+            {
+                switchStandToAttack();
+            }
+                break;
+            case NpcStatus::Move:
+            {
+                switchMoveToAttack();
+            }
+                break;
+            case NpcStatus::Attack:
+            {
+                switchAttackToAttack();
+            }
+                break;
+            case NpcStatus::Die:
+                break;
+            default:    break;
+            }
+        }
+        else if (isEnemyInAlertRange(enemy))
+        {
+            switch (_oldStatus)
+            {
+            case NpcStatus::Stand:
+            {
+                _moveToPosition = enemy->getPosition();
+                switchStandToMove();
+            }
+                break;
+            case NpcStatus::Move:
+            {
+                _cdTimeDelta += delta;
+                if (_cdTimeDelta >= CD_TIME_INTERVAL)
+                {
+                    auto enemyPosition = enemy->getPosition();
+                    if (_moveToPosition != enemyPosition)
+                    {
+                        _moveToPosition = enemyPosition;
+                        switchMoveToMove();
+                    }
+                }
+            }
+                break;
+            case NpcStatus::Attack:
+            {
+                _moveToPosition = enemy->getPosition();
+                switchAttackToMove();
+            }
+                break;
+            case NpcStatus::Die:
+                break;
+            default:    break;
+            }
+        }
+        else
+        {
+            switch (_oldStatus)
+            {
+            case NpcStatus::Move:
+            {
+                switchMoveToStand();
+            }
+                break;
+            case NpcStatus::Attack:
+            {
+                switchAttackToStand();
+            }
+                break;
+            case NpcStatus::Stand:
+            case NpcStatus::Die:
+            default:    break;
+            }
+
+            setEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
+        }
+    }
+    else
+    {
+        auto gameObjectMap = GameObjectManager::getInstance()->getGameObjectMap();
+        for (auto& gameObjectIter : gameObjectMap)
+        {
+            if (_forceType == gameObjectIter.second->getForceType())
+            {
+                continue;
+            }
+
+            if (isEnemyInAttackRange(gameObjectIter.second) || isEnemyInAlertRange(gameObjectIter.second))
+            {
+                setEnemyUniqueID(gameObjectIter.first);
+
+                break;
+            }
+        }
+    }
+}
+
+bool Npc::isEnemyInAttackRange(GameObject* enemy)
+{
+    bool result = false;
+
+    float distance = getDistanceFrom(enemy);
+
+    if (distance <= _maxAttackRadius)
+    {
+        result = true;
+    }
+
+    return result;
+}
+
+bool Npc::isEnemyInAlertRange(GameObject* enemy)
+{
+    bool result = false;
+
+    float distance = getDistanceFrom(enemy);
+
+    if (distance <= _maxAlertRadius)
+    {
+        result = true;
+    }
+
+    return result;
+}
+
+float Npc::getDistanceFrom(GameObject* enemy)
+{
+    auto enemyPosition = enemy->getPosition();
+    auto position = getPosition();
+
+    float distance = sqrt((enemyPosition.x - position.x) * (enemyPosition.x - position.x) +
+        (enemyPosition.y - position.y) * (enemyPosition.y - position.y));
+
+    return distance;
 }
 
 RepeatForever* Npc::createAnimateWidthPList(const string& plist, float animateDelayPerUnit)
@@ -291,12 +439,12 @@ bool Npc::canSwitchMoveToDie()
 
 void Npc::switchMoveToMove()
 {
-    onMoveToEvent();
+    onMoveTo();
 }
 
 void Npc::switchMoveToStand()
 {
-    onStandEvent();
+    onStand();
 }
 
 void Npc::switchMoveToAttack()
@@ -339,12 +487,12 @@ bool Npc::canSwitchStandToDie()
 
 void Npc::switchStandToStand()
 {
-    onStandEvent();
+    onStand();
 }
 
 void Npc::switchStandToMove()
 {
-    onMoveToEvent();
+    onMoveTo();
 }
 
 void Npc::switchStandToAttack()
@@ -392,12 +540,12 @@ void Npc::switchAttackToAttack()
 
 void Npc::switchAttackToMove()
 {
-    onMoveToEvent();
+    onMoveTo();
 }
 
 void Npc::switchAttackToStand()
 {
-    onStandEvent();
+    onStand();
 }
 
 void Npc::switchAttackToDie()
@@ -440,12 +588,12 @@ void Npc::switchDieToDie()
 
 void Npc::switchDieToMove()
 {
-    onMoveToEvent();
+    onMoveTo();
 }
 
 void Npc::switchDieToStand()
 {
-    onStandEvent();
+    onStand();
 }
 
 void Npc::switchDieToAttack()
@@ -505,7 +653,7 @@ float Npc::getMoveToDuration(const Vec2& moveToPosition)
     return distance / _perSecondMoveSpeedByPixel;
 }
 
-void Npc::onMoveToEvent()
+void Npc::onMoveTo()
 {
     if (_oldStatus == NpcStatus::Die)
     {
@@ -538,7 +686,7 @@ void Npc::onMoveToEvent()
     }
 }
 
-void Npc::onStandEvent()
+void Npc::onStand()
 {
     if (_oldStatus == NpcStatus::Die)
     {
@@ -551,5 +699,19 @@ void Npc::onStandEvent()
     if (standIter != _standAnimateMap.end())
     {
         runAction(standIter->second);
+    }
+}
+
+void Npc::onAttack()
+{
+    if (_oldStatus == NpcStatus::Die)
+    {
+        return;
+    }
+
+    if (_isEnemyChange)
+    {
+
+        _isEnemyChange = false;
     }
 }

@@ -3,6 +3,8 @@
 class GameObject;
 class GameWorld;
 
+typedef unordered_map<int, GameObject*> GameObjectMap;
+
 class GameObjectManager
 {
 public:
@@ -13,6 +15,9 @@ public:
     void removeGameObjectBy(int uniqueID);
     void removeAllGameObjects();
 
+    GameObject* getGameObjectBy(int uniqueID);
+    const GameObjectMap& getGameObjectMap();
+
     void gameObjectsDepthSort(const Size& tileSize);
 
     bool selectGameObjectsBy(const Rect& rect);
@@ -21,7 +26,7 @@ public:
 
     void selectedNpcMoveTo(const Vec2& position);
 private:
-    unordered_map<int, GameObject*> _gameObjectMap;
+    GameObjectMap _gameObjectMap;
 
     GameObjectManager(){}
     GameObjectManager(const GameObjectManager&);

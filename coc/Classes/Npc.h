@@ -26,6 +26,8 @@ enum class FaceDirection
     Total
 };
 
+const float CD_TIME_INTERVAL = 0.5f;
+
 class Npc : public GameObject
 {
 public:
@@ -46,6 +48,12 @@ private:
 
     void update(float delta) override;
     void updateStatus(NpcStatus newStatus);
+
+    void runAI(float delta);
+    bool isEnemyInAttackRange(GameObject* enemy);
+    bool isEnemyInAlertRange(GameObject* enemy);
+    float getDistanceFrom(GameObject* enemy);
+    float _cdTimeDelta = CD_TIME_INTERVAL;
 
     struct SwitchStatusFunction 
     {
@@ -94,8 +102,9 @@ private:
     void switchDieToStand();
     void switchDieToAttack();
 
-    void onMoveToEvent();
-    void onStandEvent();
+    void onMoveTo();
+    void onStand();
+    void onAttack();
 
     RepeatForever* createAnimateWidthPList(const string& plist, float animateDelayPerUnit);
 
@@ -109,4 +118,6 @@ private:
 
     RepeatForever* _dieAnimate = nullptr;
     FaceDirection _faceDirection = FaceDirection::Invalid;
+
+    int _maxAlertRadius = 0;
 };

@@ -32,6 +32,8 @@ enum class DamageType
     Normal,
 };
 
+const int ENEMY_UNIQUE_ID_INVALID = 0;
+
 class GameObject : public Sprite
 {
 public:
@@ -49,24 +51,26 @@ public:
     ForceType getForceType();
 
     void updateHP();
+    void setEnemyUniqueID(int uniqueID);
 protected:
     GameObject();
     bool init() override;
 
-    int _hp = 100;
-    int _maxHp = 100;
+    int _hp = 0;
+    int _maxHp = 0;
     ui::LoadingBar* _hpBar = nullptr;
 
-    int _attackPower = 10;
-    int _maxAttackRadius = 10;
-    int _perSecondAttackCount = 5;
+    int _attackPower = 0;
+    int _maxAttackRadius = 0;
+    int _perSecondAttackCount = 0;
     AttackType _attackType = AttackType::Invalid;
     DamageType _damageType = DamageType::Invalid;
 
-    int _level = 1;
-    int _maxLevel = 3;
+    int _level = 0;
+    int _maxLevel = 0;
 
-    int _enemyUniqueID = 0;
+    int _enemyUniqueID = ENEMY_UNIQUE_ID_INVALID;
+    bool _isEnemyChange = false;
     int _uniqueID = 0;
 
     bool _isSelected = false;

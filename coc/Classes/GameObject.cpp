@@ -101,6 +101,15 @@ void GameObject::updateHP()
     _hpBar->setPercent(hpPercent * 100.0f);
 }
 
+void GameObject::setEnemyUniqueID(int uniqueID)
+{
+    if (_uniqueID != uniqueID)
+    {
+        _uniqueID = uniqueID;
+        _isEnemyChange = true;
+    }
+}
+
 GameObject* GameObjectFactory::create(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
 {
     GameObject* gameObject = nullptr;

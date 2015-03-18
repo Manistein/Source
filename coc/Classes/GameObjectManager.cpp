@@ -53,6 +53,24 @@ void GameObjectManager::removeAllGameObjects()
     _gameObjectMap.clear();
 }
 
+GameObject* GameObjectManager::getGameObjectBy(int uniqueID)
+{
+    GameObject* gameObject = nullptr;
+
+    auto gameObjectIter = _gameObjectMap.find(uniqueID);
+    if (gameObjectIter != _gameObjectMap.end())
+    {
+        gameObject = gameObjectIter->second;
+    }
+
+    return gameObject;
+}
+
+const GameObjectMap& GameObjectManager::getGameObjectMap()
+{
+    return _gameObjectMap;
+}
+
 void GameObjectManager::gameObjectsDepthSort(const Size& tileSize)
 {
     for (auto& gameObjectIter : _gameObjectMap)
@@ -64,6 +82,8 @@ void GameObjectManager::gameObjectsDepthSort(const Size& tileSize)
 bool GameObjectManager::selectGameObjectsBy(const Rect& rect)
 {
     bool result = false;
+
+    cancelSelected();
 
     for (auto& gameObjectIter : _gameObjectMap)
     {

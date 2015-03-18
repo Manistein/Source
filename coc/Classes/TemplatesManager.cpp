@@ -83,6 +83,7 @@ bool TemplateManager::init()
             npcTemplate->maxHp = tabFileReader.getInteger(i, "MaxHp");
             npcTemplate->attackPower = tabFileReader.getInteger(i, "AttackPower");
             npcTemplate->maxAttackRadius = tabFileReader.getInteger(i, "MaxAttackRadius");
+            npcTemplate->maxAlertRadius = tabFileReader.getInteger(i, "MaxAlertRadius");
             npcTemplate->perSecondAttackCount = tabFileReader.getInteger(i, "PerSecondAttackCount");
 
             auto attackTypeName = tabFileReader.getString(i, "AttackType");
