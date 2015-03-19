@@ -48,7 +48,7 @@ bool GameWorld::init()
     createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2000.0f, 2000.0f));
     createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2050.0f, 2050.0f));
     createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2100.0f, 2100.0f));
-    createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2150.0f, 2150.0f));
+    createGameObject(GameObjectType::Npc, ForceType::AI, "GreenArcher", Vec2(3150.0f, 2150.0f));
 
     _director->setAlphaBlending(true);
 
@@ -81,22 +81,16 @@ void GameWorld::onMouseLeftButtonDown()
 void GameWorld::onMouseLeftButtonUp()
 {
     _gameObjectSelectBox->setMouseDownStatus(false);
+    _gameObjectManager->cancelSelected();
 
     if (std::abs(_cursorPoint.x - s_mouseDownPoint.x) < SINGLE_CLICK_AREA && std::abs(_cursorPoint.y - s_mouseDownPoint.y) < SINGLE_CLICK_AREA)
     {
-        if (!_gameObjectManager->selectGameObjectsBy(_cursorPoint))
-        {
-            _gameObjectManager->cancelSelected();
-        }
+        _gameObjectManager->selectGameObjectBy(_cursorPoint);
     }
     else
     {
         auto selectRect = _gameObjectSelectBox->getRect();
-
-        if (!_gameObjectManager->selectGameObjectsBy(selectRect))
-        {
-            _gameObjectManager->cancelSelected();
-        }
+        _gameObjectManager->selectGameObjectsBy(selectRect);
     }
 }
 
@@ -104,6 +98,7 @@ void GameWorld::onMouseRightButtonDown()
 {
     auto targetPosition = _mapManager->convertCursorPositionToTileMapSpace();
     _gameObjectManager->selectedNpcMoveTo(targetPosition);
+    _gameObjectManager->selectEnemyBy(targetPosition);
 }
 
 void GameWorld::onMouseRightButtonUp()

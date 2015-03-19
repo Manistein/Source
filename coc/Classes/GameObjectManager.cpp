@@ -83,8 +83,6 @@ bool GameObjectManager::selectGameObjectsBy(const Rect& rect)
 {
     bool result = false;
 
-    cancelSelected();
-
     for (auto& gameObjectIter : _gameObjectMap)
     {
         auto objectParent = gameObjectIter.second->getParent();
@@ -102,11 +100,9 @@ bool GameObjectManager::selectGameObjectsBy(const Rect& rect)
     return result;
 }
 
-bool GameObjectManager::selectGameObjectsBy(const Point& point)
+GameObject* GameObjectManager::selectGameObjectBy(const Point& point)
 {
-    bool result = false;
-
-    cancelSelected();
+    GameObject* gameObject = nullptr;
 
     for (auto& gameObjectIter : _gameObjectMap)
     {
@@ -118,14 +114,31 @@ bool GameObjectManager::selectGameObjectsBy(const Point& point)
 
         if (gameObjectRect.containsPoint(point))
         {
-            result = true;
+            gameObject = gameObjectIter.second;
             gameObjectIter.second->setSelected(true);
 
             break;
         }
     }
 
-    return result;
+    return gameObject;
+}
+
+GameObject* GameObjectManager::selectEnemyBy(const Point& point)
+{
+    GameObject* enemy = nullptr;
+
+    enemy = selectGameObjectBy(point);
+    if (enemy)
+    {
+        if (enemy->getForceType() != ForceType::AI)
+        {
+            enemy->setSelected(false);
+            enemy = nullptr;
+        }
+    }
+
+    return enemy;
 }
 
 void GameObjectManager::cancelSelected()

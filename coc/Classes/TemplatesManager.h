@@ -18,6 +18,13 @@ struct NpcTemplate
     string standAndFaceToWestAnimationPList;
     string standAndFaceToNorthWestAnimationPList;
 
+    string attackToNorthEastAnimationPList;
+    string attackToEastAnimationPList;
+    string attackToSouthEastAnimationPList;
+    string attackToSouthWestAnimationPList;
+    string attackToWestAnimationPList;
+    string attackToNorthWestAnimationPList;
+
     int maxHp = 0;
     int attackPower = 0;
     int maxAttackRadius = 0;

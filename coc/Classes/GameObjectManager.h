@@ -21,7 +21,8 @@ public:
     void gameObjectsDepthSort(const Size& tileSize);
 
     bool selectGameObjectsBy(const Rect& rect);
-    bool selectGameObjectsBy(const Point& point);
+    GameObject* selectGameObjectBy(const Point& point);
+    GameObject* selectEnemyBy(const Point& point);
     void cancelSelected();
 
     void selectedNpcMoveTo(const Vec2& position);

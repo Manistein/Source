@@ -8,6 +8,7 @@
 const float MOVE_ANIMATE_DELAY_PER_UNIT = 0.1f;
 const float STAND_ANIMATE_DELAY_PER_UNIT = 3.0f;
 const float DIE_ANIMATE_DELAY_PER_UNIT = 0.1f;
+const float ATTACK_ANIMATE_DELAY_PER_UNIT = 0.5f;
 
 const string SHADOW_TEXTURE_NAME = "Shadow.png";
 
@@ -35,6 +36,8 @@ Npc* Npc::create(ForceType forceType, const string& jobName, const Vec2& positio
 
 bool Npc::init(ForceType forceType, const string& jobName, const Vec2& position, int uniqueID)
 {
+    _forceType = forceType;
+
     if (!GameObject::init())
     {
         return false;
@@ -50,7 +53,6 @@ bool Npc::init(ForceType forceType, const string& jobName, const Vec2& position,
     _uniqueID = uniqueID;
 
     _gameObjectType = GameObjectType::Npc;
-    _forceType = forceType;
 
     scheduleUpdate();
 
@@ -97,6 +99,13 @@ void Npc::initAnimates(const string& jobName)
     _standAnimateMap[FaceDirection::FaceToSouthEast] = createAnimateWidthPList(npcTempalte->standAndFaceToSouthEastAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT);
     _standAnimateMap[FaceDirection::FaceToSouthWest] = createAnimateWidthPList(npcTempalte->standAndFaceToSouthWestAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT);
     _standAnimateMap[FaceDirection::FaceToWest] = createAnimateWidthPList(npcTempalte->standAndFaceToWestAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT);
+
+    _attackAnimateMap[FaceDirection::FaceToEast] = createAnimateWidthPList(npcTempalte->attackToEastAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT);
+    _attackAnimateMap[FaceDirection::FaceToNorthEast] = createAnimateWidthPList(npcTempalte->attackToNorthEastAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT);
+    _attackAnimateMap[FaceDirection::FaceToNorthWest] = createAnimateWidthPList(npcTempalte->attackToNorthWestAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT);
+    _attackAnimateMap[FaceDirection::FaceToSouthEast] = createAnimateWidthPList(npcTempalte->attackToSouthEastAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT);
+    _attackAnimateMap[FaceDirection::FaceToSouthWest] = createAnimateWidthPList(npcTempalte->attackToSouthWestAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT);
+    _attackAnimateMap[FaceDirection::FaceToWest] = createAnimateWidthPList(npcTempalte->attackToWestAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT);
 
     _faceDirection = FaceDirection::FaceToSouthEast;
     runAction(_standAnimateMap[_faceDirection]);
@@ -308,6 +317,11 @@ void Npc::runFightWithEnemyAI(float delta)
     }
     else
     {
+        if (_forceType == ForceType::Player && _oldStatus == NpcStatus::Move)
+        {
+            return;
+        }
+
         auto gameObjectMap = GameObjectManager::getInstance()->getGameObjectMap();
         for (auto& gameObjectIter : gameObjectMap)
         {
@@ -450,7 +464,7 @@ void Npc::switchMoveToStand()
 
 void Npc::switchMoveToAttack()
 {
-
+    onAttack();
 }
 
 void Npc::switchMoveToDie()
@@ -498,7 +512,7 @@ void Npc::switchStandToMove()
 
 void Npc::switchStandToAttack()
 {
-
+    onAttack();
 }
 
 void Npc::switchStandToDie()
@@ -536,7 +550,7 @@ bool Npc::canSwitchAttackToDie()
 
 void Npc::switchAttackToAttack()
 {
-
+    onAttack();
 }
 
 void Npc::switchAttackToMove()
@@ -599,7 +613,7 @@ void Npc::switchDieToStand()
 
 void Npc::switchDieToAttack()
 {
-
+    onAttack();
 }
 
 void Npc::moveTo(const Vec2& targetPosition)
@@ -696,10 +710,10 @@ void Npc::onStand()
 
     stopAllActions();
 
-    auto standIter = _standAnimateMap.find(_faceDirection);
-    if (standIter != _standAnimateMap.end())
+    auto standAnimateIter = _standAnimateMap.find(_faceDirection);
+    if (standAnimateIter != _standAnimateMap.end())
     {
-        runAction(standIter->second);
+        runAction(standAnimateIter->second);
     }
 }
 
@@ -712,7 +726,13 @@ void Npc::onAttack()
 
     if (_isEnemyChange)
     {
+        stopAllActions();
 
+        auto attackAnimateIter = _attackAnimateMap.find(_faceDirection);
+        if (attackAnimateIter != _attackAnimateMap.end())
+        {
+            runAction(attackAnimateIter->second);
+        }
         _isEnemyChange = false;
     }
 }

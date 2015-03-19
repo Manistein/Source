@@ -25,7 +25,15 @@ bool GameObject::init()
         return false;
     }
 
-    _hpBar = ui::LoadingBar::create(PLAYER_HP_BAR_TEXTURE_NAME);
+    if (_forceType == ForceType::Player)
+    {
+        _hpBar = ui::LoadingBar::create(PLAYER_HP_BAR_TEXTURE_NAME);
+    }
+    else
+    {
+        _hpBar = ui::LoadingBar::create(AI_HP_BAR_TEXTURE_NAME);
+    }
+
     _hpBar->setAnchorPoint(Vec2::ZERO);
     _hpBar->setPercent(100.0f);
 
@@ -103,9 +111,9 @@ void GameObject::updateHP()
 
 void GameObject::setEnemyUniqueID(int uniqueID)
 {
-    if (_uniqueID != uniqueID)
+    if (_enemyUniqueID != uniqueID)
     {
-        _uniqueID = uniqueID;
+        _enemyUniqueID = uniqueID;
         _isEnemyChange = true;
     }
 }

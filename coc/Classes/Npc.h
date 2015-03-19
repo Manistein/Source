@@ -115,6 +115,7 @@ private:
 
     unordered_map<FaceDirection, RepeatForever*> _moveAnimateMap;
     unordered_map<FaceDirection, RepeatForever*> _standAnimateMap;
+    unordered_map<FaceDirection, RepeatForever*> _attackAnimateMap;
 
     RepeatForever* _dieAnimate = nullptr;
     FaceDirection _faceDirection = FaceDirection::Invalid;

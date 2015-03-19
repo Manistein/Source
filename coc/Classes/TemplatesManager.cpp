@@ -80,6 +80,13 @@ bool TemplateManager::init()
             npcTemplate->standAndFaceToSouthWestAnimationPList = tabFileReader.getString(i, "StandAndFaceToSouthWestPList");
             npcTemplate->standAndFaceToWestAnimationPList = tabFileReader.getString(i, "StandAndFaceToWestPList");
 
+            npcTemplate->attackToEastAnimationPList = tabFileReader.getString(i, "AttackToEastPList");
+            npcTemplate->attackToNorthEastAnimationPList = tabFileReader.getString(i, "AttackToNorthEastPList");
+            npcTemplate->attackToSouthEastAnimationPList = tabFileReader.getString(i, "AttackToSouthEastPList");
+            npcTemplate->attackToWestAnimationPList = tabFileReader.getString(i, "AttackToWestPList");
+            npcTemplate->attackToNorthWestAnimationPList = tabFileReader.getString(i, "AttackToNorthWestPList");
+            npcTemplate->attackToSouthWestAnimationPList = tabFileReader.getString(i, "AttackToSouthWestPList");
+
             npcTemplate->maxHp = tabFileReader.getInteger(i, "MaxHp");
             npcTemplate->attackPower = tabFileReader.getInteger(i, "AttackPower");
             npcTemplate->maxAttackRadius = tabFileReader.getInteger(i, "MaxAttackRadius");
