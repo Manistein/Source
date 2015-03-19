@@ -204,7 +204,7 @@ void Npc::initBattleData(const string& jobName)
 void Npc::update(float delta)
 {
     updateHP();
-    runAI(delta);
+    runFightWithEnemyAI(delta);
 }
 
 void Npc::updateStatus(NpcStatus newStatus)
@@ -219,7 +219,7 @@ void Npc::updateStatus(NpcStatus newStatus)
     }
 }
 
-void Npc::runAI(float delta)
+void Npc::runFightWithEnemyAI(float delta)
 {
     if (_enemyUniqueID != ENEMY_UNIQUE_ID_INVALID)
     {
@@ -260,8 +260,8 @@ void Npc::runAI(float delta)
                 break;
             case NpcStatus::Move:
             {
-                _cdTimeDelta += delta;
-                if (_cdTimeDelta >= CD_TIME_INTERVAL)
+                _coolDownTimeInMoveStatus += delta;
+                if (_coolDownTimeInMoveStatus >= COOL_DOWN_TIME_IN_MOVE_STATUS_INTERVAL)
                 {
                     auto enemyPosition = enemy->getPosition();
                     if (_moveToPosition != enemyPosition)
