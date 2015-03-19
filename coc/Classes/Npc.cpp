@@ -193,6 +193,7 @@ void Npc::initBattleData(const string& jobName)
 {
     auto npcTemplate = TemplateManager::getInstance()->getNpcTemplateBy(jobName);
     _maxHp = npcTemplate->maxHp;
+    _hp = _maxHp;
     _attackPower = npcTemplate->attackPower;
     _maxAttackRadius = npcTemplate->maxAttackRadius;
     _maxAlertRadius = npcTemplate->maxAlertRadius;
