@@ -98,7 +98,16 @@ void GameWorld::onMouseRightButtonDown()
 {
     auto targetPosition = _mapManager->convertCursorPositionToTileMapSpace();
     _gameObjectManager->selectedNpcMoveTo(targetPosition);
-    _gameObjectManager->selectEnemyBy(targetPosition);
+
+    auto enemy = _gameObjectManager->selectEnemyBy(targetPosition);
+    if (enemy)
+    {
+        _gameObjectManager->setSelectedGameObjectEnemyUniqueID(enemy->getUniqueID());
+    }
+    else
+    {
+        _gameObjectManager->setSelectedGameObjectEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
+    }
 }
 
 void GameWorld::onMouseRightButtonUp()

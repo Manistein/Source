@@ -129,13 +129,10 @@ GameObject* GameObjectManager::selectEnemyBy(const Point& point)
     GameObject* enemy = nullptr;
 
     enemy = selectGameObjectBy(point);
-    if (enemy)
+    if (enemy && enemy->getForceType() != ForceType::AI)
     {
-        if (enemy->getForceType() != ForceType::AI)
-        {
-            enemy->setSelected(false);
-            enemy = nullptr;
-        }
+        enemy->setSelected(false);
+        enemy = nullptr;
     }
 
     return enemy;
@@ -176,5 +173,18 @@ void GameObjectManager::selectedNpcMoveTo(const Vec2& position)
                 hasFindFirstNpc = true;
             }
         }
+    }
+}
+
+void GameObjectManager::setSelectedGameObjectEnemyUniqueID(int uniqueID)
+{
+    for (auto& gameObject : _gameObjectMap)
+    {
+        if (!gameObject.second->isSelected() || gameObject.second->getForceType() != ForceType::Player)
+        {
+            continue;
+        }
+
+        gameObject.second->setEnemyUniqueID(uniqueID);
     }
 }

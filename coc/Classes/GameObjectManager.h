@@ -26,6 +26,8 @@ public:
     void cancelSelected();
 
     void selectedNpcMoveTo(const Vec2& position);
+
+    void setSelectedGameObjectEnemyUniqueID(int uniqueID);
 private:
     GameObjectMap _gameObjectMap;
 

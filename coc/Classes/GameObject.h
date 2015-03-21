@@ -70,7 +70,6 @@ protected:
     int _maxLevel = 0;
 
     int _enemyUniqueID = ENEMY_UNIQUE_ID_INVALID;
-    bool _isEnemyChange = false;
     int _uniqueID = 0;
 
     bool _isSelected = false;

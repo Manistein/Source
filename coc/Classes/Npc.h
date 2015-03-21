@@ -26,7 +26,7 @@ enum class FaceDirection
     Total
 };
 
-const float COOL_DOWN_TIME_IN_MOVE_STATUS_INTERVAL = 0.5f;
+const float COOL_DOWN_TIME_IN_MOVE_STATUS_INTERVAL = 1.0f;
 
 class Npc : public GameObject
 {

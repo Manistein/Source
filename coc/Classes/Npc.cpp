@@ -8,7 +8,7 @@
 const float MOVE_ANIMATE_DELAY_PER_UNIT = 0.1f;
 const float STAND_ANIMATE_DELAY_PER_UNIT = 3.0f;
 const float DIE_ANIMATE_DELAY_PER_UNIT = 0.1f;
-const float ATTACK_ANIMATE_DELAY_PER_UNIT = 0.5f;
+const float ATTACK_ANIMATE_DELAY_PER_UNIT = 0.15f;
 
 const string SHADOW_TEXTURE_NAME = "Shadow.png";
 
@@ -236,38 +236,15 @@ void Npc::runFightWithEnemyAI(float delta)
         auto enemy = GameObjectManager::getInstance()->getGameObjectBy(_enemyUniqueID);
         if (isEnemyInAttackRange(enemy))
         {
-            switch (_oldStatus)
+            if (_oldStatus != NpcStatus::Die)
             {
-            case NpcStatus::Stand:
-            {
-                switchStandToAttack();
-            }
-                break;
-            case NpcStatus::Move:
-            {
-                switchMoveToAttack();
-            }
-                break;
-            case NpcStatus::Attack:
-            {
-                switchAttackToAttack();
-            }
-                break;
-            case NpcStatus::Die:
-                break;
-            default:    break;
+                updateStatus(NpcStatus::Attack);
             }
         }
         else if (isEnemyInAlertRange(enemy))
         {
             switch (_oldStatus)
             {
-            case NpcStatus::Stand:
-            {
-                _moveToPosition = enemy->getPosition();
-                switchStandToMove();
-            }
-                break;
             case NpcStatus::Move:
             {
                 _coolDownTimeInMoveStatus += delta;
@@ -277,19 +254,21 @@ void Npc::runFightWithEnemyAI(float delta)
                     if (_moveToPosition != enemyPosition)
                     {
                         _moveToPosition = enemyPosition;
-                        switchMoveToMove();
+                        updateStatus(NpcStatus::Move);
                     }
+
+                    _coolDownTimeInMoveStatus = 0.0f;
                 }
             }
                 break;
+            case NpcStatus::Stand:
             case NpcStatus::Attack:
             {
                 _moveToPosition = enemy->getPosition();
-                switchAttackToMove();
+                updateStatus(NpcStatus::Move);
             }
                 break;
             case NpcStatus::Die:
-                break;
             default:    break;
             }
         }
@@ -298,13 +277,9 @@ void Npc::runFightWithEnemyAI(float delta)
             switch (_oldStatus)
             {
             case NpcStatus::Move:
-            {
-                switchMoveToStand();
-            }
-                break;
             case NpcStatus::Attack:
             {
-                switchAttackToStand();
+                updateStatus(NpcStatus::Stand);
             }
                 break;
             case NpcStatus::Stand:
@@ -522,7 +497,18 @@ void Npc::switchStandToDie()
 
 bool Npc::canSwitchAttackToAttack()
 {
-    bool result = true;
+    bool result = false;
+
+    auto enemy = GameObjectManager::getInstance()->getGameObjectBy(_enemyUniqueID);
+    if (enemy)
+    {
+        auto newFaceToDirection = getFaceToDirection(enemy->getPosition());
+        if (_faceDirection != newFaceToDirection)
+        {
+            _faceDirection = newFaceToDirection;
+            result = true;
+        }
+    }
 
     return result;
 }
@@ -570,28 +556,28 @@ void Npc::switchAttackToDie()
 
 bool Npc::canSwitchDieToDie()
 {
-    bool result = true;
+    bool result = false;
 
     return result;
 }
 
 bool Npc::canSwitchDieToMove()
 {
-    bool result = true;
+    bool result = false;
 
     return result;
 }
 
 bool Npc::canSwitchDieToStand()
 {
-    bool result = true;
+    bool result = false;
 
     return result;
 }
 
 bool Npc::canSwitchDieToAttack()
 {
-    bool result = true;
+    bool result = false;
 
     return result;
 }
@@ -670,11 +656,6 @@ float Npc::getMoveToDuration(const Vec2& moveToPosition)
 
 void Npc::onMoveTo()
 {
-    if (_oldStatus == NpcStatus::Die)
-    {
-        return;
-    }
-
     auto currentFaceDirection = getFaceToDirection(_moveToPosition);
     float moveToDuration = getMoveToDuration(_moveToPosition);
 
@@ -703,11 +684,6 @@ void Npc::onMoveTo()
 
 void Npc::onStand()
 {
-    if (_oldStatus == NpcStatus::Die)
-    {
-        return;
-    }
-
     stopAllActions();
 
     auto standAnimateIter = _standAnimateMap.find(_faceDirection);
@@ -719,20 +695,11 @@ void Npc::onStand()
 
 void Npc::onAttack()
 {
-    if (_oldStatus == NpcStatus::Die)
-    {
-        return;
-    }
+    stopAllActions();
 
-    if (_isEnemyChange)
+    auto attackAnimateIter = _attackAnimateMap.find(_faceDirection);
+    if (attackAnimateIter != _attackAnimateMap.end())
     {
-        stopAllActions();
-
-        auto attackAnimateIter = _attackAnimateMap.find(_faceDirection);
-        if (attackAnimateIter != _attackAnimateMap.end())
-        {
-            runAction(attackAnimateIter->second);
-        }
-        _isEnemyChange = false;
+        runAction(attackAnimateIter->second);
     }
 }

@@ -111,11 +111,7 @@ void GameObject::updateHP()
 
 void GameObject::setEnemyUniqueID(int uniqueID)
 {
-    if (_enemyUniqueID != uniqueID)
-    {
-        _enemyUniqueID = uniqueID;
-        _isEnemyChange = true;
-    }
+    _enemyUniqueID = uniqueID;
 }
 
 GameObject* GameObjectFactory::create(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
