@@ -227,10 +227,6 @@ void Npc::update(float delta)
     {
         drawAttackArea();
     }
-    else
-    {
-        _debugDrawNode->clear();
-    }
 
     updateHP();
     runFightWithEnemyAI(delta);
@@ -301,6 +297,11 @@ void Npc::runFightWithEnemyAI(float delta)
         }
         else
         {
+            if (_forceType == ForceType::Player)
+            {
+                return;
+            }
+
             switch (_oldStatus)
             {
             case NpcStatus::Move:
@@ -542,7 +543,23 @@ bool Npc::canSwitchAttackToAttack()
 
 bool Npc::canSwitchAttackToMove()
 {
-    bool result = true;
+    bool result = false;
+
+    if (_forceType == ForceType::Player)
+    {
+        result = true;
+        return result;
+    }
+
+    auto attackAnimateIter = _attackAnimateMap.find(_faceDirection);
+    auto attackInnerAction = attackAnimateIter->second->getInnerAction();
+    auto attackAnimationElapsed = attackInnerAction->getElapsed();
+    auto attackAnimationDuration = attackInnerAction->getDuration();
+
+    if (attackAnimationElapsed >= attackAnimationDuration * 0.8f)
+    {
+        result = true;
+    }
 
     return result;
 }
@@ -633,6 +650,11 @@ void Npc::moveTo(const Vec2& targetPosition)
 {
     _moveToPosition = targetPosition;
     updateStatus(NpcStatus::Move);
+}
+
+void Npc::clearDebugDraw()
+{
+    _debugDrawNode->clear();
 }
 
 FaceDirection Npc::getFaceToDirection(const Vec2& moveToPosition)

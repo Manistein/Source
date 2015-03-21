@@ -36,6 +36,8 @@ public:
     static Npc* create(ForceType forceType, const string& jobName, const Vec2& position, int uniqueID);
 
     void moveTo(const Vec2& targetPosition);
+
+    void clearDebugDraw() override;
 private:
     bool init(ForceType forceType, const string& jobName, const Vec2& position, int uniqueID);
     void clear();

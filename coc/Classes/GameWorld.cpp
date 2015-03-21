@@ -44,6 +44,7 @@ bool GameWorld::init()
     director->getEventDispatcher()->addCustomEventListener("MouseRightButtonDown", CC_CALLBACK_0(GameWorld::onMouseRightButtonDown, this));
     director->getEventDispatcher()->addCustomEventListener("MouseRightButtonUp", CC_CALLBACK_0(GameWorld::onMouseRightButtonUp, this));
     director->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameWorld::onMouseMove, this));
+    director->getEventDispatcher()->addCustomEventListener("ClearDebugDraw", CC_CALLBACK_0(GameWorld::onClearDebugDraw, this));
 
     createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2000.0f, 2000.0f));
     createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2050.0f, 2050.0f));
@@ -99,7 +100,7 @@ void GameWorld::onMouseRightButtonDown()
     auto targetPosition = _mapManager->convertCursorPositionToTileMapSpace();
     _gameObjectManager->selectedNpcMoveTo(targetPosition);
 
-    auto enemy = _gameObjectManager->selectEnemyBy(targetPosition);
+    auto enemy = _gameObjectManager->selectEnemyBy(_cursorPoint);
     if (enemy)
     {
         _gameObjectManager->setSelectedGameObjectEnemyUniqueID(enemy->getUniqueID());
@@ -108,6 +109,11 @@ void GameWorld::onMouseRightButtonDown()
     {
         _gameObjectManager->setSelectedGameObjectEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
     }
+}
+
+void GameWorld::onClearDebugDraw()
+{
+    _gameObjectManager->clearGameObjectDebugDraw();
 }
 
 void GameWorld::onMouseRightButtonUp()

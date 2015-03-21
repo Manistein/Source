@@ -19,6 +19,7 @@ public:
     void onMouseRightButtonDown();
     void onMouseRightButtonUp();
     void onMouseMove(EventCustom* eventCustom);
+    void onClearDebugDraw();
 
     void syncCursorPoint(const Vec2& cursorPoint);
 

@@ -21,13 +21,14 @@ public:
     void gameObjectsDepthSort(const Size& tileSize);
 
     bool selectGameObjectsBy(const Rect& rect);
-    GameObject* selectGameObjectBy(const Point& point);
-    GameObject* selectEnemyBy(const Point& point);
+    GameObject* selectGameObjectBy(const Point& cursorPoint);
+    GameObject* selectEnemyBy(const Point& cursorPoint);
     void cancelSelected();
 
     void selectedNpcMoveTo(const Vec2& position);
 
     void setSelectedGameObjectEnemyUniqueID(int uniqueID);
+    void clearGameObjectDebugDraw();
 private:
     GameObjectMap _gameObjectMap;
 

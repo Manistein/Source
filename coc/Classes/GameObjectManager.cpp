@@ -100,7 +100,7 @@ bool GameObjectManager::selectGameObjectsBy(const Rect& rect)
     return result;
 }
 
-GameObject* GameObjectManager::selectGameObjectBy(const Point& point)
+GameObject* GameObjectManager::selectGameObjectBy(const Point& cursorPoint)
 {
     GameObject* gameObject = nullptr;
 
@@ -112,7 +112,7 @@ GameObject* GameObjectManager::selectGameObjectBy(const Point& point)
 
         Rect gameObjectRect(worldPosition.x - contentSize.width / 2.0f, worldPosition.y, contentSize.width, contentSize.height);
 
-        if (gameObjectRect.containsPoint(point))
+        if (gameObjectRect.containsPoint(cursorPoint))
         {
             gameObject = gameObjectIter.second;
             gameObjectIter.second->setSelected(true);
@@ -124,11 +124,11 @@ GameObject* GameObjectManager::selectGameObjectBy(const Point& point)
     return gameObject;
 }
 
-GameObject* GameObjectManager::selectEnemyBy(const Point& point)
+GameObject* GameObjectManager::selectEnemyBy(const Point& cursorPoint)
 {
     GameObject* enemy = nullptr;
 
-    enemy = selectGameObjectBy(point);
+    enemy = selectGameObjectBy(cursorPoint);
     if (enemy && enemy->getForceType() != ForceType::AI)
     {
         enemy->setSelected(false);
@@ -186,5 +186,13 @@ void GameObjectManager::setSelectedGameObjectEnemyUniqueID(int uniqueID)
         }
 
         gameObject.second->setEnemyUniqueID(uniqueID);
+    }
+}
+
+void GameObjectManager::clearGameObjectDebugDraw()
+{
+    for (auto& gameObjectIter : _gameObjectMap)
+    {
+        gameObjectIter.second->clearDebugDraw();
     }
 }

@@ -73,6 +73,7 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
         if (g_setting.allowDebugDraw)
         {
             g_setting.allowDebugDraw = false;
+            _director->getEventDispatcher()->dispatchCustomEvent("ClearDebugDraw");
         }
         else
         {

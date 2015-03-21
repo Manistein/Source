@@ -52,6 +52,8 @@ public:
 
     void updateHP();
     void setEnemyUniqueID(int uniqueID);
+
+    virtual void clearDebugDraw() = 0;
 protected:
     GameObject();
     bool init() override;
