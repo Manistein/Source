@@ -45,9 +45,12 @@ private:
     void initShadow();
     void initHPBar();
     void initBattleData(const string& jobName);
+    void initDebugDraw();
 
     void update(float delta) override;
     void updateStatus(NpcStatus newStatus);
+
+    void drawAttackArea() override;
 
     void runFightWithEnemyAI(float delta);
     bool isEnemyInAttackRange(GameObject* enemy);

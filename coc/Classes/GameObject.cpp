@@ -45,6 +45,9 @@ bool GameObject::init()
 
     addChild(hpBarBackground);
 
+    _debugDrawNode = DrawNode::create();
+    addChild(_debugDrawNode, -1);
+
     return true;
 }
 

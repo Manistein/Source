@@ -6,9 +6,12 @@
 #include "GameUI.h"
 #include "GameWorld.h"
 #include "GameScene.h"
+#include "GameSetting.h"
 
 const int MOUSE_LEFT_BUTTON = 0;
 const int MOUSE_RIGHT_BUTTON = 1;
+
+GameSetting g_setting;
 
 Scene* GameScene::createScene()
 {
@@ -64,6 +67,17 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
     if (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE)
     {
         Director::getInstance()->end();
+    }
+    else if (keyCode == EventKeyboard::KeyCode::KEY_F5)
+    {
+        if (g_setting.allowDebugDraw)
+        {
+            g_setting.allowDebugDraw = false;
+        }
+        else
+        {
+            g_setting.allowDebugDraw = true;
+        }
     }
 }
 

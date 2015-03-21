@@ -4,6 +4,7 @@
 #include "TemplatesManager.h"
 #include <math.h>
 #include "GameObjectManager.h"
+#include "GameSetting.h"
 
 const float MOVE_ANIMATE_DELAY_PER_UNIT = 0.1f;
 const float STAND_ANIMATE_DELAY_PER_UNIT = 3.0f;
@@ -48,6 +49,7 @@ bool Npc::init(ForceType forceType, const string& jobName, const Vec2& position,
     initShadow();
     initHPBar();
     initBattleData(jobName);
+    initDebugDraw();
 
     setPosition(position);
     _uniqueID = uniqueID;
@@ -211,8 +213,25 @@ void Npc::initBattleData(const string& jobName)
     _damageType = npcTemplate->damageType;
 }
 
+void Npc::initDebugDraw()
+{
+    auto contentSize = getContentSize();
+    auto position = getPosition();
+
+    _debugDrawNode->setPosition(Vec2(contentSize.width / 2.0f, contentSize.height / 4.0f));
+}
+
 void Npc::update(float delta)
 {
+    if (g_setting.allowDebugDraw)
+    {
+        drawAttackArea();
+    }
+    else
+    {
+        _debugDrawNode->clear();
+    }
+
     updateHP();
     runFightWithEnemyAI(delta);
 }
@@ -227,6 +246,14 @@ void Npc::updateStatus(NpcStatus newStatus)
         switchFunction();
         _oldStatus = newStatus;
     }
+}
+
+void Npc::drawAttackArea()
+{
+    _debugDrawNode->clear();
+
+    _debugDrawNode->drawCircle(Vec2::ZERO, _maxAttackRadius, CC_DEGREES_TO_RADIANS(360), 50, true, 1.0f, 1.0f, Color4F(1.0, 0.0, 0.0, 0.5));
+    _debugDrawNode->drawCircle(Vec2::ZERO, _maxAlertRadius, CC_DEGREES_TO_RADIANS(360), 50, true, 1.0f, 1.0f, Color4F(1.0, 1.0, 1.0, 0.5));
 }
 
 void Npc::runFightWithEnemyAI(float delta)

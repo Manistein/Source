@@ -55,6 +55,7 @@ public:
 protected:
     GameObject();
     bool init() override;
+    virtual void drawAttackArea() = 0;
 
     int _hp = 0;
     int _maxHp = 0;
@@ -76,6 +77,8 @@ protected:
 
     GameObjectType _gameObjectType = GameObjectType::Invalid;
     ForceType _forceType = ForceType::Invalid;
+
+    DrawNode* _debugDrawNode = nullptr;
 };
 
 class GameObjectFactory

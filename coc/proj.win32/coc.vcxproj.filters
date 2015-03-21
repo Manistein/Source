@@ -107,6 +107,9 @@
     <ClInclude Include="..\Classes\GameObjectSelectBox.h">
       <Filter>src\GameWorld</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\GameSetting.h">
+      <Filter>src\GameWorld</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">
