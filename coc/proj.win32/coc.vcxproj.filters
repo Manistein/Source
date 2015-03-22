@@ -19,6 +19,12 @@
     <Filter Include="src\Utils">
       <UniqueIdentifier>{88d985ec-d9d8-476d-a5f8-38c18fc773da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\GameWorld\GameObject">
+      <UniqueIdentifier>{af6d8ef3-c05f-4e22-883b-c925f5c62184}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\GameWorld\GameManager">
+      <UniqueIdentifier>{e013cb3a-8983-4e73-a817-12117edc678e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -39,29 +45,29 @@
     <ClCompile Include="..\Classes\GameUI.cpp">
       <Filter>src\GameUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\MapManager.cpp">
-      <Filter>src\GameWorld</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\DebugInfoLayer.cpp">
       <Filter>src\GameUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\GameObject.cpp">
-      <Filter>src\GameWorld</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\TabFileReader.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\TemplatesManager.cpp">
-      <Filter>src\GameWorld</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Npc.cpp">
-      <Filter>src\GameWorld</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\GameObjectManager.cpp">
-      <Filter>src\GameWorld</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\GameObjectSelectBox.cpp">
       <Filter>src\GameWorld</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameObject.cpp">
+      <Filter>src\GameWorld\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Npc.cpp">
+      <Filter>src\GameWorld\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameObjectManager.cpp">
+      <Filter>src\GameWorld\GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MapManager.cpp">
+      <Filter>src\GameWorld\GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TemplatesManager.cpp">
+      <Filter>src\GameWorld\GameManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -83,32 +89,32 @@
     <ClInclude Include="..\Classes\GameUI.h">
       <Filter>src\GameUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\MapManager.h">
-      <Filter>src\GameWorld</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\DebugInfoLayer.h">
       <Filter>src\GameUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\GameObject.h">
-      <Filter>src\GameWorld</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\TabFileReader.h">
       <Filter>src\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\TemplatesManager.h">
-      <Filter>src\GameWorld</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Npc.h">
-      <Filter>src\GameWorld</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\GameObjectManager.h">
-      <Filter>src\GameWorld</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameObjectSelectBox.h">
       <Filter>src\GameWorld</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameSetting.h">
       <Filter>src\GameWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameObject.h">
+      <Filter>src\GameWorld\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Npc.h">
+      <Filter>src\GameWorld\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameObjectManager.h">
+      <Filter>src\GameWorld\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MapManager.h">
+      <Filter>src\GameWorld\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TemplatesManager.h">
+      <Filter>src\GameWorld\GameManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

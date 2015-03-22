@@ -209,7 +209,7 @@ void Npc::initBattleData(const string& jobName)
     _maxAttackRadius = npcTemplate->maxAttackRadius;
     _maxAlertRadius = npcTemplate->maxAlertRadius;
     _perSecondAttackCount = npcTemplate->perSecondAttackCount;
-    _attackType = npcTemplate->attackType;
+    _bulletType = npcTemplate->bulletType;
     _damageType = npcTemplate->damageType;
 }
 

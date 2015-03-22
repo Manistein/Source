@@ -30,8 +30,13 @@ struct NpcTemplate
     int maxAttackRadius = 0;
     int maxAlertRadius = 0;
     int perSecondAttackCount = 0;
-    AttackType attackType = AttackType::Invalid;
+    BulletType bulletType = BulletType::Invalid;
     DamageType damageType = DamageType::Invalid;
+};
+
+struct BulletTemplate
+{
+    string bulletPList;
 };
 
 class TemplateManager
@@ -41,10 +46,14 @@ public:
 
     static TemplateManager* getInstance();
     const NpcTemplate* getNpcTemplateBy(const string& jobName);
+    const BulletTemplate* getBulletTemplateBy(BulletType bulletType);
 private:
     bool init();
+    bool initNpcTemplates();
+    bool initBulletTemplates();
 
     map<string, NpcTemplate*> _npcTemplatesMap;
+    map<BulletType, BulletTemplate*> _bulletTemplatesMap;
 
     TemplateManager(){}
     TemplateManager(const TemplateManager&);

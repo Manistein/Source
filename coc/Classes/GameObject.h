@@ -16,12 +16,11 @@ enum class ForceType
     AI,
 };
 
-enum class AttackType
+enum class BulletType
 {
     Invalid,
 
-    ShortRange,
-    LongRange,
+    Arrow,
 };
 
 enum class DamageType
@@ -66,7 +65,7 @@ protected:
     int _attackPower = 0;
     int _maxAttackRadius = 0;
     int _perSecondAttackCount = 0;
-    AttackType _attackType = AttackType::Invalid;
+    BulletType _bulletType = BulletType::Invalid;
     DamageType _damageType = DamageType::Invalid;
 
     int _level = 0;

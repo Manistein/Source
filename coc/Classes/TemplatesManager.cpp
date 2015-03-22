@@ -6,9 +6,9 @@
 
 static TemplateManager* s_templateManager = nullptr;
 
-static unordered_map<string, AttackType> s_attackTypeStringToEnum = {
-    { "ShortRange", AttackType::ShortRange },
-    { "LongRange", AttackType::LongRange },
+static unordered_map<string, BulletType> s_bulletTypeStringToEnum = {
+    { "Invalid", BulletType::Invalid },
+    { "Arrow", BulletType::Arrow },
 };
 
 static unordered_map<string, DamageType> s_damageTypeStringToEnum = {
@@ -26,6 +26,15 @@ TemplateManager::~TemplateManager()
         }
     }
     _npcTemplatesMap.clear();
+
+    for (auto& iter : _bulletTemplatesMap)
+    {
+        if (iter.second)
+        {
+            CC_SAFE_DELETE(iter.second);
+        }
+    }
+    _bulletTemplatesMap.clear();
 }
 
 TemplateManager* TemplateManager::getInstance()
@@ -52,16 +61,39 @@ const NpcTemplate* TemplateManager::getNpcTemplateBy(const string& jobName)
     return npcTemplate;
 }
 
+const BulletTemplate* TemplateManager::getBulletTemplateBy(BulletType bulletType)
+{
+    BulletTemplate* bulletTemplate = nullptr;
+
+    auto iter = _bulletTemplatesMap.find(bulletType);
+    if (iter != _bulletTemplatesMap.end())
+    {
+        bulletTemplate = iter->second;
+    }
+
+    return bulletTemplate;
+}
+
 bool TemplateManager::init()
+{
+    bool result = false;
+
+    result = initNpcTemplates();
+    result = initBulletTemplates();
+
+    return result;
+}
+
+bool TemplateManager::initNpcTemplates()
 {
     bool result = false;
 
     TabFileReader tabFileReader;
     if (tabFileReader.open("NpcTemplates.tab"))
     {
-        for (int i = 0; i < tabFileReader.getRowCount(); i ++)
+        for (int i = 0; i < tabFileReader.getRowCount(); i++)
         {
-            string jobName = tabFileReader.getString(i, "NpcJobName");
+            auto jobName = tabFileReader.getString(i, "NpcJobName");
 
             NpcTemplate* npcTemplate = new NpcTemplate();
             npcTemplate->moveToNorthEastAnimationPList = tabFileReader.getString(i, "MoveToNorthEastAnimationPList");
@@ -93,11 +125,11 @@ bool TemplateManager::init()
             npcTemplate->maxAlertRadius = tabFileReader.getInteger(i, "MaxAlertRadius");
             npcTemplate->perSecondAttackCount = tabFileReader.getInteger(i, "PerSecondAttackCount");
 
-            auto attackTypeName = tabFileReader.getString(i, "AttackType");
-            auto attackTypeIter = s_attackTypeStringToEnum.find(attackTypeName);
-            if (attackTypeIter != s_attackTypeStringToEnum.end())
+            auto bulletTypeName = tabFileReader.getString(i, "BulletType");
+            auto bulletTypeIter = s_bulletTypeStringToEnum.find(bulletTypeName);
+            if (bulletTypeIter != s_bulletTypeStringToEnum.end())
             {
-                npcTemplate->attackType = s_attackTypeStringToEnum[attackTypeName];
+                npcTemplate->bulletType = s_bulletTypeStringToEnum[bulletTypeName];
             }
 
             auto damageTypeName = tabFileReader.getString(i, "DamageType");
@@ -108,6 +140,33 @@ bool TemplateManager::init()
             }
 
             _npcTemplatesMap[jobName] = npcTemplate;
+        }
+
+        result = true;
+    }
+
+    return result;
+}
+
+bool TemplateManager::initBulletTemplates()
+{
+    bool result = false;
+
+    TabFileReader tabFileReader;
+    if (tabFileReader.open("BulletTemplates.tab"))
+    {
+        for (int i = 0; i < tabFileReader.getRowCount(); i++)
+        {
+            auto bulletTypeName = tabFileReader.getString(i, "BulletType");
+
+            BulletTemplate* bulletTemplate = new BulletTemplate();
+            bulletTemplate->bulletPList = tabFileReader.getString(i, "BulletPList");
+
+            auto bulletTypeIter = s_bulletTypeStringToEnum.find(bulletTypeName);
+            CCASSERT(bulletTypeIter != s_bulletTypeStringToEnum.end(), StringUtils::format("%s is invalid type", bulletTypeName.c_str()).c_str());
+            
+            auto bulletType = bulletTypeIter->second;
+            _bulletTemplatesMap[bulletType] = bulletTemplate;
         }
 
         result = true;
