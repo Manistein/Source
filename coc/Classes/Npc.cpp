@@ -5,10 +5,11 @@
 #include <math.h>
 #include "GameObjectManager.h"
 #include "GameSetting.h"
+#include "GameWorldCallBackFunctionsManager.h"
 
 const float MOVE_ANIMATE_DELAY_PER_UNIT = 0.1f;
 const float STAND_ANIMATE_DELAY_PER_UNIT = 3.0f;
-const float DIE_ANIMATE_DELAY_PER_UNIT = 0.1f;
+const float DIE_ANIMATE_DELAY_PER_UNIT = 0.5f;
 const float ATTACK_ANIMATE_DELAY_PER_UNIT = 0.15f;
 
 const string SHADOW_TEXTURE_NAME = "Shadow.png";
@@ -56,6 +57,8 @@ bool Npc::init(ForceType forceType, const string& jobName, const Vec2& position,
 
     _gameObjectType = GameObjectType::Npc;
 
+    _gameWorld = GameWorldCallBackFunctionsManager::getInstance();
+
     scheduleUpdate();
 
     return true;
@@ -86,28 +89,28 @@ void Npc::initAnimates(const string& jobName)
     auto npcTempalte = TemplateManager::getInstance()->getNpcTemplateBy(jobName);
     CCASSERT(npcTempalte, StringUtils::format("%s is not a npc type", jobName.c_str()).c_str());
 
-    _moveAnimateMap[FaceDirection::FaceToEast] = createAnimateWidthPList(npcTempalte->moveToEastAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT);
-    _moveAnimateMap[FaceDirection::FaceToNorthEast] = createAnimateWidthPList(npcTempalte->moveToNorthEastAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT);
-    _moveAnimateMap[FaceDirection::FaceToNorthWest] = createAnimateWidthPList(npcTempalte->moveToNorthWestAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT);
-    _moveAnimateMap[FaceDirection::FaceToSouthEast] = createAnimateWidthPList(npcTempalte->moveToSouthEastAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT);
-    _moveAnimateMap[FaceDirection::FaceToSouthWest] = createAnimateWidthPList(npcTempalte->moveToSouthWestAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT);
-    _moveAnimateMap[FaceDirection::FaceToWest] = createAnimateWidthPList(npcTempalte->moveToWestAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT);
+    _moveAnimateMap[FaceDirection::FaceToEast] = createAnimateWidthPList(npcTempalte->moveToEastAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT, NpcStatus::Move);
+    _moveAnimateMap[FaceDirection::FaceToNorthEast] = createAnimateWidthPList(npcTempalte->moveToNorthEastAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT, NpcStatus::Move);
+    _moveAnimateMap[FaceDirection::FaceToNorthWest] = createAnimateWidthPList(npcTempalte->moveToNorthWestAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT, NpcStatus::Move);
+    _moveAnimateMap[FaceDirection::FaceToSouthEast] = createAnimateWidthPList(npcTempalte->moveToSouthEastAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT, NpcStatus::Move);
+    _moveAnimateMap[FaceDirection::FaceToSouthWest] = createAnimateWidthPList(npcTempalte->moveToSouthWestAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT, NpcStatus::Move);
+    _moveAnimateMap[FaceDirection::FaceToWest] = createAnimateWidthPList(npcTempalte->moveToWestAnimationPList, MOVE_ANIMATE_DELAY_PER_UNIT, NpcStatus::Move);
 
-    _dieAnimate = createAnimateWidthPList(npcTempalte->dieAnimationPList, DIE_ANIMATE_DELAY_PER_UNIT);
+    _dieAnimate = createAnimateWidthPList(npcTempalte->dieAnimationPList, DIE_ANIMATE_DELAY_PER_UNIT, NpcStatus::Die);
 
-    _standAnimateMap[FaceDirection::FaceToEast] = createAnimateWidthPList(npcTempalte->standAndFaceToEastAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT);
-    _standAnimateMap[FaceDirection::FaceToNorthEast] = createAnimateWidthPList(npcTempalte->standAndFaceToNorthEastAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT);
-    _standAnimateMap[FaceDirection::FaceToNorthWest] = createAnimateWidthPList(npcTempalte->standAndFaceToNorthWestAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT);
-    _standAnimateMap[FaceDirection::FaceToSouthEast] = createAnimateWidthPList(npcTempalte->standAndFaceToSouthEastAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT);
-    _standAnimateMap[FaceDirection::FaceToSouthWest] = createAnimateWidthPList(npcTempalte->standAndFaceToSouthWestAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT);
-    _standAnimateMap[FaceDirection::FaceToWest] = createAnimateWidthPList(npcTempalte->standAndFaceToWestAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT);
+    _standAnimateMap[FaceDirection::FaceToEast] = createAnimateWidthPList(npcTempalte->standAndFaceToEastAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT, NpcStatus::Stand);
+    _standAnimateMap[FaceDirection::FaceToNorthEast] = createAnimateWidthPList(npcTempalte->standAndFaceToNorthEastAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT, NpcStatus::Stand);
+    _standAnimateMap[FaceDirection::FaceToNorthWest] = createAnimateWidthPList(npcTempalte->standAndFaceToNorthWestAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT, NpcStatus::Stand);
+    _standAnimateMap[FaceDirection::FaceToSouthEast] = createAnimateWidthPList(npcTempalte->standAndFaceToSouthEastAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT, NpcStatus::Stand);
+    _standAnimateMap[FaceDirection::FaceToSouthWest] = createAnimateWidthPList(npcTempalte->standAndFaceToSouthWestAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT, NpcStatus::Stand);
+    _standAnimateMap[FaceDirection::FaceToWest] = createAnimateWidthPList(npcTempalte->standAndFaceToWestAnimationPList, STAND_ANIMATE_DELAY_PER_UNIT, NpcStatus::Stand);
 
-    _attackAnimateMap[FaceDirection::FaceToEast] = createAnimateWidthPList(npcTempalte->attackToEastAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT);
-    _attackAnimateMap[FaceDirection::FaceToNorthEast] = createAnimateWidthPList(npcTempalte->attackToNorthEastAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT);
-    _attackAnimateMap[FaceDirection::FaceToNorthWest] = createAnimateWidthPList(npcTempalte->attackToNorthWestAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT);
-    _attackAnimateMap[FaceDirection::FaceToSouthEast] = createAnimateWidthPList(npcTempalte->attackToSouthEastAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT);
-    _attackAnimateMap[FaceDirection::FaceToSouthWest] = createAnimateWidthPList(npcTempalte->attackToSouthWestAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT);
-    _attackAnimateMap[FaceDirection::FaceToWest] = createAnimateWidthPList(npcTempalte->attackToWestAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT);
+    _attackAnimateMap[FaceDirection::FaceToEast] = createAnimateWidthPList(npcTempalte->attackToEastAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT, NpcStatus::Attack);
+    _attackAnimateMap[FaceDirection::FaceToNorthEast] = createAnimateWidthPList(npcTempalte->attackToNorthEastAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT, NpcStatus::Attack);
+    _attackAnimateMap[FaceDirection::FaceToNorthWest] = createAnimateWidthPList(npcTempalte->attackToNorthWestAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT, NpcStatus::Attack);
+    _attackAnimateMap[FaceDirection::FaceToSouthEast] = createAnimateWidthPList(npcTempalte->attackToSouthEastAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT, NpcStatus::Attack);
+    _attackAnimateMap[FaceDirection::FaceToSouthWest] = createAnimateWidthPList(npcTempalte->attackToSouthWestAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT, NpcStatus::Attack);
+    _attackAnimateMap[FaceDirection::FaceToWest] = createAnimateWidthPList(npcTempalte->attackToWestAnimationPList, ATTACK_ANIMATE_DELAY_PER_UNIT, NpcStatus::Attack);
 
     _faceDirection = FaceDirection::FaceToSouthEast;
     runAction(_standAnimateMap[_faceDirection]);
@@ -254,9 +257,26 @@ void Npc::drawAttackArea()
 
 void Npc::runFightWithEnemyAI(float delta)
 {
+    if (_oldStatus == NpcStatus::Die)
+    {
+        return;
+    }
+
     if (_enemyUniqueID != ENEMY_UNIQUE_ID_INVALID)
     {
         auto enemy = GameObjectManager::getInstance()->getGameObjectBy(_enemyUniqueID);
+        if (!enemy || enemy->isDecimated())
+        {
+            setEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
+
+            if (_oldStatus == NpcStatus::Attack)
+            {
+                updateStatus(NpcStatus::Stand);
+            }
+
+            return;
+        }
+
         if (isEnemyInAttackRange(enemy))
         {
             if (_oldStatus != NpcStatus::Die)
@@ -328,7 +348,7 @@ void Npc::runFightWithEnemyAI(float delta)
         auto gameObjectMap = GameObjectManager::getInstance()->getGameObjectMap();
         for (auto& gameObjectIter : gameObjectMap)
         {
-            if (_forceType == gameObjectIter.second->getForceType())
+            if (_forceType == gameObjectIter.second->getForceType() || gameObjectIter.second->isDecimated())
             {
                 continue;
             }
@@ -371,6 +391,11 @@ bool Npc::isEnemyInAlertRange(GameObject* enemy)
     return result;
 }
 
+bool Npc::isDecimated()
+{
+    return _oldStatus == NpcStatus::Die;
+}
+
 float Npc::getDistanceFrom(GameObject* enemy)
 {
     auto enemyPosition = enemy->getPosition();
@@ -382,7 +407,7 @@ float Npc::getDistanceFrom(GameObject* enemy)
     return distance;
 }
 
-RepeatForever* Npc::createAnimateWidthPList(const string& plist, float animateDelayPerUnit)
+RepeatForever* Npc::createAnimateWidthPList(const string& plist, float animateDelayPerUnit, NpcStatus animateType)
 {
     auto fileUtils = FileUtils::getInstance();
     CCASSERT(fileUtils->isFileExist(plist), StringUtils::format("%s is invalid", plist.c_str()).c_str());
@@ -415,7 +440,32 @@ RepeatForever* Npc::createAnimateWidthPList(const string& plist, float animateDe
     animation->setDelayPerUnit(animateDelayPerUnit);
     animation->setRestoreOriginalFrame(true);
 
-    auto repeatForeverAnimate = RepeatForever::create(Animate::create(animation));
+    RepeatForever* repeatForeverAnimate = nullptr;
+    switch (animateType)
+    {
+    case NpcStatus::Move:
+    case NpcStatus::Stand:
+    {
+        repeatForeverAnimate = RepeatForever::create(Animate::create(animation));
+    }
+        break;
+    case NpcStatus::Attack:
+    {
+        auto animationEndFunc = CallFunc::create(CC_CALLBACK_0(Npc::onAttackAnimationEnd, this));
+        auto attackSequenceAction = Sequence::create(Animate::create(animation), animationEndFunc, nullptr);
+        repeatForeverAnimate = RepeatForever::create(attackSequenceAction);
+    }
+        break;
+    case NpcStatus::Die:
+    {
+        auto animationEndFunc = CallFunc::create(CC_CALLBACK_0(Npc::onDieAnimationEnd, this));
+        auto dieSequenceAction = Sequence::create(Animate::create(animation), animationEndFunc, nullptr);
+        repeatForeverAnimate = RepeatForever::create(dieSequenceAction);
+    }
+        break;
+    default:    break;
+    }
+
     repeatForeverAnimate->retain();
 
     return repeatForeverAnimate;
@@ -472,7 +522,7 @@ void Npc::switchMoveToAttack()
 
 void Npc::switchMoveToDie()
 {
-
+    onDie();
 }
 
 bool Npc::canSwitchStandToStand()
@@ -520,7 +570,7 @@ void Npc::switchStandToAttack()
 
 void Npc::switchStandToDie()
 {
-
+    onDie();
 }
 
 bool Npc::canSwitchAttackToAttack()
@@ -595,7 +645,7 @@ void Npc::switchAttackToStand()
 
 void Npc::switchAttackToDie()
 {
-
+    onDie();
 }
 
 bool Npc::canSwitchDieToDie()
@@ -650,6 +700,11 @@ void Npc::moveTo(const Vec2& targetPosition)
 {
     _moveToPosition = targetPosition;
     updateStatus(NpcStatus::Move);
+}
+
+NpcStatus Npc::getNpcStatus()
+{
+    return _oldStatus;
 }
 
 void Npc::clearDebugDraw()
@@ -751,4 +806,33 @@ void Npc::onAttack()
     {
         runAction(attackAnimateIter->second);
     }
+}
+
+void Npc::onDie()
+{
+    stopAllActions();
+
+    runAction(_dieAnimate);
+}
+
+void Npc::onDieAnimationEnd()
+{
+    GameObjectManager::getInstance()->addDecimatedGameObject(_uniqueID);
+}
+
+void Npc::onAttackAnimationEnd()
+{
+    if (_bulletType != BulletType::Invalid)
+    {
+        _gameWorld->_createBullet(_bulletType, _uniqueID, _enemyUniqueID);
+    }
+    else
+    {
+
+    }
+}
+
+void Npc::onPrepareToDestory()
+{
+    updateStatus(NpcStatus::Die);
 }

@@ -146,6 +146,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\Classes\BulletManager.cpp" />
     <ClCompile Include="..\Classes\DebugInfoLayer.cpp" />
     <ClCompile Include="..\Classes\GameObject.cpp" />
     <ClCompile Include="..\Classes\GameObjectManager.cpp" />
@@ -156,6 +157,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     </ClCompile>
     <ClCompile Include="..\Classes\GameUI.cpp" />
     <ClCompile Include="..\Classes\GameWorld.cpp" />
+    <ClCompile Include="..\Classes\GameWorldCallBackFunctionsManager.cpp" />
     <ClCompile Include="..\Classes\MapManager.cpp" />
     <ClCompile Include="..\Classes\Npc.cpp" />
     <ClCompile Include="..\Classes\TabFileReader.cpp" />
@@ -165,6 +167,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\Base.h" />
+    <ClInclude Include="..\Classes\BulletManager.h" />
     <ClInclude Include="..\Classes\DebugInfoLayer.h" />
     <ClInclude Include="..\Classes\GameObject.h" />
     <ClInclude Include="..\Classes\GameObjectManager.h" />
@@ -173,6 +176,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\GameSetting.h" />
     <ClInclude Include="..\Classes\GameUI.h" />
     <ClInclude Include="..\Classes\GameWorld.h" />
+    <ClInclude Include="..\Classes\GameWorldCallBackFunctionsManager.h" />
     <ClInclude Include="..\Classes\MapManager.h" />
     <ClInclude Include="..\Classes\Npc.h" />
     <ClInclude Include="..\Classes\TabFileReader.h" />

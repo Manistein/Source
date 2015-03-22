@@ -69,6 +69,12 @@
     <ClCompile Include="..\Classes\TemplatesManager.cpp">
       <Filter>src\GameWorld\GameManager</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\BulletManager.cpp">
+      <Filter>src\GameWorld\GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameWorldCallBackFunctionsManager.cpp">
+      <Filter>src\GameWorld\GameManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -114,6 +120,12 @@
       <Filter>src\GameWorld\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\TemplatesManager.h">
+      <Filter>src\GameWorld\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\BulletManager.h">
+      <Filter>src\GameWorld\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameWorldCallBackFunctionsManager.h">
       <Filter>src\GameWorld\GameManager</Filter>
     </ClInclude>
   </ItemGroup>

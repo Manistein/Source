@@ -174,8 +174,8 @@ cocos2d::Vec2 MapManager::convertCursorPositionToTileMapSpace()
     return _tileMap->convertToNodeSpace(_cursorPoint);
 }
 
-void MapManager::addChildInGameObjectLayer(Node* gameObject)
+void MapManager::addChildInGameObjectLayer(Node* gameObject, int zOrder/* = 1*/)
 {
     auto gameObjectLayer = _tileMap->getLayer("gameObjectLayer");
-    gameObjectLayer->addChild(gameObject, 1);
+    gameObjectLayer->addChild(gameObject, zOrder);
 }

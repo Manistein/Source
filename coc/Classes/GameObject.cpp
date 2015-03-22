@@ -106,6 +106,27 @@ ForceType GameObject::getForceType()
     return _forceType;
 }
 
+int GameObject::getAttackPower()
+{
+    return _attackPower;
+}
+
+void GameObject::costHP(int costHPAmount)
+{
+    _hp = std::max(0, _hp - costHPAmount);
+
+    if (_hp <= 0)
+    {
+        hideHPBar();
+        onPrepareToDestory();
+    }
+}
+
+void GameObject::addHP(int addHPAmount)
+{
+    _hp = std::min(_hp + addHPAmount, _maxHp);
+}
+
 void GameObject::updateHP()
 {
     float hpPercent = (float)_hp / (float)_maxHp;

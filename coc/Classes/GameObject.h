@@ -40,16 +40,20 @@ public:
     int getUniqueID();
     void depthSort(const Size& tileSize);
 
-    void showHPBar();
-    void hideHPBar();
-
     void setSelected(bool isSelect);
     bool isSelected();
+    virtual bool isDecimated() = 0;
 
     GameObjectType getGameObjectType();
     ForceType getForceType();
+    int getAttackPower();
 
+    void showHPBar();
+    void hideHPBar();
+    void costHP(int costHPAmount);
+    void addHP(int addHPAmount);
     void updateHP();
+
     void setEnemyUniqueID(int uniqueID);
 
     virtual void clearDebugDraw() = 0;
@@ -57,6 +61,7 @@ protected:
     GameObject();
     bool init() override;
     virtual void drawAttackArea() = 0;
+    virtual void onPrepareToDestory() = 0;
 
     int _hp = 0;
     int _maxHp = 0;

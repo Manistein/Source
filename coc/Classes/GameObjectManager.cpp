@@ -53,6 +53,20 @@ void GameObjectManager::removeAllGameObjects()
     _gameObjectMap.clear();
 }
 
+void GameObjectManager::addDecimatedGameObject(int gameObjcetUniqueID)
+{
+    _decimatedGameObjectIDList.push_back(gameObjcetUniqueID);
+}
+
+void GameObjectManager::removeAllDecimatedGameObjects()
+{
+    for (auto gameObjectID : _decimatedGameObjectIDList)
+    {
+        removeGameObjectBy(gameObjectID);
+    }
+    _decimatedGameObjectIDList.clear();
+}
+
 GameObject* GameObjectManager::getGameObjectBy(int uniqueID)
 {
     GameObject* gameObject = nullptr;
@@ -85,6 +99,11 @@ bool GameObjectManager::selectGameObjectsBy(const Rect& rect)
 
     for (auto& gameObjectIter : _gameObjectMap)
     {
+        if (gameObjectIter.second->isDecimated())
+        {
+            continue;
+        }
+
         auto objectParent = gameObjectIter.second->getParent();
 
         auto objectPosition = gameObjectIter.second->getPosition();
@@ -106,6 +125,11 @@ GameObject* GameObjectManager::selectGameObjectBy(const Point& cursorPoint)
 
     for (auto& gameObjectIter : _gameObjectMap)
     {
+        if (gameObjectIter.second->isDecimated())
+        {
+            continue;
+        }
+
         auto parentNode = gameObjectIter.second->getParent();
         auto worldPosition = parentNode->convertToWorldSpace(gameObjectIter.second->getPosition());
         auto contentSize = gameObjectIter.second->getContentSize();

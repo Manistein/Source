@@ -28,7 +28,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLViewImpl::create("COC_PC");
+        glview = GLViewImpl::createWithFullScreen("COC_PC");
 		glview->setFrameSize(1280, 720);
 		auto windowHandle = glview->getWin32Window();
 		MoveWindow(windowHandle, 0, 0, 1280, 720, false);
@@ -49,6 +49,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     searchPaths.push_back("Resources/publish/npc");
     searchPaths.push_back("Resources/publish/npc/archer");
     searchPaths.push_back("Resources/publish/npc/common");
+    searchPaths.push_back("Resources/publish/bullet");
     FileUtils::getInstance()->setSearchPaths(searchPaths);
 
     director->setDisplayStats(true);

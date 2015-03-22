@@ -15,6 +15,9 @@ public:
     void removeGameObjectBy(int uniqueID);
     void removeAllGameObjects();
 
+    void addDecimatedGameObject(int gameObjcetUniqueID);
+    void removeAllDecimatedGameObjects();
+
     GameObject* getGameObjectBy(int uniqueID);
     const GameObjectMap& getGameObjectMap();
 
@@ -37,4 +40,6 @@ private:
     GameObjectManager& operator = (const GameObjectManager&);
 
     GameWorld* _gameWorld = nullptr;
+
+    vector<int> _decimatedGameObjectIDList;
 };

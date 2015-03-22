@@ -28,6 +28,8 @@ enum class FaceDirection
 
 const float COOL_DOWN_TIME_IN_MOVE_STATUS_INTERVAL = 1.0f;
 
+class GameWorldCallBackFunctionsManager;
+
 class Npc : public GameObject
 {
 public:
@@ -36,6 +38,10 @@ public:
     static Npc* create(ForceType forceType, const string& jobName, const Vec2& position, int uniqueID);
 
     void moveTo(const Vec2& targetPosition);
+
+    NpcStatus getNpcStatus();
+
+    bool isDecimated() override;
 
     void clearDebugDraw() override;
 private:
@@ -53,6 +59,7 @@ private:
     void updateStatus(NpcStatus newStatus);
 
     void drawAttackArea() override;
+    void onPrepareToDestory() override;
 
     void runFightWithEnemyAI(float delta);
     bool isEnemyInAttackRange(GameObject* enemy);
@@ -109,9 +116,13 @@ private:
 
     void onMoveTo();
     void onStand();
-    void onAttack();
+    void onDie();
+    void onDieAnimationEnd();
 
-    RepeatForever* createAnimateWidthPList(const string& plist, float animateDelayPerUnit);
+    void onAttack();
+    void onAttackAnimationEnd();
+
+    RepeatForever* createAnimateWidthPList(const string& plist, float animateDelayPerUnit, NpcStatus animateType);
 
     FaceDirection getFaceToDirection(const Vec2& moveToPosition);
     float getMoveToDuration(const Vec2& moveToPosition);
@@ -126,4 +137,6 @@ private:
     FaceDirection _faceDirection = FaceDirection::Invalid;
 
     int _maxAlertRadius = 0;
+
+    GameWorldCallBackFunctionsManager* _gameWorld = nullptr;
 };

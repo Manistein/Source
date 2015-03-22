@@ -38,7 +38,7 @@ public:
     DebugInfo getDebugInfo(TileMapLayerType tileMapLayerType);
 
     Vec2 convertCursorPositionToTileMapSpace();
-    void addChildInGameObjectLayer(Node* gameObject);
+    void addChildInGameObjectLayer(Node* gameObject, int zOrder = 1);
 private:
     void resolveMapShakeWhenMove();
 

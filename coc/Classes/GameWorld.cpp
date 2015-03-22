@@ -5,6 +5,8 @@
 #include "GameObjectSelectBox.h"
 #include "Npc.h"
 #include "GameWorld.h"
+#include "BulletManager.h"
+#include "GameWorldCallBackFunctionsManager.h"
 
 static Vec2 s_mouseDownPoint;
 const float SINGLE_CLICK_AREA = 5.0f;
@@ -33,6 +35,10 @@ bool GameWorld::init()
     _gameObjectSelectBox = GameObjectSelectBox::create();
     _gameObjectSelectBox->setGlobalZOrder(MAX_GAME_OBJECT_COUNT);
     addChild(_gameObjectSelectBox);
+
+    _bulletManager = BulletManager::getInstance();
+
+    GameWorldCallBackFunctionsManager::getInstance()->registerCallBackFunctions(this);
 
     auto mouseListener = EventListenerMouse::create();
     mouseListener->onMouseScroll = CC_CALLBACK_1(GameWorld::onMouseScroll, this);
@@ -64,6 +70,8 @@ void GameWorld::update(float deltaTime)
 {
     _mapManager->updateMapPosition();
     _gameObjectManager->gameObjectsDepthSort(_mapManager->getTileSize());
+
+    _gameObjectManager->removeAllDecimatedGameObjects();
 }
 
 void GameWorld::onMouseScroll(Event* event)
@@ -136,6 +144,15 @@ void GameWorld::createGameObject(GameObjectType gameObjectType, ForceType forceT
 void GameWorld::removeGameObjectBy(int uniqueID)
 {
     _gameObjectManager->removeGameObjectBy(uniqueID);
+}
+
+void GameWorld::createBullet(BulletType bulletType, int attackerID, int attackTargetID)
+{
+    auto bullet = _bulletManager->createBullet(bulletType, attackerID, attackTargetID);
+    if (bullet)
+    {
+        _mapManager->addChildInGameObjectLayer(bullet);
+    }
 }
 
 void GameWorld::syncCursorPoint(const Vec2& cursorPoint)
