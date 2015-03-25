@@ -715,36 +715,87 @@ void Npc::clearDebugDraw()
 FaceDirection Npc::getFaceToDirection(const Vec2& moveToPosition)
 {
     FaceDirection faceToDirection = FaceDirection::Invalid;
-
-    auto contentSize = getContentSize() * getScale();
     auto position = getPosition();
-    float minY = position.y - contentSize.height / 2.0f;
-    float maxY = position.y + contentSize.height / 2.0f;
+    auto moveToPositionInLocalCoodinate = moveToPosition - position;
 
-    if (moveToPosition.x < position.x && moveToPosition.y >= maxY)
+    if (moveToPositionInLocalCoodinate.x > -FLT_EPSILON && moveToPositionInLocalCoodinate.x < FLT_EPSILON)
     {
-        faceToDirection = FaceDirection::FaceToNorthWest;
+        if (moveToPositionInLocalCoodinate.y >= 0.0f)
+        {
+            faceToDirection = FaceDirection::FaceToNorthEast;
+        }
+        else
+        {
+            faceToDirection = FaceDirection::FaceToSouthWest;
+        }
+
+        return faceToDirection;
     }
-    else if (moveToPosition.x < position.x && (moveToPosition.y < maxY && moveToPosition.y >= minY))
+    else if (moveToPositionInLocalCoodinate.y > -FLT_EPSILON && moveToPositionInLocalCoodinate.y < FLT_EPSILON)
     {
-        faceToDirection = FaceDirection::FaceToWest;
+        if (moveToPositionInLocalCoodinate.x >= 0.0f)
+        {
+            faceToDirection = FaceDirection::FaceToEast;
+        }
+        else
+        {
+            faceToDirection = FaceDirection::FaceToWest;
+        }
+
+        return faceToDirection;
     }
-    else if (moveToPosition.x < position.x && moveToPosition.y < minY)
+
+    float degree = 0.0f;
+    float tanTheta = moveToPositionInLocalCoodinate.x / moveToPositionInLocalCoodinate.y;
+    if (tanTheta > 0.0f)
     {
-        faceToDirection = FaceDirection::FaceToSouthWest;
-    }
-    else if (moveToPosition.x >= position.x && moveToPosition.y >= maxY)
-    {
-        faceToDirection = FaceDirection::FaceToNorthEast;
-    }
-    else if (moveToPosition.x >= position.x && (moveToPosition.y < maxY && moveToPosition.y >= minY))
-    {
-        faceToDirection = FaceDirection::FaceToEast;
+        if (moveToPositionInLocalCoodinate.y > 0.0f)
+        {
+            degree = atan(tanTheta) * 180.0f / M_PI;
+        }
+        else
+        {
+            degree = atan(tanTheta) * 180.0f / M_PI + 180.0f;
+        }
     }
     else
     {
+        if (moveToPositionInLocalCoodinate.x > 0.0f)
+        {
+            degree = atan(tanTheta) * 180.0f / M_PI + 180.0f;
+        }
+        else
+        {
+            degree = atan(tanTheta) * 180.0f / M_PI + 360.0f;
+        }
+    }
+
+    if (degree >= 0.0f && degree < 60.0f)
+    {
+        faceToDirection = FaceDirection::FaceToNorthEast;
+    }
+    else if (degree >= 60.0f && degree < 120.0f)
+    {
+        faceToDirection = FaceDirection::FaceToEast;
+    }
+    else if (degree >= 120.0f && degree < 180.0f)
+    {
         faceToDirection = FaceDirection::FaceToSouthEast;
     }
+    else if (degree >= 180.0f && degree < 240.0f)
+    {
+        faceToDirection = FaceDirection::FaceToSouthWest;
+    }
+    else if (degree >= 240.0f && degree < 300.0f)
+    {
+        faceToDirection = FaceDirection::FaceToWest;
+    }
+    else
+    {
+        faceToDirection = FaceDirection::FaceToNorthWest;
+    }
+
+    log("degree = %f", degree);
 
     return faceToDirection;
 }
