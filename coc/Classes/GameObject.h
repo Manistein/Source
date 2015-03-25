@@ -60,7 +60,7 @@ public:
 protected:
     GameObject();
     bool init() override;
-    virtual void drawAttackArea() = 0;
+    virtual void debugDraw() = 0;
     virtual void onPrepareToDestory() = 0;
 
     int _hp = 0;

@@ -58,7 +58,7 @@ private:
     void update(float delta) override;
     void updateStatus(NpcStatus newStatus);
 
-    void drawAttackArea() override;
+    void debugDraw() override;
     void onPrepareToDestory() override;
 
     void runFightWithEnemyAI(float delta);
