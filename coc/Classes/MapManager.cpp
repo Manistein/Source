@@ -27,10 +27,18 @@ bool MapManager::init(Node* parentNode, const std::string& titleMapFileName)
 
     _tileMap = cocos2d::experimental::TMXTiledMap::create(titleMapFileName);
     _tileMap->setScale(_mapScale);
+    _tileMap->setPosition(Vec2(-500.0f, -500.0f));
     parentNode->addChild(_tileMap);
 
     Director::getInstance()->setProjection(Director::Projection::_2D);
     Director::getInstance()->setDepthTest(true);
+
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    POINT cursorInClientPoint;
+    ::GetCursorPos(&cursorInClientPoint);
+    ::ScreenToClient(windowHandle, &cursorInClientPoint);
+    _cursorPoint.x = cursorInClientPoint.x;
+    _cursorPoint.y = visibleSize.height - cursorInClientPoint.y;
 
     //resolveMapShakeWhenMove();
 

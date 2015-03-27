@@ -10,11 +10,11 @@ bool DebugInfoLayer::init()
         return false;
     }
 
-    _cursorPointLabel = createLabel(20, Vec2(10.0f, 690.0f), "");
-    _tileSubscriptLabel = createLabel(20, Vec2(10.0f, 670.0f), "");
-    _currentTileMapLayerNameLabel = createLabel(20, Vec2(10.0f, 650.0f), "");
-    _currentHoverTileTextureNameLabel = createLabel(20, Vec2(10.0f, 630.0f), "");
-    _currentHoverTileGIDLabel = createLabel(20, Vec2(10.0f, 610.0f), "");
+    _cursorPointLabel = createLabel(20, Vec2(10.0f, 640.0f), "");
+    _tileSubscriptLabel = createLabel(20, Vec2(10.0f, 620.0f), "");
+    _currentTileMapLayerNameLabel = createLabel(20, Vec2(10.0f, 600.0f), "");
+    _currentHoverTileTextureNameLabel = createLabel(20, Vec2(10.0f, 580.0f), "");
+    _currentHoverTileGIDLabel = createLabel(20, Vec2(10.0f, 560.0f), "");
 
     return true;
 }
