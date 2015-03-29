@@ -13,6 +13,7 @@ const float DIE_ANIMATE_DELAY_PER_UNIT = 0.5f;
 const float ATTACK_ANIMATE_DELAY_PER_UNIT = 0.15f;
 
 const string SHADOW_TEXTURE_NAME = "Shadow.png";
+const string SHOW_WORLD_POSITION_CHILD_NAME = "ShowWorldPositionChildName";
 
 const int MOVE_TO_ACTION_TAG = 1;
 
@@ -222,6 +223,39 @@ void Npc::initDebugDraw()
     auto position = getPosition();
 
     _debugDrawNode->setPosition(Vec2(contentSize.width / 2.0f, contentSize.height / 4.0f));
+
+    TTFConfig ttfConfig("arial.ttf", 30.0f);
+    auto worldPositionLabel = Label::createWithTTF(ttfConfig, "");
+    worldPositionLabel->setPosition(Vec2::ZERO);
+    worldPositionLabel->setName(SHOW_WORLD_POSITION_CHILD_NAME);
+
+    _debugDrawNode->addChild(worldPositionLabel, 1);
+}
+
+void Npc::debugDraw()
+{
+    _debugDrawNode->clear();
+
+    _debugDrawNode->drawCircle(Vec2::ZERO, _maxAttackRadius, CC_DEGREES_TO_RADIANS(360), 50, true, 1.0f, 1.0f, Color4F(1.0f, 0.0f, 0.0f, 0.5f));
+    _debugDrawNode->drawCircle(Vec2::ZERO, _maxAlertRadius, CC_DEGREES_TO_RADIANS(360), 50, true, 1.0f, 1.0f, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
+
+    auto contentSize = getContentSize();
+    Rect gameObjectRect(-contentSize.width / 2.0f, 0.0f, contentSize.width, contentSize.height);
+    _debugDrawNode->drawRect(Vec2(gameObjectRect.getMinX(), gameObjectRect.getMinY()),
+        Vec2(gameObjectRect.getMaxX(), gameObjectRect.getMaxY()),
+        Color4F(0.0f, 0.0f, 1.0f, 0.5f));
+
+    auto parentNode = getParent();
+    auto position = getPosition();
+    auto worldPosition = parentNode->convertToWorldSpace(position);
+
+    auto worldPositionLabel = _debugDrawNode->getChildByName<Label*>(SHOW_WORLD_POSITION_CHILD_NAME);
+    worldPositionLabel->setString(StringUtils::format("cx = %.2f, cy = %.2f", worldPosition.x, worldPosition.y));
+}
+
+void Npc::clearDebugDraw()
+{
+    _debugDrawNode->clear();
 }
 
 void Npc::update(float delta)
@@ -245,20 +279,6 @@ void Npc::updateStatus(NpcStatus newStatus)
         switchFunction();
         _oldStatus = newStatus;
     }
-}
-
-void Npc::debugDraw()
-{
-    _debugDrawNode->clear();
-
-    _debugDrawNode->drawCircle(Vec2::ZERO, _maxAttackRadius, CC_DEGREES_TO_RADIANS(360), 50, true, 1.0f, 1.0f, Color4F(1.0f, 0.0f, 0.0f, 0.5f));
-    _debugDrawNode->drawCircle(Vec2::ZERO, _maxAlertRadius, CC_DEGREES_TO_RADIANS(360), 50, true, 1.0f, 1.0f, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
-
-    auto contentSize = getContentSize();
-    Rect gameObjectRect(-contentSize.width / 2.0f, 0.0f, contentSize.width, contentSize.height);
-    _debugDrawNode->drawRect(Vec2(gameObjectRect.getMinX(), gameObjectRect.getMinY()), 
-        Vec2(gameObjectRect.getMaxX(), gameObjectRect.getMaxY()),
-        Color4F(0.0f, 0.0f, 1.0f, 0.5f));
 }
 
 void Npc::runFightWithEnemyAI(float delta)
@@ -713,11 +733,6 @@ NpcStatus Npc::getNpcStatus()
     return _oldStatus;
 }
 
-void Npc::clearDebugDraw()
-{
-    _debugDrawNode->clear();
-}
-
 FaceDirection Npc::getFaceToDirection(const Vec2& moveToPosition)
 {
     FaceDirection faceToDirection = FaceDirection::Invalid;
@@ -800,8 +815,6 @@ FaceDirection Npc::getFaceToDirection(const Vec2& moveToPosition)
     {
         faceToDirection = FaceDirection::FaceToNorthWest;
     }
-
-    log("degree = %f", degree);
 
     return faceToDirection;
 }

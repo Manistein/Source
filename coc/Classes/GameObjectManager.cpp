@@ -134,7 +134,7 @@ GameObject* GameObjectManager::selectGameObjectBy(const Point& cursorPoint)
         auto worldPosition = parentNode->convertToWorldSpace(gameObjectIter.second->getPosition());
         auto contentSize = gameObjectIter.second->getContentSize();
 
-        Rect gameObjectRect(worldPosition.x - contentSize.width / 2.0f, worldPosition.y, contentSize.width, contentSize.height);
+        Rect gameObjectRect(worldPosition.x - contentSize.width / 2.0f, worldPosition.y - contentSize.height / 2.0f, contentSize.width, contentSize.height);
 
         if (gameObjectRect.containsPoint(cursorPoint))
         {

@@ -23,7 +23,7 @@ bool MapManager::init(Node* parentNode, const std::string& titleMapFileName)
 {
     auto glView = Director::getInstance()->getOpenGLView();
     auto windowHandle = glView->getWin32Window();
-    GetWindowRect(windowHandle, &_clientRect);
+    GetClientRect(windowHandle, &_clientRect);
 
     _tileMap = cocos2d::experimental::TMXTiledMap::create(titleMapFileName);
     _tileMap->setScale(_mapScale);

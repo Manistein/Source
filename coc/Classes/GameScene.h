@@ -25,4 +25,5 @@ private:
     Director* _director = nullptr;
 
     Vec2 _cursorPoint;
+    RECT _clientRect;
 };

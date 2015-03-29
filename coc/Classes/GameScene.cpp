@@ -42,6 +42,10 @@ bool GameScene::init()
 
     _gameUI->registerGameWorldCallBackFunctions(_gameWorld);
 
+    auto glView = Director::getInstance()->getOpenGLView();
+    auto windowHandle = glView->getWin32Window();
+    ::GetClientRect(windowHandle, &_clientRect);
+
     auto keyboardListener = EventListenerKeyboard::create();
     keyboardListener->onKeyReleased = CC_CALLBACK_2(GameScene::onKeyReleased, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
@@ -85,7 +89,8 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 void GameScene::onMouseMove(Event* event)
 {
     auto mouseEvent = static_cast<EventMouse*>(event);
-    auto clientHeight = Director::getInstance()->getVisibleSize().height;
+
+    auto clientHeight = _clientRect.bottom - _clientRect.top;
 
     _cursorPoint.x = mouseEvent->getCursorX();
     _cursorPoint.y = clientHeight + mouseEvent->getCursorY();
