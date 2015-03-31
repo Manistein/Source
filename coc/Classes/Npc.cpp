@@ -237,6 +237,7 @@ void Npc::debugDraw()
 {
     _debugDrawNode->clear();
 
+    _debugDrawNode->setVisible(true);
     _debugDrawNode->drawCircle(Vec2::ZERO, _maxAttackRadius, CC_DEGREES_TO_RADIANS(360), 50, true, 1.0f, 1.0f, Color4F(1.0f, 0.0f, 0.0f, 0.5f));
     _debugDrawNode->drawCircle(Vec2::ZERO, _maxAlertRadius, CC_DEGREES_TO_RADIANS(360), 50, true, 1.0f, 1.0f, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
 
@@ -257,6 +258,7 @@ void Npc::debugDraw()
 void Npc::clearDebugDraw()
 {
     _debugDrawNode->clear();
+    _debugDrawNode->setVisible(false);
 }
 
 void Npc::update(float delta)
