@@ -6,6 +6,7 @@
 #include "GameObjectManager.h"
 #include "GameSetting.h"
 #include "GameWorldCallBackFunctionsManager.h"
+#include "Utils.h"
 
 const float MOVE_ANIMATE_DELAY_PER_UNIT = 0.1f;
 const float STAND_ANIMATE_DELAY_PER_UNIT = 3.0f;
@@ -737,60 +738,8 @@ FaceDirection Npc::getFaceToDirection(const Vec2& moveToPosition)
 {
     FaceDirection faceToDirection = FaceDirection::Invalid;
     auto position = getPosition();
-    auto moveToPositionInLocalCoodinate = moveToPosition - position;
 
-    if (moveToPositionInLocalCoodinate.x > -FLT_EPSILON && moveToPositionInLocalCoodinate.x < FLT_EPSILON)
-    {
-        if (moveToPositionInLocalCoodinate.y >= 0.0f)
-        {
-            faceToDirection = FaceDirection::FaceToNorthEast;
-        }
-        else
-        {
-            faceToDirection = FaceDirection::FaceToSouthWest;
-        }
-
-        return faceToDirection;
-    }
-    else if (moveToPositionInLocalCoodinate.y > -FLT_EPSILON && moveToPositionInLocalCoodinate.y < FLT_EPSILON)
-    {
-        if (moveToPositionInLocalCoodinate.x >= 0.0f)
-        {
-            faceToDirection = FaceDirection::FaceToEast;
-        }
-        else
-        {
-            faceToDirection = FaceDirection::FaceToWest;
-        }
-
-        return faceToDirection;
-    }
-
-    float degree = 0.0f;
-    float tanTheta = moveToPositionInLocalCoodinate.x / moveToPositionInLocalCoodinate.y;
-    if (tanTheta > 0.0f)
-    {
-        if (moveToPositionInLocalCoodinate.y > 0.0f)
-        {
-            degree = atan(tanTheta) * 180.0f / M_PI;
-        }
-        else
-        {
-            degree = atan(tanTheta) * 180.0f / M_PI + 180.0f;
-        }
-    }
-    else
-    {
-        if (moveToPositionInLocalCoodinate.x > 0.0f)
-        {
-            degree = atan(tanTheta) * 180.0f / M_PI + 180.0f;
-        }
-        else
-        {
-            degree = atan(tanTheta) * 180.0f / M_PI + 360.0f;
-        }
-    }
-
+    float degree = GameUtils::computeRotatedDegree(position, moveToPosition);
     if (degree >= 0.0f && degree < 60.0f)
     {
         faceToDirection = FaceDirection::FaceToNorthEast;
