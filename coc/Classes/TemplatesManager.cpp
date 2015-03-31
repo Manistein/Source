@@ -160,7 +160,7 @@ bool TemplateManager::initBulletTemplates()
             auto bulletTypeName = tabFileReader.getString(i, "BulletType");
 
             BulletTemplate* bulletTemplate = new BulletTemplate();
-            bulletTemplate->bulletPList = tabFileReader.getString(i, "BulletPList");
+            bulletTemplate->bulletFileName = tabFileReader.getString(i, "BulletFileName");
 
             auto bulletTypeIter = s_bulletTypeStringToEnum.find(bulletTypeName);
             CCASSERT(bulletTypeIter != s_bulletTypeStringToEnum.end(), StringUtils::format("%s is invalid type", bulletTypeName.c_str()).c_str());

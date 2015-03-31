@@ -42,12 +42,16 @@ Node* BulletManager::createBullet(BulletType bulletType, int attackerID, int att
 Node* BulletManager::createArrow(BulletType bulletType, GameObject* attacker, GameObject* target)
 {
     auto bulletTemplate = TemplateManager::getInstance()->getBulletTemplateBy(bulletType);
-    auto arrow = ParticleSystemQuad::create(bulletTemplate->bulletPList);
+    auto arrow = Sprite::create(bulletTemplate->bulletFileName);
 
     auto attackerPosition = attacker->getPosition();
+    auto targetPosition = target->getPosition();
+
     arrow->setPosition(attackerPosition);
 
-    auto targetPosition = target->getPosition();
+    auto rotation = computeArrowRotation(attackerPosition, targetPosition);
+    arrow->setRotation(rotation);
+    
     auto distance = sqrt((attackerPosition.x - targetPosition.x) * (attackerPosition.x - targetPosition.x) +
         (attackerPosition.y - targetPosition.y) * (attackerPosition.y - targetPosition.y));
 
@@ -58,6 +62,65 @@ Node* BulletManager::createArrow(BulletType bulletType, GameObject* attacker, Ga
     arrow->runAction(sequenceAction);
 
     return arrow;
+}
+
+float BulletManager::computeArrowRotation(const Vec2& attackerPosition, const Vec2& targetPosition)
+{
+    float rotation = 0.0f;
+
+    auto moveVector = targetPosition - attackerPosition;
+    if (moveVector.x > -FLT_EPSILON && moveVector.x < FLT_EPSILON)
+    {
+        if (moveVector.y >= 0.0f)
+        {
+            rotation = 0.0f;
+        }
+        else
+        {
+            rotation = 180.0f;
+        }
+
+        return rotation;
+    }
+    else if (moveVector.y > -FLT_EPSILON && moveVector.y < FLT_EPSILON)
+    {
+        if (moveVector.x >= 0.0f)
+        {
+            rotation = 90.0f;
+        }
+        else
+        {
+            rotation = 270.0f;
+        }
+
+        return rotation;
+    }
+
+    float tanTheta = moveVector.x / moveVector.y;
+    if (tanTheta > 0.0f)
+    {
+        if (moveVector.y > 0.0f)
+        {
+            rotation = atan(tanTheta) * 180.0f / M_PI;
+        }
+        else
+        {
+            rotation = atan(tanTheta) * 180.0f / M_PI + 180.0f;
+        }
+    }
+    else
+    {
+        if (moveVector.x > 0.0f)
+        {
+            rotation = atan(tanTheta) * 180.0f / M_PI + 180.0f;
+        }
+        else
+        {
+            rotation = atan(tanTheta) * 180.0f / M_PI + 360.0f;
+        }
+    }
+
+    return rotation;
 }
 
 void BulletManager::onBulletMoveEnd(Node* bullet, int attackTargetID, int damageAmount)

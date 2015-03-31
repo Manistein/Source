@@ -53,7 +53,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     FileUtils::getInstance()->setSearchPaths(searchPaths);
 
     director->setDisplayStats(true);
-    director->setAnimationInterval(1.0 / 60);
+    director->setAnimationInterval(1.0 / 60.0);
 
     auto scene = GameScene::createScene();
     director->runWithScene(scene);

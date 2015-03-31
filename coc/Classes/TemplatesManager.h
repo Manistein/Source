@@ -36,7 +36,7 @@ struct NpcTemplate
 
 struct BulletTemplate
 {
-    string bulletPList;
+    string bulletFileName;
 };
 
 class TemplateManager
