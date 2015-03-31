@@ -90,7 +90,7 @@ void GameWorld::onMouseLeftButtonDown()
 void GameWorld::onMouseLeftButtonUp()
 {
     _gameObjectSelectBox->setMouseDownStatus(false);
-    _gameObjectManager->cancelSelected();
+    _gameObjectManager->cancelAllGameObjectSelected();
 
     if (std::abs(_cursorPoint.x - s_mouseDownPoint.x) < SINGLE_CLICK_AREA && std::abs(_cursorPoint.y - s_mouseDownPoint.y) < SINGLE_CLICK_AREA)
     {
@@ -116,6 +116,7 @@ void GameWorld::onMouseRightButtonDown()
     else
     {
         _gameObjectManager->setSelectedGameObjectEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
+        _gameObjectManager->cancelEnemySelected();
     }
 }
 

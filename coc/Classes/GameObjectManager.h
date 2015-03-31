@@ -26,7 +26,8 @@ public:
     bool selectGameObjectsBy(const Rect& rect);
     GameObject* selectGameObjectBy(const Point& cursorPoint);
     GameObject* selectEnemyBy(const Point& cursorPoint);
-    void cancelSelected();
+    void cancelAllGameObjectSelected();
+    void cancelEnemySelected();
 
     void selectedNpcMoveTo(const Vec2& position);
 

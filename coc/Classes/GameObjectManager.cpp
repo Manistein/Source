@@ -5,8 +5,8 @@
 #include "Npc.h"
 
 static GameObjectManager* s_gameObjectManager = nullptr;
-const float MOVE_TO_POINT_X_RANGE = 50.0f;
-const float MOVE_TO_POINT_Y_RANGE = 50.0f;
+const float MOVE_TO_POINT_X_RANGE = 150.0f;
+const float MOVE_TO_POINT_Y_RANGE = 150.0f;
 
 GameObjectManager* GameObjectManager::getInstance()
 {
@@ -162,10 +162,23 @@ GameObject* GameObjectManager::selectEnemyBy(const Point& cursorPoint)
     return enemy;
 }
 
-void GameObjectManager::cancelSelected()
+void GameObjectManager::cancelAllGameObjectSelected()
 {
     for (auto& gameObjectIter : _gameObjectMap)
     {
+        gameObjectIter.second->setSelected(false);
+    }
+}
+
+void GameObjectManager::cancelEnemySelected()
+{
+    for (auto& gameObjectIter : _gameObjectMap)
+    {
+        if (gameObjectIter.second->getForceType() != ForceType::AI || !gameObjectIter.second->isSelected())
+        {
+            continue;
+        }
+
         gameObjectIter.second->setSelected(false);
     }
 }
