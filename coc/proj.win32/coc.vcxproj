@@ -162,6 +162,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\Npc.cpp" />
     <ClCompile Include="..\Classes\TabFileReader.cpp" />
     <ClCompile Include="..\Classes\TemplatesManager.cpp" />
+    <ClCompile Include="..\Classes\Utils.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +182,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\Npc.h" />
     <ClInclude Include="..\Classes\TabFileReader.h" />
     <ClInclude Include="..\Classes\TemplatesManager.h" />
+    <ClInclude Include="..\Classes\Utils.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>
