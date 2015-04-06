@@ -18,7 +18,6 @@ MapManager::~MapManager()
     Director::getInstance()->setDepthTest(false);
 }
 
-
 bool MapManager::init(Node* parentNode, const std::string& titleMapFileName)
 {
     auto glView = Director::getInstance()->getOpenGLView();
@@ -39,6 +38,8 @@ bool MapManager::init(Node* parentNode, const std::string& titleMapFileName)
     ::ScreenToClient(windowHandle, &cursorInClientPoint);
     _cursorPoint.x = cursorInClientPoint.x;
     _cursorPoint.y = visibleSize.height - cursorInClientPoint.y;
+
+    initTileMapInfoTable();
 
     //resolveMapShakeWhenMove();
 
@@ -186,4 +187,33 @@ void MapManager::addChildInGameObjectLayer(Node* gameObject, int zOrder/* = 1*/)
 {
     auto gameObjectLayer = _tileMap->getLayer("gameObjectLayer");
     gameObjectLayer->addChild(gameObject, zOrder);
+}
+
+void MapManager::initTileMapInfoTable()
+{
+    auto mapSize = _tileMap->getMapSize();
+    _tileInfoTable.resize((int)mapSize.width);
+
+    auto tileSize = _tileMap->getTileSize();
+
+    auto gameObjectLayer = _tileMap->getLayer(s_tileMapLayerTypeToString[TileMapLayerType::GameObjcetLayer]);
+
+    for (int tileXSubscript = 0; tileXSubscript < (int)mapSize.width; tileXSubscript ++)
+    {
+        _tileInfoTable[tileXSubscript].resize((int)mapSize.height);
+        for (int tileYSubscript = 0; tileYSubscript < (int)mapSize.height; tileYSubscript ++)
+        {
+            _tileInfoTable[tileXSubscript][tileYSubscript].gid = gameObjectLayer->getTileGIDAt(Vec2(tileXSubscript, tileYSubscript));
+
+            Vec2 positionInTileMap;
+            positionInTileMap.x = ((tileXSubscript - tileYSubscript) / 2 + mapSize.width / 2) * tileSize.width;
+            positionInTileMap.y = (mapSize.height - (tileXSubscript + tileYSubscript) / 2) *  tileSize.height - tileSize.height / 2;
+            _tileInfoTable[tileXSubscript][tileYSubscript].centerPoint = positionInTileMap;
+        }
+    }
+}
+
+TileInfo MapManager::getTileInfoAt(int xSubscript, int ySubscript)
+{
+    return _tileInfoTable[xSubscript][ySubscript];
 }

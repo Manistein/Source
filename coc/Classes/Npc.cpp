@@ -308,10 +308,7 @@ void Npc::runFightWithEnemyAI(float delta)
 
         if (isEnemyInAttackRange(enemy))
         {
-            if (_oldStatus != NpcStatus::Die)
-            {
-                updateStatus(NpcStatus::Attack);
-            }
+            updateStatus(NpcStatus::Attack);
         }
         else if (isEnemyInAlertRange(enemy))
         {
