@@ -1,10 +1,6 @@
 #include "Base.h"
 #include "MapManager.h"
 
-const float MAP_MOVE_SPEED = 20.0f;
-const float MAP_BORDER_MARGIN = 50.0f;
-const float MAP_MIN_SCALE = 0.3f;
-const float MAP_MAX_SCALE = 1.0f;
 
 static std::map<TileMapLayerType, std::string> s_tileMapLayerTypeToString = {
     { TileMapLayerType::BackgroundLayer, "backgroundLayer" },
@@ -123,6 +119,92 @@ void MapManager::syncCursorPoint(const Vec2& cursorPoint)
     _cursorPoint = cursorPoint;
 }
 
+vector<Vec2> MapManager::getNpcMoveEndPositionListBy(int npcSelectedByPlayerCount)
+{
+    vector<Vec2> npcMoveEndPositionList;
+
+    auto mapSize = _tileMap->getMapSize();
+    auto startSubscript = getTileSubscript();
+    
+    auto tileInfo = getTileInfoAt((int)startSubscript.x, (int)startSubscript.y);
+    auto deltaFromCursorToTile = _tileMap->convertToNodeSpace(_cursorPoint) - tileInfo.leftTopPosition;
+
+    startSubscript.x = std::max(startSubscript.x, 0.0f);
+    startSubscript.x = std::min(startSubscript.x, mapSize.width);
+
+    startSubscript.y = std::max(startSubscript.y, (float)(QUEUE_MAX_ROW_COUNT / 2));
+    startSubscript.y = std::min(startSubscript.y, (float)(mapSize.height - QUEUE_MAX_ROW_COUNT / 2));
+
+    int minRowIndex = startSubscript.y - QUEUE_MAX_ROW_COUNT / 2;
+    int maxRowIndex = startSubscript.y + QUEUE_MAX_ROW_COUNT / 2;
+
+    bool canSearchLeftArea = true;
+    bool canSearchRightArea = true;
+
+    int searchLeftAreaXSubscript = (int)startSubscript.x;
+    int searchRightAreaXSubscript = (int)startSubscript.x + 1;
+    while ((int)npcMoveEndPositionList.size() < npcSelectedByPlayerCount)
+    {
+        if (searchLeftAreaXSubscript >= 0 && canSearchLeftArea)
+        {
+            int count = insertNpcMoveEndPositionInto(npcMoveEndPositionList, searchLeftAreaXSubscript, minRowIndex, maxRowIndex, npcSelectedByPlayerCount, deltaFromCursorToTile);
+
+            if (count <= 0)
+            {
+                canSearchLeftArea = false;
+            }
+
+            searchLeftAreaXSubscript--;
+        }
+
+        if ((int)npcMoveEndPositionList.size() >= npcSelectedByPlayerCount)
+        {
+            break;
+        }
+
+        if (searchRightAreaXSubscript <= (int)mapSize.width && canSearchRightArea)
+        {
+            int count = insertNpcMoveEndPositionInto(npcMoveEndPositionList, searchRightAreaXSubscript, minRowIndex, maxRowIndex, npcSelectedByPlayerCount, deltaFromCursorToTile);
+
+            if (count <= 0)
+            {
+                canSearchRightArea = false;
+            }
+
+            searchRightAreaXSubscript++;
+        }
+
+        if (!canSearchLeftArea && !canSearchRightArea)
+        {
+            break;
+        }
+    }
+
+    return npcMoveEndPositionList;
+}
+
+int MapManager::insertNpcMoveEndPositionInto(vector<Vec2>& npcMoveEndPositionList, int xSubscript, int minRowIndex, int maxRowIndex, int npcSelectedByPlayerCount, Vec2 deltaFromCursorToTile)
+{
+    int count = 0;
+
+    for (int ySubscript = minRowIndex; ySubscript < maxRowIndex; ySubscript ++)
+    {
+        auto tileInfo = getTileInfoAt(xSubscript, ySubscript);
+        if (tileInfo.gid != OBSTACLE_ID)
+        {
+            count++;
+            npcMoveEndPositionList.push_back(tileInfo.leftTopPosition + deltaFromCursorToTile);
+
+            if ((int)npcMoveEndPositionList.size() >= npcSelectedByPlayerCount)
+            {
+                break;
+            }
+        }
+    }
+
+    return count;
+}
+
 void MapManager::resolveMapShakeWhenMove()
 {
     auto& children = _tileMap->getChildren();
@@ -206,9 +288,9 @@ void MapManager::initTileMapInfoTable()
             _tileInfoTable[tileXSubscript][tileYSubscript].gid = gameObjectLayer->getTileGIDAt(Vec2(tileXSubscript, tileYSubscript));
 
             Vec2 positionInTileMap;
-            positionInTileMap.x = ((tileXSubscript - tileYSubscript) / 2 + mapSize.width / 2) * tileSize.width;
-            positionInTileMap.y = (mapSize.height - (tileXSubscript + tileYSubscript) / 2) *  tileSize.height - tileSize.height / 2;
-            _tileInfoTable[tileXSubscript][tileYSubscript].centerPoint = positionInTileMap;
+            positionInTileMap.x = (((float)tileXSubscript - (float)tileYSubscript) / 2.0f + mapSize.width / 2.0f) * tileSize.width;
+            positionInTileMap.y = (mapSize.height - ((float)tileXSubscript + (float)tileYSubscript) / 2.0f) *  tileSize.height;
+            _tileInfoTable[tileXSubscript][tileYSubscript].leftTopPosition = positionInTileMap;
         }
     }
 }

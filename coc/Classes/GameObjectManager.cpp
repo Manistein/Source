@@ -183,9 +183,23 @@ void GameObjectManager::cancelEnemySelected()
     }
 }
 
-void GameObjectManager::selectedNpcMoveTo(const Vec2& position)
+int GameObjectManager::getGameObjectSelectedByPlayerCount()
 {
-    bool hasFindFirstNpc = false;
+    int count = 0;
+
+    for (auto& gameObjectIter : _gameObjectMap)
+    {
+        if (gameObjectIter.second->isSelected() && gameObjectIter.second->getForceType() == ForceType::Player)
+        {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position)
+{
     for (auto& gameObjectIter : _gameObjectMap)
     {
         if (gameObjectIter.second->getGameObjectType() != GameObjectType::Npc)
@@ -196,19 +210,38 @@ void GameObjectManager::selectedNpcMoveTo(const Vec2& position)
         if (gameObjectIter.second->isSelected() && gameObjectIter.second->getForceType() == ForceType::Player)
         {
             auto npc = static_cast<Npc*>(gameObjectIter.second);
+            npc->moveTo(position);
+        }
+    }
+}
 
-            if (hasFindFirstNpc)
+void GameObjectManager::npcSelectedByPlayerMoveTo(const vector<Vec2>& npcMoveEndPositionList)
+{
+    if (npcMoveEndPositionList.empty())
+    {
+        return;
+    }
+
+    int index = 0;
+    for (auto& gameObjectIter : _gameObjectMap)
+    {
+        if (gameObjectIter.second->getGameObjectType() != GameObjectType::Npc)
+        {
+            continue;
+        }
+
+        if (gameObjectIter.second->isSelected() && gameObjectIter.second->getForceType() == ForceType::Player)
+        {
+            if (index >= npcMoveEndPositionList.size())
             {
-                float xDelta = powf(-1.0f, (float)(rand() % 2)) * (float)(rand() % (int)MOVE_TO_POINT_X_RANGE);
-                float yDelta = powf(-1.0f, (float)(rand() % 2)) * (float)(rand() % (int)MOVE_TO_POINT_Y_RANGE);
-                Vec2 finalPosition(position.x + xDelta, position.y + yDelta);
-                npc->moveTo(finalPosition);
+                break;
             }
-            else
-            {
-                npc->moveTo(position);
-                hasFindFirstNpc = true;
-            }
+
+            auto position = npcMoveEndPositionList[index];
+            index++;
+
+            auto npc = static_cast<Npc*>(gameObjectIter.second);
+            npc->moveTo(position);
         }
     }
 }

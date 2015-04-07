@@ -105,8 +105,18 @@ void GameWorld::onMouseLeftButtonUp()
 
 void GameWorld::onMouseRightButtonDown()
 {
-    auto targetPosition = _mapManager->convertCursorPositionToTileMapSpace();
-    _gameObjectManager->selectedNpcMoveTo(targetPosition);
+    auto gameObjectSelectedByPlayerCount = _gameObjectManager->getGameObjectSelectedByPlayerCount();
+
+    if (gameObjectSelectedByPlayerCount == 1)
+    {
+        auto targetPosition = _mapManager->convertCursorPositionToTileMapSpace();
+        _gameObjectManager->npcSelectedByPlayerMoveTo(targetPosition);
+    }
+    else
+    {
+        auto npcMoveEndPositionList = _mapManager->getNpcMoveEndPositionListBy(gameObjectSelectedByPlayerCount);
+        _gameObjectManager->npcSelectedByPlayerMoveTo(npcMoveEndPositionList);
+    }
 
     auto enemy = _gameObjectManager->selectEnemyBy(_cursorPoint);
     if (enemy)

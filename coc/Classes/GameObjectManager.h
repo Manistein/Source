@@ -29,7 +29,10 @@ public:
     void cancelAllGameObjectSelected();
     void cancelEnemySelected();
 
-    void selectedNpcMoveTo(const Vec2& position);
+    int getGameObjectSelectedByPlayerCount();
+
+    void npcSelectedByPlayerMoveTo(const Vec2& position);
+    void npcSelectedByPlayerMoveTo(const vector<Vec2>& npcMoveEndPositionList);
 
     void setSelectedGameObjectEnemyUniqueID(int uniqueID);
     void clearGameObjectDebugDraw();
