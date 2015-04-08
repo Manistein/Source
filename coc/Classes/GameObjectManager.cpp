@@ -232,7 +232,7 @@ void GameObjectManager::npcSelectedByPlayerMoveTo(const vector<Vec2>& npcMoveEnd
 
         if (gameObjectIter.second->isSelected() && gameObjectIter.second->getForceType() == ForceType::Player)
         {
-            if (index >= npcMoveEndPositionList.size())
+            if (index >= (int)npcMoveEndPositionList.size())
             {
                 break;
             }

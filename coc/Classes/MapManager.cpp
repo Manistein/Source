@@ -122,21 +122,25 @@ void MapManager::syncCursorPoint(const Vec2& cursorPoint)
 vector<Vec2> MapManager::getNpcMoveEndPositionListBy(int npcSelectedByPlayerCount)
 {
     vector<Vec2> npcMoveEndPositionList;
+    int queueMaxRowCount = std::min(npcSelectedByPlayerCount, QUEUE_MAX_ROW_COUNT);
 
     auto mapSize = _tileMap->getMapSize();
+    int maxMapWidthIndex = mapSize.width - 1;
+    int maxMapHeightIndex = mapSize.height - 1;
+
     auto startSubscript = getTileSubscript();
     
     auto tileInfo = getTileInfoAt((int)startSubscript.x, (int)startSubscript.y);
     auto deltaFromCursorToTile = _tileMap->convertToNodeSpace(_cursorPoint) - tileInfo.leftTopPosition;
 
     startSubscript.x = std::max(startSubscript.x, 0.0f);
-    startSubscript.x = std::min(startSubscript.x, mapSize.width);
+    startSubscript.x = std::min((int)startSubscript.x, maxMapWidthIndex);
 
-    startSubscript.y = std::max(startSubscript.y, (float)(QUEUE_MAX_ROW_COUNT / 2));
-    startSubscript.y = std::min(startSubscript.y, (float)(mapSize.height - QUEUE_MAX_ROW_COUNT / 2));
+    startSubscript.y = std::max(startSubscript.y, (float)(queueMaxRowCount / 2));
+    startSubscript.y = std::min(startSubscript.y, (float)(maxMapHeightIndex - queueMaxRowCount / 2));
 
-    int minRowIndex = startSubscript.y - QUEUE_MAX_ROW_COUNT / 2;
-    int maxRowIndex = startSubscript.y + QUEUE_MAX_ROW_COUNT / 2;
+    int minRowIndex = startSubscript.y - queueMaxRowCount / 2;
+    int maxRowIndex = startSubscript.y + queueMaxRowCount / 2;
 
     bool canSearchLeftArea = true;
     bool canSearchRightArea = true;
@@ -162,7 +166,7 @@ vector<Vec2> MapManager::getNpcMoveEndPositionListBy(int npcSelectedByPlayerCoun
             break;
         }
 
-        if (searchRightAreaXSubscript <= (int)mapSize.width && canSearchRightArea)
+        if (searchRightAreaXSubscript <= maxMapWidthIndex && canSearchRightArea)
         {
             int count = insertNpcMoveEndPositionInto(npcMoveEndPositionList, searchRightAreaXSubscript, minRowIndex, maxRowIndex, npcSelectedByPlayerCount, deltaFromCursorToTile);
 
@@ -187,7 +191,7 @@ int MapManager::insertNpcMoveEndPositionInto(vector<Vec2>& npcMoveEndPositionLis
 {
     int count = 0;
 
-    for (int ySubscript = minRowIndex; ySubscript < maxRowIndex; ySubscript ++)
+    for (int ySubscript = minRowIndex; ySubscript <= maxRowIndex; ySubscript ++)
     {
         auto tileInfo = getTileInfoAt(xSubscript, ySubscript);
         if (tileInfo.gid != OBSTACLE_ID)
