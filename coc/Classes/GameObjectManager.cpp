@@ -5,8 +5,6 @@
 #include "Npc.h"
 
 static GameObjectManager* s_gameObjectManager = nullptr;
-const float MOVE_TO_POINT_X_RANGE = 150.0f;
-const float MOVE_TO_POINT_Y_RANGE = 150.0f;
 
 GameObjectManager* GameObjectManager::getInstance()
 {
