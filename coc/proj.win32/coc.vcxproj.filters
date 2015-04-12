@@ -78,6 +78,9 @@
     <ClCompile Include="..\Classes\Utils.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\AutoFindPathHelper.cpp">
+      <Filter>src\GameWorld</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -133,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Utils.h">
       <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AutoFindPathHelper.h">
+      <Filter>src\GameWorld</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

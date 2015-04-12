@@ -1,5 +1,6 @@
 #include "Base.h"
 #include "MapManager.h"
+#include "AutoFindPathHelper.h"
 
 
 static std::map<TileMapLayerType, std::string> s_tileMapLayerTypeToString = {
@@ -12,6 +13,15 @@ MapManager::~MapManager()
 {
     Director::getInstance()->setProjection(Director::Projection::DEFAULT);
     Director::getInstance()->setDepthTest(false);
+
+    for (int rowIndex = 0; rowIndex < (int)_tileNodeTable.size(); rowIndex ++)
+    {
+        for (int columnIndex = 0; columnIndex < (int)_tileNodeTable[rowIndex].size(); columnIndex ++)
+        {
+            CC_SAFE_DELETE(_tileNodeTable[rowIndex][columnIndex]);
+        }
+    }
+    _tileNodeTable.clear();
 }
 
 bool MapManager::init(Node* parentNode, const std::string& titleMapFileName)
@@ -35,7 +45,8 @@ bool MapManager::init(Node* parentNode, const std::string& titleMapFileName)
     _cursorPoint.x = cursorInClientPoint.x;
     _cursorPoint.y = visibleSize.height - cursorInClientPoint.y;
 
-    initTileMapInfoTable();
+    initTileNodeTable();
+    AutoFindPathHelper::initTileNodeTable(_tileNodeTable);
 
     //resolveMapShakeWhenMove();
 
@@ -122,43 +133,46 @@ void MapManager::syncCursorPoint(const Vec2& cursorPoint)
 vector<Vec2> MapManager::getNpcMoveEndPositionListBy(int npcSelectedByPlayerCount)
 {
     vector<Vec2> npcMoveEndPositionList;
-    int queueMaxRowCount = std::min(npcSelectedByPlayerCount, QUEUE_MAX_ROW_COUNT);
+    int lineupMaxRowCount = std::min(npcSelectedByPlayerCount, LINEUP_MAX_ROW_COUNT);
 
     auto mapSize = _tileMap->getMapSize();
-    int maxMapWidthIndex = mapSize.width - 1;
-    int maxMapHeightIndex = mapSize.height - 1;
+    int maxMapColumnIndex = mapSize.width - 1;
+    int maxMapRowIndex = mapSize.height - 1;
 
-    auto startSubscript = getTileSubscript();
-    
-    auto tileInfo = getTileInfoAt((int)startSubscript.x, (int)startSubscript.y);
-    auto deltaFromCursorToTile = _tileMap->convertToNodeSpace(_cursorPoint) - tileInfo.leftTopPosition;
+    auto lineupCenterTileNodeSubscript = getTileSubscript();
+    int lineupCenterTileNodeColumnIndex = (int)lineupCenterTileNodeSubscript.x;
+    int lineupCenterTileNodeRowIndex = (int)lineupCenterTileNodeSubscript.y;
 
-    startSubscript.x = std::max(startSubscript.x, 0.0f);
-    startSubscript.x = std::min((int)startSubscript.x, maxMapWidthIndex);
+    lineupCenterTileNodeColumnIndex = std::max(lineupCenterTileNodeColumnIndex, 0);
+    lineupCenterTileNodeColumnIndex = std::min(lineupCenterTileNodeColumnIndex, maxMapColumnIndex);
 
-    startSubscript.y = std::max(startSubscript.y, (float)(queueMaxRowCount / 2));
-    startSubscript.y = std::min(startSubscript.y, (float)(maxMapHeightIndex - queueMaxRowCount / 2));
+    lineupCenterTileNodeRowIndex = std::max(lineupCenterTileNodeRowIndex, lineupMaxRowCount / 2);
+    lineupCenterTileNodeRowIndex = std::min(lineupCenterTileNodeRowIndex, maxMapRowIndex - lineupMaxRowCount / 2);
 
-    int minRowIndex = startSubscript.y - queueMaxRowCount / 2;
-    int maxRowIndex = startSubscript.y + queueMaxRowCount / 2;
+    int lineupMinRowIndex = lineupCenterTileNodeRowIndex - lineupMaxRowCount / 2;
+    int lineupMaxRowIndex = lineupCenterTileNodeRowIndex + lineupMaxRowCount / 2;
 
     bool canSearchLeftArea = true;
     bool canSearchRightArea = true;
 
-    int searchLeftAreaXSubscript = (int)startSubscript.x;
-    int searchRightAreaXSubscript = (int)startSubscript.x + 1;
+    int searchLeftAreaColumnIndex = lineupCenterTileNodeColumnIndex;
+    int searchRightAreaColumnIndex = lineupCenterTileNodeColumnIndex + 1;
+
+    auto tileNode = getTileNodeAt(lineupCenterTileNodeColumnIndex, lineupCenterTileNodeRowIndex);
+    auto deltaFromCursorToTile = _tileMap->convertToNodeSpace(_cursorPoint) - tileNode->leftTopPosition;
+
     while ((int)npcMoveEndPositionList.size() < npcSelectedByPlayerCount)
     {
-        if (searchLeftAreaXSubscript >= 0 && canSearchLeftArea)
+        if (searchLeftAreaColumnIndex >= 0 && canSearchLeftArea)
         {
-            int count = insertNpcMoveEndPositionInto(npcMoveEndPositionList, searchLeftAreaXSubscript, minRowIndex, maxRowIndex, npcSelectedByPlayerCount, deltaFromCursorToTile);
+            int count = insertNpcMoveEndPositionInto(npcMoveEndPositionList, searchLeftAreaColumnIndex, lineupMinRowIndex, lineupMaxRowIndex, npcSelectedByPlayerCount, deltaFromCursorToTile);
 
             if (count <= 0)
             {
                 canSearchLeftArea = false;
             }
 
-            searchLeftAreaXSubscript--;
+            searchLeftAreaColumnIndex--;
         }
 
         if ((int)npcMoveEndPositionList.size() >= npcSelectedByPlayerCount)
@@ -166,16 +180,16 @@ vector<Vec2> MapManager::getNpcMoveEndPositionListBy(int npcSelectedByPlayerCoun
             break;
         }
 
-        if (searchRightAreaXSubscript <= maxMapWidthIndex && canSearchRightArea)
+        if (searchRightAreaColumnIndex <= maxMapColumnIndex && canSearchRightArea)
         {
-            int count = insertNpcMoveEndPositionInto(npcMoveEndPositionList, searchRightAreaXSubscript, minRowIndex, maxRowIndex, npcSelectedByPlayerCount, deltaFromCursorToTile);
+            int count = insertNpcMoveEndPositionInto(npcMoveEndPositionList, searchRightAreaColumnIndex, lineupMinRowIndex, lineupMaxRowIndex, npcSelectedByPlayerCount, deltaFromCursorToTile);
 
             if (count <= 0)
             {
                 canSearchRightArea = false;
             }
 
-            searchRightAreaXSubscript++;
+            searchRightAreaColumnIndex++;
         }
 
         if (!canSearchLeftArea && !canSearchRightArea)
@@ -187,17 +201,17 @@ vector<Vec2> MapManager::getNpcMoveEndPositionListBy(int npcSelectedByPlayerCoun
     return npcMoveEndPositionList;
 }
 
-int MapManager::insertNpcMoveEndPositionInto(vector<Vec2>& npcMoveEndPositionList, int xSubscript, int minRowIndex, int maxRowIndex, int npcSelectedByPlayerCount, Vec2 deltaFromCursorToTile)
+int MapManager::insertNpcMoveEndPositionInto(vector<Vec2>& npcMoveEndPositionList, int columnIndex, int minRowIndex, int maxRowIndex, int npcSelectedByPlayerCount, Vec2 deltaFromCursorToTile)
 {
     int count = 0;
 
-    for (int ySubscript = minRowIndex; ySubscript <= maxRowIndex; ySubscript ++)
+    for (int rowIndex = minRowIndex; rowIndex <= maxRowIndex; rowIndex ++)
     {
-        auto tileInfo = getTileInfoAt(xSubscript, ySubscript);
-        if (tileInfo.gid != OBSTACLE_ID)
+        auto tileInfo = getTileNodeAt(columnIndex, rowIndex);
+        if (tileInfo->gid != OBSTACLE_ID)
         {
             count++;
-            npcMoveEndPositionList.push_back(tileInfo.leftTopPosition + deltaFromCursorToTile);
+            npcMoveEndPositionList.push_back(tileInfo->leftTopPosition + deltaFromCursorToTile);
 
             if ((int)npcMoveEndPositionList.size() >= npcSelectedByPlayerCount)
             {
@@ -275,31 +289,40 @@ void MapManager::addChildInGameObjectLayer(Node* gameObject, int zOrder/* = 1*/)
     gameObjectLayer->addChild(gameObject, zOrder);
 }
 
-void MapManager::initTileMapInfoTable()
+void MapManager::initTileNodeTable()
 {
     auto mapSize = _tileMap->getMapSize();
-    _tileInfoTable.resize((int)mapSize.width);
+    _tileNodeTable.resize((int)mapSize.width);
 
     auto tileSize = _tileMap->getTileSize();
 
     auto gameObjectLayer = _tileMap->getLayer(s_tileMapLayerTypeToString[TileMapLayerType::GameObjcetLayer]);
 
-    for (int tileXSubscript = 0; tileXSubscript < (int)mapSize.width; tileXSubscript ++)
+    for (int columnIndex = 0; columnIndex < (int)mapSize.width; columnIndex ++)
     {
-        _tileInfoTable[tileXSubscript].resize((int)mapSize.height);
-        for (int tileYSubscript = 0; tileYSubscript < (int)mapSize.height; tileYSubscript ++)
+        _tileNodeTable[columnIndex].resize((int)mapSize.height);
+        for (int rowIndex = 0; rowIndex < (int)mapSize.height; rowIndex ++)
         {
-            _tileInfoTable[tileXSubscript][tileYSubscript].gid = gameObjectLayer->getTileGIDAt(Vec2(tileXSubscript, tileYSubscript));
+            _tileNodeTable[columnIndex][rowIndex] = new TileNode;
+
+            _tileNodeTable[columnIndex][rowIndex]->gid = gameObjectLayer->getTileGIDAt(Vec2(columnIndex, rowIndex));
 
             Vec2 positionInTileMap;
-            positionInTileMap.x = (((float)tileXSubscript - (float)tileYSubscript) / 2.0f + mapSize.width / 2.0f) * tileSize.width;
-            positionInTileMap.y = (mapSize.height - ((float)tileXSubscript + (float)tileYSubscript) / 2.0f) *  tileSize.height;
-            _tileInfoTable[tileXSubscript][tileYSubscript].leftTopPosition = positionInTileMap;
+            positionInTileMap.x = (((float)columnIndex - (float)rowIndex) / 2.0f + mapSize.width / 2.0f) * tileSize.width;
+            positionInTileMap.y = (mapSize.height - ((float)columnIndex + (float)rowIndex) / 2.0f) *  tileSize.height;
+            _tileNodeTable[columnIndex][rowIndex]->leftTopPosition = positionInTileMap;
+
+            _tileNodeTable[columnIndex][rowIndex]->rowIndex = rowIndex;
+            _tileNodeTable[columnIndex][rowIndex]->columnIndex = columnIndex;
+
+            _tileNodeTable[columnIndex][rowIndex]->parent = nullptr;
+
+            _tileNodeTable[columnIndex][rowIndex]->isVisit = false;
         }
     }
 }
 
-TileInfo MapManager::getTileInfoAt(int xSubscript, int ySubscript)
+TileNode* MapManager::getTileNodeAt(int columnIndex, int rowIndex)
 {
-    return _tileInfoTable[xSubscript][ySubscript];
+    return _tileNodeTable[columnIndex][rowIndex];
 }
