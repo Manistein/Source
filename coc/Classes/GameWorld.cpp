@@ -52,14 +52,12 @@ bool GameWorld::init()
     director->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameWorld::onMouseMove, this));
     director->getEventDispatcher()->addCustomEventListener("ClearDebugDraw", CC_CALLBACK_0(GameWorld::onClearDebugDraw, this));
 
-    for (int i = 0; i < 10; i ++)
-    {
-        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2000.0f, 2000.0f));
-        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2050.0f, 2050.0f));
-        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2100.0f, 2100.0f));
 
-        createGameObject(GameObjectType::Npc, ForceType::AI, "PinkArcher", Vec2(3150.0f, 2150.0f));
-    }
+    createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2000.0f, 2000.0f));
+    createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2050.0f, 2050.0f));
+    createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2100.0f, 2100.0f));
+
+    createGameObject(GameObjectType::Npc, ForceType::AI, "PinkArcher", Vec2(3150.0f, 2150.0f));
 
     _director->setAlphaBlending(true);
 

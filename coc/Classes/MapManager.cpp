@@ -139,7 +139,7 @@ vector<Vec2> MapManager::getNpcMoveEndPositionListBy(int npcSelectedByPlayerCoun
     int maxMapColumnIndex = mapSize.width - 1;
     int maxMapRowIndex = mapSize.height - 1;
 
-    auto lineupCenterTileNodeSubscript = getTileSubscript();
+    auto lineupCenterTileNodeSubscript = getTileSubscript(_tileMap->convertToNodeSpace(_cursorPoint));
     int lineupCenterTileNodeColumnIndex = (int)lineupCenterTileNodeSubscript.x;
     int lineupCenterTileNodeRowIndex = (int)lineupCenterTileNodeSubscript.y;
 
@@ -242,15 +242,15 @@ Size MapManager::getTileSize()
     return _tileMap->getTileSize();
 }
 
-Point MapManager::getTileSubscript()
+Point MapManager::getTileSubscript(const Vec2& inMapPosition)
 {
     Point tileSubscript;
 
     auto mapSize = _tileMap->getMapSize();
     auto tileSize = _tileMap->getTileSize();
-    auto positionInTileMap = _tileMap->convertToNodeSpace(_cursorPoint);
-    tileSubscript.x = (mapSize.height - (positionInTileMap.y / tileSize.height)) + ((positionInTileMap.x / tileSize.width) - mapSize.width / 2);
-    tileSubscript.y = (mapSize.height - (positionInTileMap.y / tileSize.height)) - ((positionInTileMap.x / tileSize.width) - mapSize.width / 2);
+    //auto inMapPosition = _tileMap->convertToNodeSpace(_cursorPoint);
+    tileSubscript.x = (mapSize.height - (inMapPosition.y / tileSize.height)) + ((inMapPosition.x / tileSize.width) - mapSize.width / 2);
+    tileSubscript.y = (mapSize.height - (inMapPosition.y / tileSize.height)) - ((inMapPosition.x / tileSize.width) - mapSize.width / 2);
 
     tileSubscript.x = std::max(0.0f, tileSubscript.x);
     tileSubscript.x = std::min(mapSize.width - 1.0f, tileSubscript.x);
@@ -268,7 +268,7 @@ DebugInfo MapManager::getDebugInfo(TileMapLayerType tileMapLayerType)
     DebugInfo tileDebugInfo;
 
     auto currentTileMapLayer = _tileMap->getLayer(s_tileMapLayerTypeToString[tileMapLayerType]);
-    auto tileSubscript = getTileSubscript();
+    auto tileSubscript = getTileSubscript(_tileMap->convertToNodeSpace(_cursorPoint));
 
     tileDebugInfo.gid = currentTileMapLayer->getTileGIDAt(tileSubscript);
     tileDebugInfo.tileMapLayerName = s_tileMapLayerTypeToString[tileMapLayerType];

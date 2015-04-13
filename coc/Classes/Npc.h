@@ -129,6 +129,8 @@ private:
     float _perSecondMoveSpeedByPixel = 100.0f;
     Vec2 _moveToPosition;
 
+    list<Vec2> getPathListTo(const Vec2& targetPosition);
+
     unordered_map<FaceDirection, RepeatForever*> _moveAnimateMap;
     unordered_map<FaceDirection, RepeatForever*> _standAnimateMap;
     unordered_map<FaceDirection, RepeatForever*> _attackAnimateMap;

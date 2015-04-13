@@ -59,3 +59,16 @@ float GameUtils::computeRotatedDegree(const Vec2& beginPosition, const Vec2& end
 
     return rotation;
 }
+
+bool GameUtils::isFloatEqual(float left, float right)
+{
+    bool result = false;
+
+    float difference = left - right;
+    if (difference > -FLT_EPSILON && difference < FLT_EPSILON)
+    {
+        result = true;
+    }
+
+    return result;
+}

@@ -58,7 +58,7 @@ public:
     void syncCursorPoint(const Vec2& cursorPoint);
 
     Size getTileSize();
-    Point getTileSubscript();
+    Point getTileSubscript(const Vec2& inMapPosition);
     DebugInfo getDebugInfo(TileMapLayerType tileMapLayerType);
 
     Vec2 convertCursorPositionToTileMapSpace();

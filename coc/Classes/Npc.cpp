@@ -724,8 +724,11 @@ void Npc::switchDieToAttack()
 
 void Npc::moveTo(const Vec2& targetPosition)
 {
-    _moveToPosition = targetPosition;
-    updateStatus(NpcStatus::Move);
+    if (_moveToPosition != targetPosition)
+    {
+        _moveToPosition = targetPosition;
+        updateStatus(NpcStatus::Move);
+    }
 }
 
 NpcStatus Npc::getNpcStatus()
@@ -853,4 +856,14 @@ void Npc::onAttackAnimationEnd()
 void Npc::onPrepareToDestory()
 {
     updateStatus(NpcStatus::Die);
+}
+
+list<Vec2> Npc::getPathListTo(const Vec2& targetPosition)
+{
+    list<Vec2> pathList;
+
+    auto position = getPosition();
+
+
+    return pathList;
 }
