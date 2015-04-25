@@ -294,7 +294,7 @@ void Npc::runFightWithEnemyAI(float delta)
     if (_enemyUniqueID != ENEMY_UNIQUE_ID_INVALID)
     {
         auto enemy = GameObjectManager::getInstance()->getGameObjectBy(_enemyUniqueID);
-        if (!enemy || enemy->isDecimated())
+        if (!enemy || enemy->isDying())
         {
             setEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
 
@@ -325,8 +325,6 @@ void Npc::runFightWithEnemyAI(float delta)
                     if (_gotoTargetPositionPathList.empty() ||
                         !_gotoTargetPositionPathList.empty() && _gotoTargetPositionPathList.back() != enemyPosition)
                     {
-                        _moveToPosition = enemyPosition;
-
                         _gotoTargetPositionPathList.clear();
                         _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition);
 
@@ -386,7 +384,7 @@ void Npc::runFightWithEnemyAI(float delta)
         auto gameObjectMap = GameObjectManager::getInstance()->getGameObjectMap();
         for (auto& gameObjectIter : gameObjectMap)
         {
-            if (_forceType == gameObjectIter.second->getForceType() || gameObjectIter.second->isDecimated())
+            if (_forceType == gameObjectIter.second->getForceType() || gameObjectIter.second->isDying())
             {
                 continue;
             }
@@ -429,7 +427,7 @@ bool Npc::isEnemyInAlertRange(GameObject* enemy)
     return result;
 }
 
-bool Npc::isDecimated()
+bool Npc::isDying()
 {
     return _oldStatus == NpcStatus::Die;
 }
@@ -739,13 +737,18 @@ void Npc::moveTo(const Vec2& targetPosition)
     if (_gotoTargetPositionPathList.empty() || 
         !_gotoTargetPositionPathList.empty() && _gotoTargetPositionPathList.back() != targetPosition)
     {
-        _moveToPosition = targetPosition;
-
         auto startPosition = getPosition();
         _gotoTargetPositionPathList.clear();
         _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(startPosition, targetPosition);
 
-        updateStatus(NpcStatus::Move);
+        if (_gotoTargetPositionPathList.empty())
+        {
+            updateStatus(NpcStatus::Stand);
+        }
+        else
+        {
+            updateStatus(NpcStatus::Move);
+        }
     }
 }
 

@@ -42,7 +42,7 @@ public:
 
     void setSelected(bool isSelect);
     bool isSelected();
-    virtual bool isDecimated() = 0;
+    virtual bool isDying() = 0;
 
     GameObjectType getGameObjectType();
     ForceType getForceType();

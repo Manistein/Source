@@ -19,6 +19,9 @@ GameObjectManager* GameObjectManager::getInstance()
 void GameObjectManager::init(GameWorld* gameWorld)
 {
     _gameWorld = gameWorld;
+
+    _npcReadyMoveToEndPositionDataMap[ForceType::Player] = NPC_READY_MOVE_TO_END_POSITION_DATA();
+    _npcReadyMoveToEndPositionDataMap[ForceType::AI] = NPC_READY_MOVE_TO_END_POSITION_DATA();
 }
 
 GameObject* GameObjectManager::createGameObject(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
@@ -53,16 +56,16 @@ void GameObjectManager::removeAllGameObjects()
 
 void GameObjectManager::addDecimatedGameObject(int gameObjcetUniqueID)
 {
-    _decimatedGameObjectIDList.push_back(gameObjcetUniqueID);
+    _dyingGameObjectIDList.push_back(gameObjcetUniqueID);
 }
 
-void GameObjectManager::removeAllDecimatedGameObjects()
+void GameObjectManager::removeAllDyingGameObjects()
 {
-    for (auto gameObjectID : _decimatedGameObjectIDList)
+    for (auto gameObjectID : _dyingGameObjectIDList)
     {
         removeGameObjectBy(gameObjectID);
     }
-    _decimatedGameObjectIDList.clear();
+    _dyingGameObjectIDList.clear();
 }
 
 GameObject* GameObjectManager::getGameObjectBy(int uniqueID)
@@ -97,7 +100,7 @@ bool GameObjectManager::selectGameObjectsBy(const Rect& rect)
 
     for (auto& gameObjectIter : _gameObjectMap)
     {
-        if (gameObjectIter.second->isDecimated())
+        if (gameObjectIter.second->isDying())
         {
             continue;
         }
@@ -123,7 +126,7 @@ GameObject* GameObjectManager::selectGameObjectBy(const Point& cursorPoint)
 
     for (auto& gameObjectIter : _gameObjectMap)
     {
-        if (gameObjectIter.second->isDecimated())
+        if (gameObjectIter.second->isDying())
         {
             continue;
         }
@@ -213,12 +216,15 @@ void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position)
     }
 }
 
-void GameObjectManager::npcSelectedByPlayerMoveTo(const vector<Vec2>& npcMoveEndPositionList)
+void GameObjectManager::setNpcMoveEndPositionList(ForceType forceType, const vector<Vec2>& npcMoveEndPositionList)
 {
-    if (npcMoveEndPositionList.empty())
+    if (npcMoveEndPositionList.empty() || forceType == ForceType::Invalid)
     {
         return;
     }
+
+    _npcReadyMoveToEndPositionDataMap[forceType]._readyMoveToEndPositionNpcIDList.clear();
+    _npcReadyMoveToEndPositionDataMap[forceType]._npcMoveEndPositionList.clear();
 
     int index = 0;
     for (auto& gameObjectIter : _gameObjectMap)
@@ -228,18 +234,55 @@ void GameObjectManager::npcSelectedByPlayerMoveTo(const vector<Vec2>& npcMoveEnd
             continue;
         }
 
-        if (gameObjectIter.second->isSelected() && gameObjectIter.second->getForceType() == ForceType::Player)
+        if (gameObjectIter.second->isSelected() && gameObjectIter.second->getForceType() == forceType)
         {
             if (index >= (int)npcMoveEndPositionList.size())
             {
                 break;
             }
-
-            auto position = npcMoveEndPositionList[index];
-            index++;
-
+            
             auto npc = static_cast<Npc*>(gameObjectIter.second);
-            npc->moveTo(position);
+            _npcReadyMoveToEndPositionDataMap[forceType]._readyMoveToEndPositionNpcIDList.push_back(npc->getUniqueID());
+
+            index++;
+        }
+    }
+
+    _npcReadyMoveToEndPositionDataMap[forceType]._npcMoveEndPositionList.assign(npcMoveEndPositionList.begin(), npcMoveEndPositionList.end());
+}
+
+
+void GameObjectManager::npcMoveToEndPositionOneByOne()
+{
+    for (auto& dataIter : _npcReadyMoveToEndPositionDataMap)
+    {
+        if (dataIter.second._npcMoveEndPositionList.empty() || 
+            dataIter.second._readyMoveToEndPositionNpcIDList.empty())
+        {
+            continue;
+        }
+
+        auto readyMoveToEndPositionNpcID = dataIter.second._readyMoveToEndPositionNpcIDList.back();
+        auto readyMoveToEndPositionNpcIter = _gameObjectMap.find(readyMoveToEndPositionNpcID);
+        if (readyMoveToEndPositionNpcIter == _gameObjectMap.end())
+        {
+            dataIter.second._readyMoveToEndPositionNpcIDList.pop_back();
+            continue;
+        }
+        else
+        {
+            auto readyMoveToEndPositionNpc = static_cast<Npc*>(readyMoveToEndPositionNpcIter->second);
+            if (readyMoveToEndPositionNpc->isDying())
+            {
+                dataIter.second._readyMoveToEndPositionNpcIDList.pop_back();
+                continue;
+            }
+
+            auto moveEndPosition = dataIter.second._npcMoveEndPositionList.back();
+            readyMoveToEndPositionNpc->moveTo(moveEndPosition);
+
+            dataIter.second._readyMoveToEndPositionNpcIDList.pop_back();
+            dataIter.second._npcMoveEndPositionList.pop_back();
         }
     }
 }

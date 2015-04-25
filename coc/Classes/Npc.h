@@ -41,7 +41,7 @@ public:
 
     NpcStatus getNpcStatus();
 
-    bool isDecimated() override;
+    bool isDying() override;
 
     void clearDebugDraw() override;
 private:
@@ -127,7 +127,6 @@ private:
     FaceDirection getFaceToDirection(const Vec2& moveToPosition);
     float getMoveToDuration(const Vec2& moveToPosition);
     float _perSecondMoveSpeedByPixel = 100.0f;
-    Vec2 _moveToPosition;
 
     list<Vec2> getPathListTo(const Vec2& inMapEndPosition);
     list<Vec2> _gotoTargetPositionPathList;

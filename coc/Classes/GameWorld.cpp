@@ -53,10 +53,12 @@ bool GameWorld::init()
     director->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameWorld::onMouseMove, this));
     director->getEventDispatcher()->addCustomEventListener("ClearDebugDraw", CC_CALLBACK_0(GameWorld::onClearDebugDraw, this));
 
-
-    createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2000.0f, 2000.0f));
-    createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2050.0f, 2050.0f));
-    createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2100.0f, 2100.0f));
+    for (int i = 0; i < 10; i ++)
+    {
+        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2000.0f, 2000.0f));
+        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2050.0f, 2050.0f));
+        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2100.0f, 2100.0f));
+    }
 
     createGameObject(GameObjectType::Npc, ForceType::AI, "PinkArcher", Vec2(3150.0f, 2150.0f));
 
@@ -72,9 +74,10 @@ bool GameWorld::init()
 void GameWorld::update(float deltaTime)
 {
     _mapManager->updateMapPosition();
-    _gameObjectManager->gameObjectsDepthSort(_mapManager->getTileSize());
 
-    _gameObjectManager->removeAllDecimatedGameObjects();
+    _gameObjectManager->gameObjectsDepthSort(_mapManager->getTileSize());
+    _gameObjectManager->npcMoveToEndPositionOneByOne();
+    _gameObjectManager->removeAllDyingGameObjects();
 }
 
 void GameWorld::onMouseScroll(Event* event)
@@ -123,7 +126,7 @@ void GameWorld::onMouseRightButtonDown()
     else
     {
         auto npcMoveEndPositionList = _mapManager->getNpcMoveEndPositionListBy(gameObjectSelectedByPlayerCount);
-        _gameObjectManager->npcSelectedByPlayerMoveTo(npcMoveEndPositionList);
+        _gameObjectManager->setNpcMoveEndPositionList(ForceType::Player, npcMoveEndPositionList);
     }
 
     auto enemy = _gameObjectManager->selectEnemyBy(_cursorPoint);
@@ -192,11 +195,14 @@ list<Vec2> GameWorld::computePathListBetween(const Vec2& inMapStartPosition, con
     auto endTileSubscript = _mapManager->getTileSubscript(inMapEndPosition);
     auto endTileNode = _mapManager->getTileNodeAt((int)endTileSubscript.x, (int)endTileSubscript.y);
 
-    auto tileNodePathList = AutoFindPathHelper::computeTileNodePathListBetween(startTileNode, endTileNode);
-
-    for (auto tileNodePath: tileNodePathList)
+    if (endTileNode->gid != OBSTACLE_ID)
     {
-        pointPathList.push_front(tileNodePath->leftTopPosition + distanceBetweenTileAndNpc);
+        auto tileNodePathList = AutoFindPathHelper::computeTileNodePathListBetween(startTileNode, endTileNode);
+
+        for (auto tileNodePath : tileNodePathList)
+        {
+            pointPathList.push_front(tileNodePath->leftTopPosition + distanceBetweenTileAndNpc);
+        }
     }
 
     return pointPathList;
