@@ -7,6 +7,7 @@
 #include "GameWorld.h"
 #include "BulletManager.h"
 #include "GameWorldCallBackFunctionsManager.h"
+#include "AutoFindPathHelper.h"
 
 static Vec2 s_mouseDownPoint;
 const float SINGLE_CLICK_AREA = 5.0f;
@@ -107,12 +108,17 @@ void GameWorld::onMouseLeftButtonUp()
 
 void GameWorld::onMouseRightButtonDown()
 {
+    auto inMapCursorPosition = _mapManager->convertCursorPositionToTileMapSpace();
+    if (_mapManager->isInObstacleTile(inMapCursorPosition))
+    {
+        return;
+    }
+
     auto gameObjectSelectedByPlayerCount = _gameObjectManager->getGameObjectSelectedByPlayerCount();
 
     if (gameObjectSelectedByPlayerCount == 1)
     {
-        auto targetPosition = _mapManager->convertCursorPositionToTileMapSpace();
-        _gameObjectManager->npcSelectedByPlayerMoveTo(targetPosition);
+        _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition);
     }
     else
     {
@@ -173,4 +179,25 @@ void GameWorld::syncCursorPoint(const Vec2& cursorPoint)
     _cursorPoint = cursorPoint;
     _mapManager->syncCursorPoint(cursorPoint);
     _gameObjectSelectBox->syncCursorPoint(cursorPoint);
+}
+
+list<Vec2> GameWorld::computePathListBetween(const Vec2& inMapStartPosition, const Vec2& inMapEndPosition)
+{
+    list<Vec2> pointPathList;
+
+    auto startTileSubscript = _mapManager->getTileSubscript(inMapStartPosition);
+    auto startTileNode = _mapManager->getTileNodeAt((int)startTileSubscript.x, (int)startTileSubscript.y);
+    auto distanceBetweenTileAndNpc = inMapStartPosition - startTileNode->leftTopPosition;
+
+    auto endTileSubscript = _mapManager->getTileSubscript(inMapEndPosition);
+    auto endTileNode = _mapManager->getTileNodeAt((int)endTileSubscript.x, (int)endTileSubscript.y);
+
+    auto tileNodePathList = AutoFindPathHelper::computeTileNodePathListBetween(startTileNode, endTileNode);
+
+    for (auto tileNodePath: tileNodePathList)
+    {
+        pointPathList.push_front(tileNodePath->leftTopPosition + distanceBetweenTileAndNpc);
+    }
+
+    return pointPathList;
 }

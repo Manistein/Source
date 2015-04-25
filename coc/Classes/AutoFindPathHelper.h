@@ -7,7 +7,7 @@ class AutoFindPathHelper
 {
 public:
     static void initTileNodeTable(const vector<vector<TileNode*>>& tileNodeTable);
-    static list<TileNode*> computePathListBetween(TileNode* startNode, TileNode* endNode);
+    static list<TileNode*> computeTileNodePathListBetween(TileNode* startNode, TileNode* endNode);
 
 private:
     static void reset();

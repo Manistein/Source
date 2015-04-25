@@ -201,6 +201,24 @@ vector<Vec2> MapManager::getNpcMoveEndPositionListBy(int npcSelectedByPlayerCoun
     return npcMoveEndPositionList;
 }
 
+bool MapManager::isInObstacleTile(const Vec2& inMapPosition)
+{
+    bool result = false;
+
+    auto gameObjectLayer = _tileMap->getLayer(s_tileMapLayerTypeToString[TileMapLayerType::GameObjcetLayer]);
+    if (gameObjectLayer)
+    {
+        auto tileSubscript = getTileSubscript(inMapPosition);
+        auto tileGID = gameObjectLayer->getTileGIDAt(tileSubscript);
+        if (tileGID == OBSTACLE_ID)
+        {
+            result = true;
+        }
+    }
+
+    return result;
+}
+
 int MapManager::insertNpcMoveEndPositionInto(vector<Vec2>& npcMoveEndPositionList, int columnIndex, int minRowIndex, int maxRowIndex, int npcSelectedByPlayerCount, Vec2 deltaFromCursorToTile)
 {
     int count = 0;

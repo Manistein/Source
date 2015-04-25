@@ -319,10 +319,17 @@ void Npc::runFightWithEnemyAI(float delta)
                 _coolDownTimeInMoveStatus += delta;
                 if (_coolDownTimeInMoveStatus >= COOL_DOWN_TIME_IN_MOVE_STATUS_INTERVAL)
                 {
+                    auto npcPosition = getPosition();
                     auto enemyPosition = enemy->getPosition();
-                    if (_moveToPosition != enemyPosition)
+
+                    if (_gotoTargetPositionPathList.empty() ||
+                        !_gotoTargetPositionPathList.empty() && _gotoTargetPositionPathList.back() != enemyPosition)
                     {
                         _moveToPosition = enemyPosition;
+
+                        _gotoTargetPositionPathList.clear();
+                        _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition);
+
                         updateStatus(NpcStatus::Move);
                     }
 
@@ -333,7 +340,12 @@ void Npc::runFightWithEnemyAI(float delta)
             case NpcStatus::Stand:
             case NpcStatus::Attack:
             {
-                _moveToPosition = enemy->getPosition();
+                auto npcPosition = getPosition();
+                auto enemyPosition = enemy->getPosition();
+
+                _gotoTargetPositionPathList.clear();
+                _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition);
+
                 updateStatus(NpcStatus::Move);
             }
                 break;
@@ -724,9 +736,15 @@ void Npc::switchDieToAttack()
 
 void Npc::moveTo(const Vec2& targetPosition)
 {
-    if (_moveToPosition != targetPosition)
+    if (_gotoTargetPositionPathList.empty() || 
+        !_gotoTargetPositionPathList.empty() && _gotoTargetPositionPathList.back() != targetPosition)
     {
         _moveToPosition = targetPosition;
+
+        auto startPosition = getPosition();
+        _gotoTargetPositionPathList.clear();
+        _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(startPosition, targetPosition);
+
         updateStatus(NpcStatus::Move);
     }
 }
@@ -781,8 +799,16 @@ float Npc::getMoveToDuration(const Vec2& moveToPosition)
 
 void Npc::onMoveTo()
 {
-    auto currentFaceDirection = getFaceToDirection(_moveToPosition);
-    float moveToDuration = getMoveToDuration(_moveToPosition);
+    if (_gotoTargetPositionPathList.empty())
+    {
+        return;
+    }
+
+    auto moveToPosition = _gotoTargetPositionPathList.front();
+    _gotoTargetPositionPathList.pop_front();
+
+    auto currentFaceDirection = getFaceToDirection(moveToPosition);
+    float moveToDuration = getMoveToDuration(moveToPosition);
 
     auto animateIter = _moveAnimateMap.find(currentFaceDirection);
     if (animateIter != _moveAnimateMap.end())
@@ -798,8 +824,18 @@ void Npc::onMoveTo()
 
         stopActionByTag(MOVE_TO_ACTION_TAG);
 
-        auto moveTo = MoveTo::create(moveToDuration, _moveToPosition);
-        auto onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::updateStatus, this, NpcStatus::Stand));
+        auto moveTo = MoveTo::create(moveToDuration, moveToPosition);
+
+        CallFunc* onMoveEndEvent = nullptr;
+        if (_gotoTargetPositionPathList.empty())
+        {
+            onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::updateStatus, this, NpcStatus::Stand));
+        }
+        else
+        {
+            onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::onMoveTo, this));
+        }
+        
         auto sequenceAction = Sequence::create(moveTo, onMoveEndEvent, nullptr);
         sequenceAction->setTag(MOVE_TO_ACTION_TAG);
 
@@ -809,6 +845,8 @@ void Npc::onMoveTo()
 
 void Npc::onStand()
 {
+    _gotoTargetPositionPathList.clear();
+
     stopAllActions();
 
     auto standAnimateIter = _standAnimateMap.find(_faceDirection);
@@ -820,6 +858,8 @@ void Npc::onStand()
 
 void Npc::onAttack()
 {
+    _gotoTargetPositionPathList.clear();
+
     stopAllActions();
 
     auto attackAnimateIter = _attackAnimateMap.find(_faceDirection);
@@ -831,6 +871,8 @@ void Npc::onAttack()
 
 void Npc::onDie()
 {
+    _gotoTargetPositionPathList.clear();
+
     stopAllActions();
 
     runAction(_dieAnimate);
@@ -858,12 +900,10 @@ void Npc::onPrepareToDestory()
     updateStatus(NpcStatus::Die);
 }
 
-list<Vec2> Npc::getPathListTo(const Vec2& targetPosition)
+list<Vec2> Npc::getPathListTo(const Vec2& inMapEndPosition)
 {
-    list<Vec2> pathList;
-
-    auto position = getPosition();
-
+    auto inMapStartPosition = getPosition();
+    list<Vec2> pathList = _gameWorld->_computePathListBetween(inMapStartPosition, inMapEndPosition);
 
     return pathList;
 }
