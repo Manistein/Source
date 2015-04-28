@@ -272,7 +272,7 @@ void Npc::update(float delta)
     runFightWithEnemyAI(delta);
 }
 
-void Npc::updateStatus(NpcStatus newStatus)
+void Npc::tryToUpdateStatus(NpcStatus newStatus)
 {
     auto& canSwitch = _switchStatusFunctions[(int)_oldStatus][(int)newStatus].canSwitch;
     auto& switchFunction = _switchStatusFunctions[(int)_oldStatus][(int)newStatus].switchFunction;
@@ -300,7 +300,7 @@ void Npc::runFightWithEnemyAI(float delta)
 
             if (_oldStatus == NpcStatus::Attack)
             {
-                updateStatus(NpcStatus::Stand);
+                tryToUpdateStatus(NpcStatus::Stand);
             }
 
             return;
@@ -308,7 +308,7 @@ void Npc::runFightWithEnemyAI(float delta)
 
         if (isEnemyInAttackRange(enemy))
         {
-            updateStatus(NpcStatus::Attack);
+            tryToUpdateStatus(NpcStatus::Attack);
         }
         else if (isEnemyInAlertRange(enemy))
         {
@@ -328,7 +328,7 @@ void Npc::runFightWithEnemyAI(float delta)
                         _gotoTargetPositionPathList.clear();
                         _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition);
 
-                        updateStatus(NpcStatus::Move);
+                        tryToUpdateStatus(NpcStatus::Move);
                     }
 
                     _coolDownTimeInMoveStatus = 0.0f;
@@ -344,7 +344,7 @@ void Npc::runFightWithEnemyAI(float delta)
                 _gotoTargetPositionPathList.clear();
                 _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition);
 
-                updateStatus(NpcStatus::Move);
+                tryToUpdateStatus(NpcStatus::Move);
             }
                 break;
             case NpcStatus::Die:
@@ -363,7 +363,7 @@ void Npc::runFightWithEnemyAI(float delta)
             case NpcStatus::Move:
             case NpcStatus::Attack:
             {
-                updateStatus(NpcStatus::Stand);
+                tryToUpdateStatus(NpcStatus::Stand);
             }
                 break;
             case NpcStatus::Stand:
@@ -743,11 +743,11 @@ void Npc::moveTo(const Vec2& targetPosition)
 
         if (_gotoTargetPositionPathList.empty())
         {
-            updateStatus(NpcStatus::Stand);
+            tryToUpdateStatus(NpcStatus::Stand);
         }
         else
         {
-            updateStatus(NpcStatus::Move);
+            tryToUpdateStatus(NpcStatus::Move);
         }
     }
 }
@@ -832,7 +832,7 @@ void Npc::onMoveTo()
         CallFunc* onMoveEndEvent = nullptr;
         if (_gotoTargetPositionPathList.empty())
         {
-            onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::updateStatus, this, NpcStatus::Stand));
+            onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::tryToUpdateStatus, this, NpcStatus::Stand));
         }
         else
         {
@@ -900,7 +900,7 @@ void Npc::onAttackAnimationEnd()
 
 void Npc::onPrepareToDestory()
 {
-    updateStatus(NpcStatus::Die);
+    tryToUpdateStatus(NpcStatus::Die);
 }
 
 list<Vec2> Npc::getPathListTo(const Vec2& inMapEndPosition)

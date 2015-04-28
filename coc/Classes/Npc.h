@@ -56,7 +56,7 @@ private:
     void initDebugDraw();
 
     void update(float delta) override;
-    void updateStatus(NpcStatus newStatus);
+    void tryToUpdateStatus(NpcStatus newStatus);
 
     void debugDraw() override;
     void onPrepareToDestory() override;
