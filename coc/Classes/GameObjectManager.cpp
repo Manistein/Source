@@ -242,6 +242,7 @@ void GameObjectManager::setNpcMoveEndPositionList(ForceType forceType, const vec
             }
             
             auto npc = static_cast<Npc*>(gameObjectIter.second);
+            npc->setReadyToMoveStatus(true);
             _npcReadyMoveToEndPositionDataMap[forceType]._readyMoveToEndPositionNpcIDList.push_back(npc->getUniqueID());
 
             index++;

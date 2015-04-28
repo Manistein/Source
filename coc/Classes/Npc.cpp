@@ -272,7 +272,7 @@ void Npc::update(float delta)
     runFightWithEnemyAI(delta);
 }
 
-void Npc::tryToUpdateStatus(NpcStatus newStatus)
+void Npc::tryUpdateStatus(NpcStatus newStatus)
 {
     auto& canSwitch = _switchStatusFunctions[(int)_oldStatus][(int)newStatus].canSwitch;
     auto& switchFunction = _switchStatusFunctions[(int)_oldStatus][(int)newStatus].switchFunction;
@@ -300,7 +300,7 @@ void Npc::runFightWithEnemyAI(float delta)
 
             if (_oldStatus == NpcStatus::Attack)
             {
-                tryToUpdateStatus(NpcStatus::Stand);
+                tryUpdateStatus(NpcStatus::Stand);
             }
 
             return;
@@ -308,7 +308,7 @@ void Npc::runFightWithEnemyAI(float delta)
 
         if (isEnemyInAttackRange(enemy))
         {
-            tryToUpdateStatus(NpcStatus::Attack);
+            tryUpdateStatus(NpcStatus::Attack);
         }
         else if (isEnemyInAlertRange(enemy))
         {
@@ -328,7 +328,7 @@ void Npc::runFightWithEnemyAI(float delta)
                         _gotoTargetPositionPathList.clear();
                         _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition);
 
-                        tryToUpdateStatus(NpcStatus::Move);
+                        tryUpdateStatus(NpcStatus::Move);
                     }
 
                     _coolDownTimeInMoveStatus = 0.0f;
@@ -344,7 +344,7 @@ void Npc::runFightWithEnemyAI(float delta)
                 _gotoTargetPositionPathList.clear();
                 _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition);
 
-                tryToUpdateStatus(NpcStatus::Move);
+                tryUpdateStatus(NpcStatus::Move);
             }
                 break;
             case NpcStatus::Die:
@@ -353,6 +353,7 @@ void Npc::runFightWithEnemyAI(float delta)
         }
         else
         {
+            //ai控制的npc脱战，则立即站立，玩家控制的npc脱战以后，仍然可以移动。
             if (_forceType == ForceType::Player)
             {
                 return;
@@ -363,7 +364,7 @@ void Npc::runFightWithEnemyAI(float delta)
             case NpcStatus::Move:
             case NpcStatus::Attack:
             {
-                tryToUpdateStatus(NpcStatus::Stand);
+                tryUpdateStatus(NpcStatus::Stand);
             }
                 break;
             case NpcStatus::Stand:
@@ -376,7 +377,8 @@ void Npc::runFightWithEnemyAI(float delta)
     }
     else
     {
-        if (_forceType == ForceType::Player && _oldStatus == NpcStatus::Move)
+        if (_forceType == ForceType::Player && _oldStatus == NpcStatus::Move ||
+            _isReadyToMove)
         {
             return;
         }
@@ -734,6 +736,8 @@ void Npc::switchDieToAttack()
 
 void Npc::moveTo(const Vec2& targetPosition)
 {
+    _isReadyToMove = false;
+
     if (_gotoTargetPositionPathList.empty() || 
         !_gotoTargetPositionPathList.empty() && _gotoTargetPositionPathList.back() != targetPosition)
     {
@@ -743,13 +747,18 @@ void Npc::moveTo(const Vec2& targetPosition)
 
         if (_gotoTargetPositionPathList.empty())
         {
-            tryToUpdateStatus(NpcStatus::Stand);
+            tryUpdateStatus(NpcStatus::Stand);
         }
         else
         {
-            tryToUpdateStatus(NpcStatus::Move);
+            tryUpdateStatus(NpcStatus::Move);
         }
     }
+}
+
+void Npc::setReadyToMoveStatus(bool isReadyToMove)
+{
+    _isReadyToMove = isReadyToMove;
 }
 
 NpcStatus Npc::getNpcStatus()
@@ -832,7 +841,7 @@ void Npc::onMoveTo()
         CallFunc* onMoveEndEvent = nullptr;
         if (_gotoTargetPositionPathList.empty())
         {
-            onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::tryToUpdateStatus, this, NpcStatus::Stand));
+            onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::tryUpdateStatus, this, NpcStatus::Stand));
         }
         else
         {
@@ -900,7 +909,7 @@ void Npc::onAttackAnimationEnd()
 
 void Npc::onPrepareToDestory()
 {
-    tryToUpdateStatus(NpcStatus::Die);
+    tryUpdateStatus(NpcStatus::Die);
 }
 
 list<Vec2> Npc::getPathListTo(const Vec2& inMapEndPosition)
