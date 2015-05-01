@@ -216,7 +216,7 @@ void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position)
     }
 }
 
-void GameObjectManager::setNpcMoveEndPositionList(ForceType forceType, const vector<Vec2>& npcMoveEndPositionList)
+void GameObjectManager::setSelectedNpcMoveEndPositionList(ForceType forceType, const vector<Vec2>& npcMoveEndPositionList)
 {
     if (npcMoveEndPositionList.empty() || forceType == ForceType::Invalid)
     {

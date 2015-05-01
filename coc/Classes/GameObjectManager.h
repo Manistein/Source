@@ -39,7 +39,7 @@ public:
     int getGameObjectSelectedByPlayerCount();
 
     void npcSelectedByPlayerMoveTo(const Vec2& position);
-    void setNpcMoveEndPositionList(ForceType forceType, const vector<Vec2>& npcMoveEndPositionList);
+    void setSelectedNpcMoveEndPositionList(ForceType forceType, const vector<Vec2>& npcMoveEndPositionList);
     void npcMoveToEndPositionOneByOne();
 
     void setSelectedGameObjectEnemyUniqueID(int uniqueID);

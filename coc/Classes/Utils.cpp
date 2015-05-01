@@ -72,3 +72,16 @@ bool GameUtils::isFloatEqual(float left, float right)
 
     return result;
 }
+
+bool GameUtils::isVec2Equal(const Vec2& left, const Vec2& right)
+{
+    bool result = false;
+
+    if (GameUtils::isFloatEqual(left.x, right.x) && GameUtils::isFloatEqual(left.y, right.y))
+    {
+        result = true;
+        return result;
+    }
+
+    return result;
+}

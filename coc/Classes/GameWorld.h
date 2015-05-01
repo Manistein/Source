@@ -37,5 +37,7 @@ private:
     GameObjectManager* _gameObjectManager = nullptr;
     GameObjectSelectBox* _gameObjectSelectBox = nullptr;
     BulletManager* _bulletManager = nullptr;
+
     Vec2 _cursorPoint;
+    Vec2 _previousClickedCursorPoint;
 };

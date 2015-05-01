@@ -8,6 +8,7 @@
 #include "BulletManager.h"
 #include "GameWorldCallBackFunctionsManager.h"
 #include "AutoFindPathHelper.h"
+#include "Utils.h"
 
 static Vec2 s_mouseDownPoint;
 const float SINGLE_CLICK_AREA = 5.0f;
@@ -112,10 +113,13 @@ void GameWorld::onMouseLeftButtonUp()
 void GameWorld::onMouseRightButtonDown()
 {
     auto inMapCursorPosition = _mapManager->convertCursorPositionToTileMapSpace();
-    if (_mapManager->isInObstacleTile(inMapCursorPosition))
+    if (_mapManager->isInObstacleTile(inMapCursorPosition) || 
+        GameUtils::isVec2Equal(_cursorPoint, _previousClickedCursorPoint))
     {
         return;
     }
+
+    _previousClickedCursorPoint = _cursorPoint;
 
     auto gameObjectSelectedByPlayerCount = _gameObjectManager->getGameObjectSelectedByPlayerCount();
 
@@ -126,7 +130,7 @@ void GameWorld::onMouseRightButtonDown()
     else
     {
         auto npcMoveEndPositionList = _mapManager->getNpcMoveEndPositionListBy(gameObjectSelectedByPlayerCount);
-        _gameObjectManager->setNpcMoveEndPositionList(ForceType::Player, npcMoveEndPositionList);
+        _gameObjectManager->setSelectedNpcMoveEndPositionList(ForceType::Player, npcMoveEndPositionList);
     }
 
     auto enemy = _gameObjectManager->selectEnemyBy(_cursorPoint);
@@ -197,11 +201,24 @@ list<Vec2> GameWorld::computePathListBetween(const Vec2& inMapStartPosition, con
 
     if (endTileNode->gid != OBSTACLE_ID)
     {
-        auto tileNodePathList = AutoFindPathHelper::computeTileNodePathListBetween(startTileNode, endTileNode);
-
-        for (auto tileNodePath : tileNodePathList)
+        if (startTileNode != endTileNode)
         {
-            pointPathList.push_front(tileNodePath->leftTopPosition + distanceBetweenTileAndNpc);
+            auto tileNodePathList = AutoFindPathHelper::computeTileNodePathListBetween(startTileNode, endTileNode);
+
+            for (auto tileNodePath : tileNodePathList)
+            {
+                pointPathList.push_front(tileNodePath->leftTopPosition + distanceBetweenTileAndNpc);
+            }
+
+            if (!pointPathList.empty())
+            {
+                //第一个点是起点，因此可以忽略
+                pointPathList.pop_front();
+            }
+        }
+        else
+        {
+            pointPathList.push_front(inMapEndPosition);
         }
     }
 

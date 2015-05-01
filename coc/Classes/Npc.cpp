@@ -738,21 +738,17 @@ void Npc::moveTo(const Vec2& targetPosition)
 {
     _isReadyToMove = false;
 
-    if (_gotoTargetPositionPathList.empty() || 
-        !_gotoTargetPositionPathList.empty() && _gotoTargetPositionPathList.back() != targetPosition)
-    {
-        auto startPosition = getPosition();
-        _gotoTargetPositionPathList.clear();
-        _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(startPosition, targetPosition);
+    auto startPosition = getPosition();
+    _gotoTargetPositionPathList.clear();
+    _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(startPosition, targetPosition);
 
-        if (_gotoTargetPositionPathList.empty())
-        {
-            tryUpdateStatus(NpcStatus::Stand);
-        }
-        else
-        {
-            tryUpdateStatus(NpcStatus::Move);
-        }
+    if (_gotoTargetPositionPathList.empty())
+    {
+        tryUpdateStatus(NpcStatus::Stand);
+    }
+    else
+    {
+        tryUpdateStatus(NpcStatus::Move);
     }
 }
 
@@ -813,6 +809,7 @@ void Npc::onMoveTo()
 {
     if (_gotoTargetPositionPathList.empty())
     {
+        tryUpdateStatus(NpcStatus::Stand);
         return;
     }
 
@@ -838,16 +835,7 @@ void Npc::onMoveTo()
 
         auto moveTo = MoveTo::create(moveToDuration, moveToPosition);
 
-        CallFunc* onMoveEndEvent = nullptr;
-        if (_gotoTargetPositionPathList.empty())
-        {
-            onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::tryUpdateStatus, this, NpcStatus::Stand));
-        }
-        else
-        {
-            onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::onMoveTo, this));
-        }
-        
+        auto onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::onMoveTo, this));
         auto sequenceAction = Sequence::create(moveTo, onMoveEndEvent, nullptr);
         sequenceAction->setTag(MOVE_TO_ACTION_TAG);
 
