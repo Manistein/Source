@@ -7,6 +7,7 @@ public:
 
     void setMouseDownStatus(bool isMouseDown);
     void setMouseDownPoint(const Vec2& point);
+
     void syncCursorPoint(const Vec2& point);
     void update(float delta) override;
     Rect getRect();

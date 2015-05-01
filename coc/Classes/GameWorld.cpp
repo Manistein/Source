@@ -74,7 +74,10 @@ bool GameWorld::init()
 
 void GameWorld::update(float deltaTime)
 {
-    _mapManager->updateMapPosition();
+    if (!_isLeftMouseButtonDown)
+    {
+        _mapManager->updateMapPosition();
+    }
 
     _gameObjectManager->gameObjectsDepthSort(_mapManager->getTileSize());
     _gameObjectManager->npcMoveToEndPositionOneByOne();
@@ -88,6 +91,8 @@ void GameWorld::onMouseScroll(Event* event)
 
 void GameWorld::onMouseLeftButtonDown()
 {
+    _isLeftMouseButtonDown = true;
+
     _gameObjectSelectBox->setMouseDownStatus(true);
     _gameObjectSelectBox->setMouseDownPoint(_cursorPoint);
 
@@ -96,6 +101,8 @@ void GameWorld::onMouseLeftButtonDown()
 
 void GameWorld::onMouseLeftButtonUp()
 {
+    _isLeftMouseButtonDown = false;
+
     _gameObjectSelectBox->setMouseDownStatus(false);
     _gameObjectManager->cancelAllGameObjectSelected();
 

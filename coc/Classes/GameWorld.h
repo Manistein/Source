@@ -40,4 +40,6 @@ private:
 
     Vec2 _cursorPoint;
     Vec2 _previousClickedCursorPoint;
+
+    bool _isLeftMouseButtonDown = false;
 };
