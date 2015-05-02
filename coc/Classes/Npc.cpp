@@ -15,6 +15,7 @@ const float ATTACK_ANIMATE_DELAY_PER_UNIT = 0.15f;
 
 const string SHADOW_TEXTURE_NAME = "Shadow.png";
 const string SHOW_WORLD_POSITION_CHILD_NAME = "ShowWorldPositionChildName";
+const string SHOW_NPC_STATUS_CHILD_NAME = "ShowNpcStatusChildName";
 
 const int MOVE_TO_ACTION_TAG = 1;
 
@@ -214,6 +215,7 @@ void Npc::initBattleData(const string& jobName)
     _maxAttackRadius = npcTemplate->maxAttackRadius;
     _maxAlertRadius = npcTemplate->maxAlertRadius;
     _perSecondAttackCount = npcTemplate->perSecondAttackCount;
+    _perSecondMoveSpeedByPixel = npcTemplate->perSecondMoveSpeedByPixel;
     _bulletType = npcTemplate->bulletType;
     _damageType = npcTemplate->damageType;
 }
@@ -229,8 +231,12 @@ void Npc::initDebugDraw()
     auto worldPositionLabel = Label::createWithTTF(ttfConfig, "");
     worldPositionLabel->setPosition(Vec2::ZERO);
     worldPositionLabel->setName(SHOW_WORLD_POSITION_CHILD_NAME);
-
     _debugDrawNode->addChild(worldPositionLabel, 1);
+
+    auto npcStatusLabel = Label::createWithTTF(ttfConfig, "");
+    npcStatusLabel->setPosition(Vec2(0.0f, 20.0f));
+    npcStatusLabel->setName(SHOW_NPC_STATUS_CHILD_NAME);
+    _debugDrawNode->addChild(npcStatusLabel, 1);
 }
 
 void Npc::debugDraw()
@@ -253,6 +259,26 @@ void Npc::debugDraw()
 
     auto worldPositionLabel = _debugDrawNode->getChildByName<Label*>(SHOW_WORLD_POSITION_CHILD_NAME);
     worldPositionLabel->setString(StringUtils::format("cx = %.2f, cy = %.2f", worldPosition.x, worldPosition.y));
+
+    auto npcStatusLabel = _debugDrawNode->getChildByName<Label*>(SHOW_NPC_STATUS_CHILD_NAME);
+    string statusName = "Current Status: ";
+    switch (_oldStatus)
+    {
+    case NpcStatus::Attack:
+        statusName += "Attack";
+        break;
+    case NpcStatus::Move:
+        statusName += "Move";
+        break;
+    case NpcStatus::Stand:
+        statusName += "Stand";
+        break;
+    case NpcStatus::Die:
+        statusName += "Die";
+        break;
+    default: break;
+    }
+    npcStatusLabel->setString(statusName);
 }
 
 void Npc::clearDebugDraw()
@@ -328,7 +354,14 @@ void Npc::runFightWithEnemyAI(float delta)
                         _gotoTargetPositionPathList.clear();
                         _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition);
 
-                        tryUpdateStatus(NpcStatus::Move);
+                        if (_gotoTargetPositionPathList.empty())
+                        {
+                            tryUpdateStatus(NpcStatus::Stand);
+                        }
+                        else
+                        {
+                            tryUpdateStatus(NpcStatus::Move);
+                        }
                     }
 
                     _coolDownTimeInMoveStatus = 0.0f;
@@ -343,8 +376,14 @@ void Npc::runFightWithEnemyAI(float delta)
 
                 _gotoTargetPositionPathList.clear();
                 _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition);
-
-                tryUpdateStatus(NpcStatus::Move);
+                if (_gotoTargetPositionPathList.empty())
+                {
+                    tryUpdateStatus(NpcStatus::Stand);
+                }
+                else
+                {
+                    tryUpdateStatus(NpcStatus::Move);
+                }
             }
                 break;
             case NpcStatus::Die:
@@ -633,7 +672,7 @@ bool Npc::canSwitchAttackToMove()
 {
     bool result = false;
 
-    if (_forceType == ForceType::Player)
+    if (_forceType == ForceType::Player && isSelected())
     {
         result = true;
         return result;
@@ -646,6 +685,7 @@ bool Npc::canSwitchAttackToMove()
 
     if (attackAnimationElapsed >= attackAnimationDuration * 0.8f)
     {
+        _gameWorld->_createBullet(_bulletType, _uniqueID, _enemyUniqueID);
         result = true;
     }
 
@@ -809,7 +849,6 @@ void Npc::onMoveTo()
 {
     if (_gotoTargetPositionPathList.empty())
     {
-        tryUpdateStatus(NpcStatus::Stand);
         return;
     }
 
@@ -835,7 +874,15 @@ void Npc::onMoveTo()
 
         auto moveTo = MoveTo::create(moveToDuration, moveToPosition);
 
-        auto onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::onMoveTo, this));
+        CallFunc* onMoveEndEvent = nullptr;
+        if (_gotoTargetPositionPathList.empty())
+        {
+            onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::tryUpdateStatus, this, NpcStatus::Stand));
+        }
+        else
+        {
+            onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::onMoveTo, this));
+        }
         auto sequenceAction = Sequence::create(moveTo, onMoveEndEvent, nullptr);
         sequenceAction->setTag(MOVE_TO_ACTION_TAG);
 

@@ -124,6 +124,7 @@ bool TemplateManager::initNpcTemplates()
             npcTemplate->maxAttackRadius = tabFileReader.getInteger(i, "MaxAttackRadius");
             npcTemplate->maxAlertRadius = tabFileReader.getInteger(i, "MaxAlertRadius");
             npcTemplate->perSecondAttackCount = tabFileReader.getInteger(i, "PerSecondAttackCount");
+            npcTemplate->perSecondMoveSpeedByPixel = tabFileReader.getFloat(i, "PerSecondMoveSpeedByPixel");
 
             auto bulletTypeName = tabFileReader.getString(i, "BulletType");
             auto bulletTypeIter = s_bulletTypeStringToEnum.find(bulletTypeName);

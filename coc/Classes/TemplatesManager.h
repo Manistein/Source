@@ -30,6 +30,7 @@ struct NpcTemplate
     int maxAttackRadius = 0;
     int maxAlertRadius = 0;
     int perSecondAttackCount = 0;
+    float perSecondMoveSpeedByPixel = 0.0f;
     BulletType bulletType = BulletType::Invalid;
     DamageType damageType = DamageType::Invalid;
 };
