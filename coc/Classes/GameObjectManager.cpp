@@ -131,11 +131,7 @@ GameObject* GameObjectManager::selectGameObjectBy(const Point& cursorPoint)
             continue;
         }
 
-        auto parentNode = gameObjectIter.second->getParent();
-        auto worldPosition = parentNode->convertToWorldSpace(gameObjectIter.second->getPosition());
-        auto contentSize = gameObjectIter.second->getContentSize();
-
-        Rect gameObjectRect(worldPosition.x - contentSize.width / 2.0f, worldPosition.y - contentSize.height / 2.0f, contentSize.width, contentSize.height);
+        auto gameObjectRect = computeGameObjectRect(gameObjectIter.second);
 
         if (gameObjectRect.containsPoint(cursorPoint))
         {
@@ -153,11 +149,22 @@ GameObject* GameObjectManager::selectEnemyBy(const Point& cursorPoint)
 {
     GameObject* enemy = nullptr;
 
-    enemy = selectGameObjectBy(cursorPoint);
-    if (enemy && enemy->getForceType() != ForceType::AI)
+    for (auto& gameObjectIter : _gameObjectMap)
     {
-        enemy->setSelected(false);
-        enemy = nullptr;
+        if (gameObjectIter.second->isDying() || gameObjectIter.second->getForceType() != ForceType::AI)
+        {
+            continue;
+        }
+
+        auto gameObjectRect = computeGameObjectRect(gameObjectIter.second);
+
+        if (gameObjectRect.containsPoint(cursorPoint))
+        {
+            enemy = gameObjectIter.second;
+            gameObjectIter.second->setSelected(true);
+
+            break;
+        }
     }
 
     return enemy;
@@ -307,4 +314,13 @@ void GameObjectManager::clearGameObjectDebugDraw()
     {
         gameObjectIter.second->clearDebugDraw();
     }
+}
+
+Rect GameObjectManager::computeGameObjectRect(GameObject* gameObject)
+{
+    auto parentNode = gameObject->getParent();
+    auto worldPosition = parentNode->convertToWorldSpace(gameObject->getPosition());
+    auto contentSize = gameObject->getContentSize();
+
+    return Rect(worldPosition.x - contentSize.width / 2.0f, worldPosition.y - contentSize.height / 2.0f, contentSize.width, contentSize.height);
 }

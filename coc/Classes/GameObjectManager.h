@@ -45,6 +45,8 @@ public:
     void setSelectedGameObjectEnemyUniqueID(int uniqueID);
     void clearGameObjectDebugDraw();
 private:
+    Rect computeGameObjectRect(GameObject* gameObject);
+
     GameObjectMap _gameObjectMap;
     unordered_map<ForceType, NPC_READY_MOVE_TO_END_POSITION_DATA> _npcReadyMoveToEndPositionDataMap;
 
