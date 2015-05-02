@@ -201,10 +201,10 @@ list<Vec2> GameWorld::computePathListBetween(const Vec2& inMapStartPosition, con
 
     auto startTileSubscript = _mapManager->getTileSubscript(inMapStartPosition);
     auto startTileNode = _mapManager->getTileNodeAt((int)startTileSubscript.x, (int)startTileSubscript.y);
-    auto distanceBetweenTileAndNpc = inMapStartPosition - startTileNode->leftTopPosition;
 
     auto endTileSubscript = _mapManager->getTileSubscript(inMapEndPosition);
     auto endTileNode = _mapManager->getTileNodeAt((int)endTileSubscript.x, (int)endTileSubscript.y);
+    auto distanceBetweenTileAndNpc = inMapEndPosition - endTileNode->leftTopPosition;
 
     if (endTileNode->gid != OBSTACLE_ID)
     {
