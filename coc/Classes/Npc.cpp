@@ -319,7 +319,7 @@ void Npc::runFightWithEnemyAI(float delta)
     if (_enemyUniqueID != ENEMY_UNIQUE_ID_INVALID)
     {
         auto enemy = GameObjectManager::getInstance()->getGameObjectBy(_enemyUniqueID);
-        if (!enemy || enemy->isDying())
+        if (!enemy || enemy->isReadyToRemove())
         {
             setEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
 
@@ -467,7 +467,7 @@ bool Npc::isEnemyInAlertRange(GameObject* enemy)
     return result;
 }
 
-bool Npc::isDying()
+bool Npc::isReadyToRemove()
 {
     return _oldStatus == NpcStatus::Die;
 }
@@ -933,7 +933,7 @@ void Npc::onDie()
 
 void Npc::onDieAnimationEnd()
 {
-    GameObjectManager::getInstance()->addDecimatedGameObject(_uniqueID);
+    GameObjectManager::getInstance()->addReadyToRemoveGameObject(_uniqueID);
 }
 
 void Npc::onAttackAnimationEnd()
@@ -945,14 +945,14 @@ void Npc::onAttackAnimationEnd()
     else
     {
         auto enemy = GameObjectManager::getInstance()->getGameObjectBy(_enemyUniqueID);
-        if (enemy && !enemy->isDying())
+        if (enemy && !enemy->isReadyToRemove())
         {
             enemy->costHP(getAttackPower());
         }
     }
 }
 
-void Npc::onPrepareToDestory()
+void Npc::onPrepareToRemove()
 {
     tryUpdateStatus(NpcStatus::Die);
 }

@@ -22,8 +22,8 @@ public:
     void removeGameObjectBy(int uniqueID);
     void removeAllGameObjects();
 
-    void addDecimatedGameObject(int gameObjcetUniqueID);
-    void removeAllDyingGameObjects();
+    void addReadyToRemoveGameObject(int gameObjcetUniqueID);
+    void removeAllReadyToRemoveGameObjects();
 
     GameObject* getGameObjectBy(int uniqueID);
     const GameObjectMap& getGameObjectMap();
@@ -56,5 +56,5 @@ private:
 
     GameWorld* _gameWorld = nullptr;
 
-    vector<int> _dyingGameObjectIDList;
+    vector<int> _readyToRemoveGameObjectIDList;
 };

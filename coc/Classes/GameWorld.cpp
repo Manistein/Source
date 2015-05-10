@@ -81,7 +81,7 @@ void GameWorld::update(float deltaTime)
 
     _gameObjectManager->gameObjectsDepthSort(_mapManager->getTileSize());
     _gameObjectManager->npcMoveToEndPositionOneByOne();
-    _gameObjectManager->removeAllDyingGameObjects();
+    _gameObjectManager->removeAllReadyToRemoveGameObjects();
 }
 
 void GameWorld::onMouseScroll(Event* event)

@@ -42,7 +42,7 @@ public:
 
     NpcStatus getNpcStatus();
 
-    bool isDying() override;
+    bool isReadyToRemove() override;
 
     void clearDebugDraw() override;
 private:
@@ -60,7 +60,7 @@ private:
     void tryUpdateStatus(NpcStatus newStatus);
 
     void debugDraw() override;
-    void onPrepareToDestory() override;
+    void onPrepareToRemove() override;
 
     void runFightWithEnemyAI(float delta);
     bool isEnemyInAttackRange(GameObject* enemy);

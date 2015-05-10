@@ -119,7 +119,7 @@ void GameObject::costHP(int costHPAmount)
     if (_hp <= 0)
     {
         hideHPBar();
-        onPrepareToDestory();
+        onPrepareToRemove();
     }
 }
 

@@ -42,7 +42,7 @@ public:
 
     void setSelected(bool isSelect);
     bool isSelected();
-    virtual bool isDying() = 0;
+    virtual bool isReadyToRemove() = 0;
 
     GameObjectType getGameObjectType();
     ForceType getForceType();
@@ -61,7 +61,7 @@ protected:
     GameObject();
     bool init() override;
     virtual void debugDraw() = 0;
-    virtual void onPrepareToDestory() = 0;
+    virtual void onPrepareToRemove() = 0;
 
     int _hp = 0;
     int _maxHp = 0;

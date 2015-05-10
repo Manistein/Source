@@ -54,18 +54,18 @@ void GameObjectManager::removeAllGameObjects()
     _gameObjectMap.clear();
 }
 
-void GameObjectManager::addDecimatedGameObject(int gameObjcetUniqueID)
+void GameObjectManager::addReadyToRemoveGameObject(int gameObjcetUniqueID)
 {
-    _dyingGameObjectIDList.push_back(gameObjcetUniqueID);
+    _readyToRemoveGameObjectIDList.push_back(gameObjcetUniqueID);
 }
 
-void GameObjectManager::removeAllDyingGameObjects()
+void GameObjectManager::removeAllReadyToRemoveGameObjects()
 {
-    for (auto gameObjectID : _dyingGameObjectIDList)
+    for (auto gameObjectID : _readyToRemoveGameObjectIDList)
     {
         removeGameObjectBy(gameObjectID);
     }
-    _dyingGameObjectIDList.clear();
+    _readyToRemoveGameObjectIDList.clear();
 }
 
 GameObject* GameObjectManager::getGameObjectBy(int uniqueID)
@@ -280,7 +280,7 @@ void GameObjectManager::npcMoveToEndPositionOneByOne()
         else
         {
             auto readyMoveToEndPositionNpc = static_cast<Npc*>(readyMoveToEndPositionNpcIter->second);
-            if (readyMoveToEndPositionNpc->isDying())
+            if (readyMoveToEndPositionNpc->isReadyToRemove())
             {
                 dataIter.second._readyMoveToEndPositionNpcIDList.pop_back();
                 continue;
