@@ -191,10 +191,10 @@ void Npc::initShadow()
     auto contentSize = getContentSize();
     auto position = getPosition();
 
-    auto shadowSprite = Sprite::create(SHADOW_TEXTURE_NAME);
-    shadowSprite->setPosition(Vec2(contentSize.width / 2.0f, contentSize.height / 4.0f));
-    shadowSprite->setScale(2.0f);
-    addChild(shadowSprite, -1);
+    _shadowSprite = Sprite::create(SHADOW_TEXTURE_NAME);
+    _shadowSprite->setPosition(Vec2(contentSize.width / 2.0f, contentSize.height / 4.0f));
+    _shadowSprite->setScale(2.0f);
+    addChild(_shadowSprite, -1);
 }
 
 void Npc::initHPBar()
@@ -538,6 +538,8 @@ RepeatForever* Npc::createAnimateWidthPList(const string& plist, float animateDe
         auto animationEndFunc = CallFunc::create(CC_CALLBACK_0(Npc::onDieAnimationEnd, this));
         auto dieSequenceAction = Sequence::create(Animate::create(animation), animationEndFunc, nullptr);
         repeatForeverAnimate = RepeatForever::create(dieSequenceAction);
+
+        _dieAnimationFrameSize = animation->getFrames().at(0)->getSpriteFrame()->getOriginalSizeInPixels();
     }
         break;
     default:    break;
@@ -919,6 +921,10 @@ void Npc::onAttack()
 void Npc::onDie()
 {
     _gotoTargetPositionPathList.clear();
+
+    auto shadowPosition = _shadowSprite->getPosition();
+    shadowPosition.x = _dieAnimationFrameSize.width / 2.0f;
+    _shadowSprite->setPosition(shadowPosition);
 
     stopAllActions();
 
