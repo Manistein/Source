@@ -50,8 +50,8 @@ bool Npc::init(ForceType forceType, const string& jobName, const Vec2& position,
 
     initAnimates(jobName);
     initSwitchStatusFunctions();
-    initShadow();
-    initHPBar();
+    initShadow(jobName);
+    initHPBar(jobName);
     initBattleData(jobName);
     initDebugDraw();
 
@@ -186,24 +186,28 @@ void Npc::initSwitchStatusFunctions()
         std::bind(&Npc::switchDieToStand, this));
 }
 
-void Npc::initShadow()
+void Npc::initShadow(const string& jobName)
 {
+    auto npcTemplate = TemplateManager::getInstance()->getNpcTemplateBy(jobName);
+
     auto contentSize = getContentSize();
     auto position = getPosition();
 
     _shadowSprite = Sprite::create(SHADOW_TEXTURE_NAME);
-    _shadowSprite->setPosition(Vec2(contentSize.width / 2.0f, contentSize.height / 4.0f));
+    _shadowSprite->setPosition(Vec2(contentSize.width / 2.0f, npcTemplate->shadowYPosition));
     _shadowSprite->setScale(2.0f);
     addChild(_shadowSprite, -1);
 }
 
-void Npc::initHPBar()
+void Npc::initHPBar(const string& jobName)
 {
+    auto npcTemplate = TemplateManager::getInstance()->getNpcTemplateBy(jobName);
+
     auto contentSize = getContentSize();
     auto position = getPosition();
 
     auto hpBarBackground = _hpBar->getParent();
-    hpBarBackground->setPosition(Vec2(contentSize.width / 2.0f, contentSize.height + _hpBar->getContentSize().height * 1.2f));
+    hpBarBackground->setPosition(Vec2(contentSize.width / 2.0f, npcTemplate->hpBarYPosition));
 }
 
 void Npc::initBattleData(const string& jobName)
@@ -924,6 +928,7 @@ void Npc::onDie()
 
     auto shadowPosition = _shadowSprite->getPosition();
     shadowPosition.x = _dieAnimationFrameSize.width / 2.0f;
+    shadowPosition.y = _dieAnimationFrameSize.height / 4.0f;
     _shadowSprite->setPosition(shadowPosition);
 
     stopAllActions();
@@ -944,7 +949,11 @@ void Npc::onAttackAnimationEnd()
     }
     else
     {
-
+        auto enemy = GameObjectManager::getInstance()->getGameObjectBy(_enemyUniqueID);
+        if (enemy && !enemy->isDying())
+        {
+            enemy->costHP(getAttackPower());
+        }
     }
 }
 

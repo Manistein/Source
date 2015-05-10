@@ -68,7 +68,7 @@ Node* BulletManager::createArrow(BulletType bulletType, GameObject* attacker, Ga
 void BulletManager::onBulletMoveEnd(Node* bullet, int attackTargetID, int damageAmount)
 {
     auto attackTarget = GameObjectManager::getInstance()->getGameObjectBy(attackTargetID);
-    if (attackTarget)
+    if (attackTarget && !attackTarget->isDying())
     {
         attackTarget->costHP(damageAmount);
     }

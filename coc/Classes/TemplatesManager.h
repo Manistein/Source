@@ -33,6 +33,9 @@ struct NpcTemplate
     float perSecondMoveSpeedByPixel = 0.0f;
     BulletType bulletType = BulletType::Invalid;
     DamageType damageType = DamageType::Invalid;
+
+    float shadowYPosition = 0.0f;
+    float hpBarYPosition = 0.0f;
 };
 
 struct BulletTemplate

@@ -51,8 +51,8 @@ private:
 
     void initAnimates(const string& jobName);
     void initSwitchStatusFunctions();
-    void initShadow();
-    void initHPBar();
+    void initShadow(const string& jobName);
+    void initHPBar(const string& jobName);
     void initBattleData(const string& jobName);
     void initDebugDraw();
 

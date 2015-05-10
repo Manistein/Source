@@ -48,6 +48,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     searchPaths.push_back("Resources/publish/data");
     searchPaths.push_back("Resources/publish/npc");
     searchPaths.push_back("Resources/publish/npc/archer");
+    searchPaths.push_back("Resources/publish/npc/barbarian");
     searchPaths.push_back("Resources/publish/npc/common");
     searchPaths.push_back("Resources/publish/bullet");
     FileUtils::getInstance()->setSearchPaths(searchPaths);

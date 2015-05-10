@@ -140,6 +140,9 @@ bool TemplateManager::initNpcTemplates()
                 npcTemplate->damageType = s_damageTypeStringToEnum[damageTypeName];
             }
 
+            npcTemplate->shadowYPosition = tabFileReader.getFloat(i, "ShadowYPosition");
+            npcTemplate->hpBarYPosition = tabFileReader.getFloat(i, "HpBarYPosition");
+
             _npcTemplatesMap[jobName] = npcTemplate;
         }
 
