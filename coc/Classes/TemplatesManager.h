@@ -36,6 +36,10 @@ struct NpcTemplate
 
     float shadowYPosition = 0.0f;
     float hpBarYPosition = 0.0f;
+
+    float moveAnimateDelayPerUnit = 0.0f;
+    float standAnimateDelayPerUnit = 0.0f;
+    float dieAnimateDelayPerUnit = 0.0f;
 };
 
 struct BulletTemplate

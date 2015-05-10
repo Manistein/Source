@@ -69,7 +69,6 @@ protected:
 
     int _attackPower = 0;
     int _maxAttackRadius = 0;
-    int _perSecondAttackCount = 0;
     BulletType _bulletType = BulletType::Invalid;
     DamageType _damageType = DamageType::Invalid;
 

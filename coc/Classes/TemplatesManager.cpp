@@ -143,6 +143,10 @@ bool TemplateManager::initNpcTemplates()
             npcTemplate->shadowYPosition = tabFileReader.getFloat(i, "ShadowYPosition");
             npcTemplate->hpBarYPosition = tabFileReader.getFloat(i, "HpBarYPosition");
 
+            npcTemplate->moveAnimateDelayPerUnit = tabFileReader.getFloat(i, "MoveAnimateDelayPerUnit");
+            npcTemplate->standAnimateDelayPerUnit = tabFileReader.getFloat(i, "StandAnimateDelayPerUnit");
+            npcTemplate->dieAnimateDelayPerUnit = tabFileReader.getFloat(i, "DieAnimateDelayPerUnit");
+
             _npcTemplatesMap[jobName] = npcTemplate;
         }
 
