@@ -81,6 +81,9 @@
     <ClCompile Include="..\Classes\AutoFindPathHelper.cpp">
       <Filter>src\GameWorld</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Building.cpp">
+      <Filter>src\GameWorld\GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -139,6 +142,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\AutoFindPathHelper.h">
       <Filter>src\GameWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Building.h">
+      <Filter>src\GameWorld\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

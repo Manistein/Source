@@ -147,6 +147,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\Classes\Building.cpp" />
     <ClCompile Include="..\Classes\BulletManager.cpp" />
     <ClCompile Include="..\Classes\DebugInfoLayer.cpp" />
     <ClCompile Include="..\Classes\GameObject.cpp" />
@@ -170,6 +171,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\AutoFindPathHelper.h" />
     <ClInclude Include="..\Classes\Base.h" />
+    <ClInclude Include="..\Classes\Building.h" />
     <ClInclude Include="..\Classes\BulletManager.h" />
     <ClInclude Include="..\Classes\DebugInfoLayer.h" />
     <ClInclude Include="..\Classes\GameObject.h" />
