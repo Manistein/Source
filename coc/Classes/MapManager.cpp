@@ -301,6 +301,11 @@ cocos2d::Vec2 MapManager::convertCursorPositionToTileMapSpace()
     return _tileMap->convertToNodeSpace(_cursorPoint);
 }
 
+cocos2d::Vec2 MapManager::convertToTileMapSpace(const Vec2& worldPosition)
+{
+    return _tileMap->convertToNodeSpace(worldPosition);
+}
+
 void MapManager::addChildInGameObjectLayer(Node* gameObject, int zOrder/* = 1*/)
 {
     auto gameObjectLayer = _tileMap->getLayer("gameObjectLayer");

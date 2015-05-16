@@ -62,6 +62,8 @@ public:
     DebugInfo getDebugInfo(TileMapLayerType tileMapLayerType);
 
     Vec2 convertCursorPositionToTileMapSpace();
+    Vec2 convertToTileMapSpace(const Vec2& worldPosition);
+
     void addChildInGameObjectLayer(Node* gameObject, int zOrder = 1);
 
     TileNode* getTileNodeAt(int columnIndex, int rowIndex);

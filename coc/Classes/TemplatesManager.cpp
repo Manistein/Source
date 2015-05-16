@@ -35,6 +35,15 @@ TemplateManager::~TemplateManager()
         }
     }
     _bulletTemplatesMap.clear();
+
+    for (auto& iter : _buildingTemplatesMap)
+    {
+        if (iter.second)
+        {
+            CC_SAFE_DELETE(iter.second);
+        }
+    }
+    _buildingTemplatesMap.clear();
 }
 
 TemplateManager* TemplateManager::getInstance()
@@ -74,12 +83,26 @@ const BulletTemplate* TemplateManager::getBulletTemplateBy(BulletType bulletType
     return bulletTemplate;
 }
 
+const BuildingTemplate* TemplateManager::getBuildingTemplateBy(const string& buildingTemplateName)
+{
+    BuildingTemplate* buildingTemplate = nullptr;
+
+    auto iter = _buildingTemplatesMap.find(buildingTemplateName);
+    if (iter != _buildingTemplatesMap.end())
+    {
+        buildingTemplate = iter->second;
+    }
+
+    return buildingTemplate;
+}
+
 bool TemplateManager::init()
 {
     bool result = false;
 
     result = initNpcTemplates();
     result = initBulletTemplates();
+    result = initBuildingTemplates();
 
     return result;
 }
@@ -175,6 +198,35 @@ bool TemplateManager::initBulletTemplates()
             
             auto bulletType = bulletTypeIter->second;
             _bulletTemplatesMap[bulletType] = bulletTemplate;
+        }
+
+        result = true;
+    }
+
+    return result;
+}
+
+bool TemplateManager::initBuildingTemplates()
+{
+    bool result = false;
+
+    TabFileReader tabFileReader;
+    if (tabFileReader.open("BuildingTemplates.tab"))
+    {
+        for (int i = 0; i < tabFileReader.getRowCount(); i ++)
+        {
+            BuildingTemplate* buildingTemplate = new BuildingTemplate();
+
+            buildingTemplate->prepareToBuildStatusTextureName = tabFileReader.getString(i, "PrepareToBuildStatusTextureName");
+            buildingTemplate->beingBuiltStatusTextureName = tabFileReader.getString(i, "BeingBuiltStatusTextureName");
+            buildingTemplate->workingStatusTextureName = tabFileReader.getString(i, "WorkingStatusTextureName");
+            buildingTemplate->destroyStatusTextureName = tabFileReader.getString(i, "DestroyStatusTextureName");
+            buildingTemplate->buildingTimeBySecond = tabFileReader.getFloat(i, "BuildingTimeBySecond");
+            buildingTemplate->maxHP = tabFileReader.getInteger(i, "MaxHP");
+            buildingTemplate->centerBottomGridYPosition = tabFileReader.getFloat(i, "CenterBottomGridYPosition");
+
+            auto buildingTemplateName = tabFileReader.getString(i, "BuildingTemplateName");
+            _buildingTemplatesMap[buildingTemplateName] = buildingTemplate;
         }
 
         result = true;

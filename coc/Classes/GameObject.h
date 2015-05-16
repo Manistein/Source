@@ -32,6 +32,7 @@ enum class DamageType
 };
 
 const int ENEMY_UNIQUE_ID_INVALID = 0;
+const int GAME_OBJECT_UNIQUE_ID_INVALID = 0; 
 
 class GameObject : public Sprite
 {

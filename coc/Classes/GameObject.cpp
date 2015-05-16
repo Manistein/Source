@@ -1,6 +1,7 @@
 #include "Base.h"
 #include "GameObject.h"
 #include "Npc.h"
+#include "Building.h"
 
 static int g_uniqueID = 0;
 
@@ -151,7 +152,11 @@ GameObject* GameObjectFactory::create(GameObjectType gameObjectType, ForceType f
             gameObject = Npc::create(forceType, jobName, position, g_uniqueID);
         }
         break;
-    case GameObjectType::Building:
+        case GameObjectType::Building:
+        {
+            g_uniqueID++;
+            gameObject = Building::create(forceType, jobName, position, g_uniqueID);
+        }
         break;
     default:
         break;

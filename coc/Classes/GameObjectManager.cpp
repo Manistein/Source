@@ -3,6 +3,7 @@
 #include "GameObjectManager.h"
 #include "GameWorld.h"
 #include "Npc.h"
+#include "Building.h"
 
 static GameObjectManager* s_gameObjectManager = nullptr;
 
@@ -90,7 +91,23 @@ void GameObjectManager::gameObjectsDepthSort(const Size& tileSize)
 {
     for (auto& gameObjectIter : _gameObjectMap)
     {
-        gameObjectIter.second->depthSort(tileSize);
+        if (gameObjectIter.second->getGameObjectType() == GameObjectType::Building)
+        {
+            auto building = static_cast<Building*>(gameObjectIter.second);
+            if (building->getBuildingStatus() == BuildingStatus::PrepareToBuild)
+            {
+                gameObjectIter.second->setPositionZ(MAX_GAME_OBJECT_COUNT);
+                gameObjectIter.second->setGlobalZOrder(MAX_GAME_OBJECT_COUNT);
+            }
+            else
+            {
+                gameObjectIter.second->depthSort(tileSize);
+            }
+        }
+        else
+        {
+            gameObjectIter.second->depthSort(tileSize);
+        }
     }
 }
 
@@ -100,7 +117,7 @@ bool GameObjectManager::selectGameObjectsBy(const Rect& rect)
 
     for (auto& gameObjectIter : _gameObjectMap)
     {
-        if (gameObjectIter.second->isDying())
+        if (gameObjectIter.second->isReadyToRemove())
         {
             continue;
         }
@@ -126,7 +143,7 @@ GameObject* GameObjectManager::selectGameObjectBy(const Point& cursorPoint)
 
     for (auto& gameObjectIter : _gameObjectMap)
     {
-        if (gameObjectIter.second->isDying())
+        if (gameObjectIter.second->isReadyToRemove())
         {
             continue;
         }
@@ -151,7 +168,7 @@ GameObject* GameObjectManager::selectEnemyBy(const Point& cursorPoint)
 
     for (auto& gameObjectIter : _gameObjectMap)
     {
-        if (gameObjectIter.second->isDying() || gameObjectIter.second->getForceType() != ForceType::AI)
+        if (gameObjectIter.second->isReadyToRemove() || gameObjectIter.second->getForceType() != ForceType::AI)
         {
             continue;
         }

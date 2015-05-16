@@ -27,12 +27,15 @@ public:
     void syncCursorPoint(const Vec2& cursorPoint);
 
     list<Vec2> computePathListBetween(const Vec2& inMapStartPosition, const Vec2& inMapEndPosition);
+    MapManager* getMapManager();
 
     MapManager* _mapManager = nullptr;
 private:
     bool init() override;
     void update(float deltaTime) override;
     void onMouseScroll(Event* event);
+    void constructBuilding();
+    void cancelConstructBuilding();
 
     GameObjectManager* _gameObjectManager = nullptr;
     GameObjectSelectBox* _gameObjectSelectBox = nullptr;
@@ -42,4 +45,6 @@ private:
     Vec2 _previousClickedCursorPoint;
 
     bool _isLeftMouseButtonDown = false;
+
+    int _holdingBuildingID = GAME_OBJECT_UNIQUE_ID_INVALID;
 };

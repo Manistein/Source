@@ -9,6 +9,7 @@
 #include "GameWorldCallBackFunctionsManager.h"
 #include "AutoFindPathHelper.h"
 #include "Utils.h"
+#include "Building.h"
 
 static Vec2 s_mouseDownPoint;
 const float SINGLE_CLICK_AREA = 5.0f;
@@ -27,6 +28,8 @@ bool GameWorld::init()
     {
         return false;
     }
+
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("BuildingCommon.plist");
 
     _mapManager = new MapManager();
     _mapManager->init(this, "isoMap.tmx");
@@ -62,6 +65,7 @@ bool GameWorld::init()
     }
 
     createGameObject(GameObjectType::Npc, ForceType::AI, "BlueBarbarian", Vec2(3150.0f, 2150.0f));
+    createGameObject(GameObjectType::Building, ForceType::Player, "BaseCamp", Vec2(3150.0f, 2150.0f));
 
     _director->setAlphaBlending(true);
 
@@ -97,6 +101,8 @@ void GameWorld::onMouseLeftButtonDown()
     _gameObjectSelectBox->setMouseDownPoint(_cursorPoint);
 
     s_mouseDownPoint = _cursorPoint;
+
+    constructBuilding();
 }
 
 void GameWorld::onMouseLeftButtonUp()
@@ -119,6 +125,8 @@ void GameWorld::onMouseLeftButtonUp()
 
 void GameWorld::onMouseRightButtonDown()
 {
+    cancelConstructBuilding();
+
     auto inMapCursorPosition = _mapManager->convertCursorPositionToTileMapSpace();
     if (_mapManager->isInObstacleTile(inMapCursorPosition) || 
         GameUtils::isVec2Equal(_cursorPoint, _previousClickedCursorPoint))
@@ -172,6 +180,11 @@ void GameWorld::createGameObject(GameObjectType gameObjectType, ForceType forceT
 {
     auto gameObject = _gameObjectManager->createGameObject(gameObjectType, forceType, jobName, position);
     _mapManager->addChildInGameObjectLayer(gameObject);
+
+    if (gameObjectType == GameObjectType::Building)
+    {
+        _holdingBuildingID = gameObject->getUniqueID();
+    }
 }
 
 void GameWorld::removeGameObjectBy(int uniqueID)
@@ -230,4 +243,41 @@ list<Vec2> GameWorld::computePathListBetween(const Vec2& inMapStartPosition, con
     }
 
     return pointPathList;
+}
+
+MapManager* GameWorld::getMapManager()
+{
+    return _mapManager;
+}
+
+void GameWorld::constructBuilding()
+{
+    if (_holdingBuildingID != GAME_OBJECT_UNIQUE_ID_INVALID)
+    {
+        auto holdingObject = _gameObjectManager->getGameObjectBy(_holdingBuildingID);
+        auto holdingBuilding = dynamic_cast<Building*>(holdingObject);
+        if (holdingBuilding && 
+            holdingBuilding->getBuildingStatus() == BuildingStatus::PrepareToBuild &&
+            holdingBuilding->canUpdateToWorkingStatus())
+        {
+            holdingBuilding->updateStatus(BuildingStatus::Working);
+
+            _holdingBuildingID = GAME_OBJECT_UNIQUE_ID_INVALID;
+        }
+    }
+}
+
+void GameWorld::cancelConstructBuilding()
+{
+    if (_holdingBuildingID != GAME_OBJECT_UNIQUE_ID_INVALID)
+    {
+        auto holdingObject = _gameObjectManager->getGameObjectBy(_holdingBuildingID);
+        auto holdingBuilding = dynamic_cast<Building*>(holdingObject);
+        if (holdingBuilding && holdingBuilding->getBuildingStatus() == BuildingStatus::PrepareToBuild)
+        {
+            _gameObjectManager->removeGameObjectBy(_holdingBuildingID);
+        }
+
+        _holdingBuildingID = GAME_OBJECT_UNIQUE_ID_INVALID;
+    }
 }

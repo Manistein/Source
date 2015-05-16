@@ -7,6 +7,7 @@
 #include "GameSetting.h"
 #include "GameWorldCallBackFunctionsManager.h"
 #include "Utils.h"
+#include "Building.h"
 
 const string SHADOW_TEXTURE_NAME = "Shadow.png";
 const string SHOW_WORLD_POSITION_CHILD_NAME = "ShowWorldPositionChildName";
@@ -424,7 +425,15 @@ void Npc::runFightWithEnemyAI(float delta)
         auto gameObjectMap = GameObjectManager::getInstance()->getGameObjectMap();
         for (auto& gameObjectIter : gameObjectMap)
         {
-            if (_forceType == gameObjectIter.second->getForceType() || gameObjectIter.second->isDying())
+            Building* buildingObject = nullptr;
+            if (gameObjectIter.second->getGameObjectType() == GameObjectType::Building)
+            {
+                buildingObject = static_cast<Building*>(gameObjectIter.second);
+            }
+
+            if (_forceType == gameObjectIter.second->getForceType() || 
+                gameObjectIter.second->isReadyToRemove() ||
+                (buildingObject && buildingObject->getBuildingStatus() == BuildingStatus::PrepareToBuild))
             {
                 continue;
             }

@@ -47,6 +47,17 @@ struct BulletTemplate
     string bulletFileName;
 };
 
+struct BuildingTemplate
+{
+    string prepareToBuildStatusTextureName;
+    string beingBuiltStatusTextureName;
+    string workingStatusTextureName;
+    string destroyStatusTextureName;
+    float buildingTimeBySecond = 0.0f;
+    int maxHP = 0;
+    float centerBottomGridYPosition = 0.0f;
+};
+
 class TemplateManager
 {
 public:
@@ -55,13 +66,16 @@ public:
     static TemplateManager* getInstance();
     const NpcTemplate* getNpcTemplateBy(const string& jobName);
     const BulletTemplate* getBulletTemplateBy(BulletType bulletType);
+    const BuildingTemplate* getBuildingTemplateBy(const string& buildingTemplateName);
 private:
     bool init();
     bool initNpcTemplates();
     bool initBulletTemplates();
+    bool initBuildingTemplates();
 
     map<string, NpcTemplate*> _npcTemplatesMap;
     map<BulletType, BulletTemplate*> _bulletTemplatesMap;
+    map<string, BuildingTemplate*> _buildingTemplatesMap;
 
     TemplateManager(){}
     TemplateManager(const TemplateManager&);
