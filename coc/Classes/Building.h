@@ -29,12 +29,14 @@ private:
     bool init(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID);
     void initBuildingStatusSprites(const string& buildingTemplateName);
     void initBottomGridSprites(const string& buildingTemplateName);
+    void initHPBar();
+    void initBattleData(const string& buildingTemplateName);
     void clear();
 
     void onPrepareToRemove() override;
     void debugDraw() override;
 
-    void updatePositionInPrepareToBuildStatus();
+    void followCursorInPrepareToBuildStatus();
     void updateBottomGridTextureInPrepareToBuildStatus();
 
     map<BuildingStatus, Sprite*> _buildingStatusSpriteMap;

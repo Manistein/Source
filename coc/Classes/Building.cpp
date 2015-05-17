@@ -44,6 +44,8 @@ bool Building::init(ForceType forceType, const string& buildingTemplateName, con
     initBuildingStatusSprites(buildingTemplateName);
     initBottomGridSprites(buildingTemplateName);
     updateStatus(BuildingStatus::PrepareToBuild);
+    initHPBar();
+    initBattleData(buildingTemplateName);
 
     scheduleUpdate();
 
@@ -132,6 +134,21 @@ void Building::initBottomGridSprites(const string& buildingTemplateName)
     }
 }
 
+void Building::initHPBar()
+{
+    auto contentSize = _buildingStatusSpriteMap[BuildingStatus::Working]->getContentSize();
+
+    auto hpBarBackground = _hpBar->getParent();
+    hpBarBackground->setPosition(Vec2(contentSize.width / 2.0f, contentSize.height + 50.0f));
+}
+
+void Building::initBattleData(const string& buildingTemplateName)
+{
+    auto buildingTemplate = TemplateManager::getInstance()->getBuildingTemplateBy(buildingTemplateName);
+
+    _maxHp = _hp = buildingTemplate->maxHP;
+}
+
 void Building::clear()
 {
 
@@ -149,7 +166,9 @@ void Building::clearDebugDraw()
 
 void Building::update(float delta)
 {
-    updatePositionInPrepareToBuildStatus();
+    GameObject::update(delta);
+
+    followCursorInPrepareToBuildStatus();
     updateBottomGridTextureInPrepareToBuildStatus();
 }
 
@@ -160,6 +179,10 @@ void Building::updateStatus(BuildingStatus buildingStatus)
         if (buildStatusSpriteIter.first == buildingStatus)
         {
             buildStatusSpriteIter.second->setVisible(true);
+
+            auto buildingSize = buildStatusSpriteIter.second->getContentSize();
+            setContentSize(buildingSize);
+            buildStatusSpriteIter.second->setPosition(Vec2(buildingSize.width / 2.0f, buildingSize.height / 2.0f));
         }
         else
         {
@@ -182,15 +205,22 @@ bool Building::canUpdateToWorkingStatus()
 
 void Building::onPrepareToRemove()
 {
-
+    updateStatus(BuildingStatus::Destory);
 }
 
 void Building::debugDraw()
 {
+    _debugDrawNode->clear();
+    _debugDrawNode->setVisible(true);
 
+    auto contentSize = getContentSize();
+    Rect gameObjectRect(0.0f, 0.0f, contentSize.width, contentSize.height);
+    _debugDrawNode->drawRect(Vec2(gameObjectRect.getMinX(), gameObjectRect.getMinY()),
+        Vec2(gameObjectRect.getMaxX(), gameObjectRect.getMaxY()),
+        Color4F(0.0f, 0.0f, 1.0f, 0.5f));
 }
 
-void Building::updatePositionInPrepareToBuildStatus()
+void Building::followCursorInPrepareToBuildStatus()
 {
     if (_buildingStatus != BuildingStatus::PrepareToBuild)
     {

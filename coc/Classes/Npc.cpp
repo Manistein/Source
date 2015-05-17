@@ -289,12 +289,8 @@ void Npc::clearDebugDraw()
 
 void Npc::update(float delta)
 {
-    if (g_setting.allowDebugDraw)
-    {
-        debugDraw();
-    }
+    GameObject::update(delta);
 
-    updateHP();
     runFightWithEnemyAI(delta);
 }
 

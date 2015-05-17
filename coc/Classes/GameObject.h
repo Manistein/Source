@@ -57,6 +57,7 @@ public:
 
     void setEnemyUniqueID(int uniqueID);
 
+    void update(float delta) override;
     virtual void clearDebugDraw() = 0;
 protected:
     GameObject();

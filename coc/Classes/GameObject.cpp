@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Npc.h"
 #include "Building.h"
+#include "GameSetting.h"
 
 static int g_uniqueID = 0;
 
@@ -138,6 +139,16 @@ void GameObject::updateHP()
 void GameObject::setEnemyUniqueID(int uniqueID)
 {
     _enemyUniqueID = uniqueID;
+}
+
+void GameObject::update(float delta)
+{
+    if (g_setting.allowDebugDraw)
+    {
+        debugDraw();
+    }
+
+    updateHP();
 }
 
 GameObject* GameObjectFactory::create(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
