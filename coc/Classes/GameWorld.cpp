@@ -84,7 +84,7 @@ void GameWorld::update(float deltaTime)
     }
 
     _gameObjectManager->gameObjectsDepthSort(_mapManager->getTileSize());
-    _gameObjectManager->npcMoveToEndPositionOneByOne();
+    _gameObjectManager->npcMoveToTargetOneByOne();
     _gameObjectManager->removeAllReadyToRemoveGameObjects();
 }
 
@@ -145,7 +145,7 @@ void GameWorld::onMouseRightButtonDown()
     else
     {
         auto npcMoveEndPositionList = _mapManager->getNpcMoveEndPositionListBy(gameObjectSelectedByPlayerCount);
-        _gameObjectManager->setSelectedNpcMoveEndPositionList(ForceType::Player, npcMoveEndPositionList);
+        _gameObjectManager->setSelectedNpcMoveTargetList(ForceType::Player, npcMoveEndPositionList);
     }
 
     auto enemy = _gameObjectManager->selectEnemyBy(_cursorPoint);

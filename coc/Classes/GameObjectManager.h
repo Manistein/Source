@@ -6,8 +6,8 @@ class Npc;
 
 struct NPC_READY_MOVE_TO_END_POSITION_DATA
 {
-    list<int> _readyMoveToEndPositionNpcIDList;
-    list<Vec2> _npcMoveEndPositionList;
+    list<int> _readyMoveToTargetNpcIDList;
+    list<Vec2> _npcMoveTargetList;
 };
 
 typedef unordered_map<int, GameObject*> GameObjectMap;
@@ -39,8 +39,8 @@ public:
     int getGameObjectSelectedByPlayerCount();
 
     void npcSelectedByPlayerMoveTo(const Vec2& position);
-    void setSelectedNpcMoveEndPositionList(ForceType forceType, const vector<Vec2>& npcMoveEndPositionList);
-    void npcMoveToEndPositionOneByOne();
+    void setSelectedNpcMoveTargetList(ForceType forceType, const vector<Vec2>& npcMoveTargetList);
+    void npcMoveToTargetOneByOne();
 
     void setSelectedGameObjectEnemyUniqueID(int uniqueID);
     void clearGameObjectDebugDraw();
@@ -48,7 +48,7 @@ private:
     Rect computeGameObjectRect(GameObject* gameObject);
 
     GameObjectMap _gameObjectMap;
-    unordered_map<ForceType, NPC_READY_MOVE_TO_END_POSITION_DATA> _npcReadyMoveToEndPositionDataMap;
+    unordered_map<ForceType, NPC_READY_MOVE_TO_END_POSITION_DATA> _npcReadyMoveToTargetDataMap;
 
     GameObjectManager(){}
     GameObjectManager(const GameObjectManager&);
