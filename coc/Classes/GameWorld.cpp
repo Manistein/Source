@@ -144,8 +144,8 @@ void GameWorld::onMouseRightButtonDown()
     }
     else
     {
-        auto npcMoveEndPositionList = _mapManager->getNpcMoveEndPositionListBy(gameObjectSelectedByPlayerCount);
-        _gameObjectManager->setSelectedNpcMoveTargetList(ForceType::Player, npcMoveEndPositionList);
+        auto npcMoveTargetList = _mapManager->getNpcMoveTargetListBy(gameObjectSelectedByPlayerCount);
+        _gameObjectManager->setSelectedNpcMoveTargetList(ForceType::Player, npcMoveTargetList);
     }
 
     auto enemy = _gameObjectManager->selectEnemyBy(_cursorPoint);

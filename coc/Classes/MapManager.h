@@ -68,7 +68,7 @@ public:
 
     TileNode* getTileNodeAt(int columnIndex, int rowIndex);
 
-    vector<Vec2> getNpcMoveEndPositionListBy(int npcSelectedByPlayerCount);
+    vector<Vec2> getNpcMoveTargetListBy(int npcSelectedByPlayerCount);
 
     bool isInObstacleTile(const Vec2& inMapPosition);
 private:

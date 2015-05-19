@@ -148,6 +148,15 @@ GameObject* GameObjectManager::selectGameObjectBy(const Point& cursorPoint)
             continue;
         }
 
+        if (gameObjectIter.second->getGameObjectType() == GameObjectType::Building)
+        {
+            auto building = static_cast<Building*>(gameObjectIter.second);
+            if (building->getBuildingStatus() == BuildingStatus::PrepareToBuild)
+            {
+                continue;
+            }
+        }
+
         auto gameObjectRect = computeGameObjectRect(gameObjectIter.second);
 
         if (gameObjectRect.containsPoint(cursorPoint))

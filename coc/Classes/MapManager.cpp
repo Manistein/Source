@@ -130,7 +130,7 @@ void MapManager::syncCursorPoint(const Vec2& cursorPoint)
     _cursorPoint = cursorPoint;
 }
 
-vector<Vec2> MapManager::getNpcMoveEndPositionListBy(int npcSelectedByPlayerCount)
+vector<Vec2> MapManager::getNpcMoveTargetListBy(int npcSelectedByPlayerCount)
 {
     vector<Vec2> npcMoveEndPositionList;
     int lineupMaxRowCount = std::min(npcSelectedByPlayerCount, LINEUP_MAX_ROW_COUNT);
