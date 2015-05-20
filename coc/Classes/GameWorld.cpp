@@ -102,7 +102,10 @@ void GameWorld::onMouseLeftButtonDown()
 
     s_mouseDownPoint = _cursorPoint;
 
-    constructBuilding();
+    if (_holdingBuildingID != GAME_OBJECT_UNIQUE_ID_INVALID)
+    {
+        constructBuilding();
+    }
 }
 
 void GameWorld::onMouseLeftButtonUp()
@@ -252,18 +255,15 @@ MapManager* GameWorld::getMapManager()
 
 void GameWorld::constructBuilding()
 {
-    if (_holdingBuildingID != GAME_OBJECT_UNIQUE_ID_INVALID)
+    auto holdingObject = _gameObjectManager->getGameObjectBy(_holdingBuildingID);
+    auto holdingBuilding = dynamic_cast<Building*>(holdingObject);
+    if (holdingBuilding &&
+        holdingBuilding->getBuildingStatus() == BuildingStatus::PrepareToBuild &&
+        holdingBuilding->canUpdateToWorkingStatus())
     {
-        auto holdingObject = _gameObjectManager->getGameObjectBy(_holdingBuildingID);
-        auto holdingBuilding = dynamic_cast<Building*>(holdingObject);
-        if (holdingBuilding && 
-            holdingBuilding->getBuildingStatus() == BuildingStatus::PrepareToBuild &&
-            holdingBuilding->canUpdateToWorkingStatus())
-        {
-            holdingBuilding->updateStatus(BuildingStatus::Working);
+        holdingBuilding->updateStatus(BuildingStatus::Working);
 
-            _holdingBuildingID = GAME_OBJECT_UNIQUE_ID_INVALID;
-        }
+        _holdingBuildingID = GAME_OBJECT_UNIQUE_ID_INVALID;
     }
 }
 

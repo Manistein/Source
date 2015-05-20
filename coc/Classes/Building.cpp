@@ -109,6 +109,7 @@ void Building::initBottomGridSprites(const string& buildingTemplateName)
     {
         Vec2 centerBottomGridPosition(prepareToBuildSprite->getContentSize().width / 2.0f, buildingTemplate->centerBottomGridYPosition);
         Vec2 firstQueryGridPosition(centerBottomGridPosition.x, centerBottomGridPosition.y + tileSize.height);
+        _bottomGridsPlaneCenterPositionInLocalSpace = centerBottomGridPosition;
 
         for (int i = 0; i < 3; i++)
         {
@@ -227,10 +228,24 @@ void Building::followCursorInPrepareToBuildStatus()
         return;
     }
 
+    auto prepareToBuildSprite = _buildingStatusSpriteMap[BuildingStatus::PrepareToBuild];
+    auto prepareToBuildSpriteSize = prepareToBuildSprite->getContentSize();
+
     auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
     auto cursorPointInTileMap = mapManager->convertCursorPositionToTileMapSpace();
 
-    setPosition(cursorPointInTileMap);
+    Vec2 buildingPosition;
+    buildingPosition.x = cursorPointInTileMap.x;
+    buildingPosition.y = prepareToBuildSpriteSize.height / 2.0f - _bottomGridsPlaneCenterPositionInLocalSpace.y +
+        cursorPointInTileMap.y;
+
+    auto tileSize = mapManager->getTileSize();
+    auto tileSubscript = mapManager->getTileSubscript(buildingPosition);
+    auto tileNode = mapManager->getTileNodeAt((int)tileSubscript.x, (int)tileSubscript.y);
+    buildingPosition.x = tileNode->leftTopPosition.x;
+    buildingPosition.y = tileNode->leftTopPosition.y;
+
+    setPosition(buildingPosition);
 }
 
 void Building::updateBottomGridTextureInPrepareToBuildStatus()
