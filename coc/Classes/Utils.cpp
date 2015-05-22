@@ -102,9 +102,17 @@ Animation* GameUtils::createAnimationWithPList(const string& plistFileName)
     CCASSERT(framesIter != plistDataMap.end(), StringUtils::format("frames key is invalid in %s", plistFileName.c_str()).c_str());
 
     auto framesMap = plistDataMap["frames"].asValueMap();
+    vector<string> frameKeysList;
     for (auto& iter : framesMap)
     {
-        auto spriteFrame = spriteFrameCache->getSpriteFrameByName(iter.first);
+        frameKeysList.push_back(iter.first);
+    }
+
+    std::sort(frameKeysList.begin(), frameKeysList.end());
+
+    for (auto& key : frameKeysList)
+    {
+        auto spriteFrame = spriteFrameCache->getSpriteFrameByName(key);
         if (spriteFrame)
         {
             animation->addSpriteFrame(spriteFrame);
