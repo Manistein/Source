@@ -33,6 +33,7 @@ enum class DamageType
 
 const int ENEMY_UNIQUE_ID_INVALID = 0;
 const int GAME_OBJECT_UNIQUE_ID_INVALID = 0; 
+const string HP_BAR_BACKGROUND_TEXTURE_NAME = "HPBarBackground.png";
 
 class GameObject : public Sprite
 {

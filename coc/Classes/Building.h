@@ -24,7 +24,7 @@ public:
     void updateStatus(BuildingStatus buildingStatus);
     BuildingStatus getBuildingStatus();
 
-    bool canUpdateToWorkingStatus();
+    bool canBuild();
 private:
     bool init(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID);
 
@@ -33,6 +33,7 @@ private:
 
     void initBottomGridSprites(const string& buildingTemplateName);
     void initHPBar();
+    void initBeingBuiltProgressBar();
     void initBattleData(const string& buildingTemplateName);
     void clear();
 
@@ -42,10 +43,19 @@ private:
     void followCursorInPrepareToBuildStatus();
     void updateBottomGridTextureInPrepareToBuildStatus();
 
+    void showBeingBuiltProgressBar();
+    void hideBeingBuiltProgressBar();
+    void onConstructionComplete();
+    void updateBeingBuiltProgressBar(float delta);
+
     map<BuildingStatus, Sprite*> _buildingStatusSpriteMap;
     vector<Sprite*> _bottomGridSpritesList;
     Vec2 _bottomGridsPlaneCenterPositionInLocalSpace; // 建筑物底部面片的中心位置
 
     BuildingStatus _buildingStatus;
-    bool _canUpdateToWorkingStatus = true;
+    bool _canBuild = true;
+
+    float _buildingTimeBySecond = 0.0f;
+    float _passTimeBySecondInBeingBuiltStatus = 0.0f;
+    ui::LoadingBar* _beingBuildProgressBar = nullptr;
 };

@@ -54,7 +54,9 @@ struct BuildingTemplate
     string workingStatusTextureName;
     string destroyStatusTextureName;
     string shadowTextureName;
-    float shadowYPosition = 0.0f;
+    float shadowYPositionInBeingBuiltStatus = 0.0f;
+    float shadowYPositionInWorkingStatus = 0.0f;
+    float shadowYPositionInDestroyStatus = 0.0f;
     float buildingTimeBySecond = 0.0f;
     int maxHP = 0;
     float centerBottomGridYPosition = 0.0f;

@@ -259,9 +259,9 @@ void GameWorld::constructBuilding()
     auto holdingBuilding = dynamic_cast<Building*>(holdingObject);
     if (holdingBuilding &&
         holdingBuilding->getBuildingStatus() == BuildingStatus::PrepareToBuild &&
-        holdingBuilding->canUpdateToWorkingStatus())
+        holdingBuilding->canBuild())
     {
-        holdingBuilding->updateStatus(BuildingStatus::Working);
+        holdingBuilding->updateStatus(BuildingStatus::BeingBuilt);
 
         _holdingBuildingID = GAME_OBJECT_UNIQUE_ID_INVALID;
     }

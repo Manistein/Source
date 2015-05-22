@@ -6,7 +6,6 @@
 
 static int g_uniqueID = 0;
 
-const string HP_BAR_BACKGROUND_TEXTURE_NAME = "HPBarBackground.png";
 const string PLAYER_HP_BAR_TEXTURE_NAME = "PlayerHPBar.png";
 const string AI_HP_BAR_TEXTURE_NAME = "AIHPBar.png";
 

@@ -11,6 +11,7 @@ const int MIN_BOTTOM_GRID_COUNT = 1;
 
 const string ENABLE_BUILD_GRID_FILE_NAME = "EnableBuildGBrid.png";
 const string DISABLE_BUILD_GRID_FILE_NAME = "DisableBuildGrid.png";
+const string BEING_BUILT_PROGRESS_BAR = "PlayerHPBar.png";
 
 Building* Building::create(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID)
 {
@@ -46,6 +47,7 @@ bool Building::init(ForceType forceType, const string& buildingTemplateName, con
     updateStatus(BuildingStatus::PrepareToBuild);
 
     initHPBar();
+    initBeingBuiltProgressBar();
     initBattleData(buildingTemplateName);
 
     scheduleUpdate();
@@ -66,6 +68,7 @@ Sprite* Building::createBuildingStatusSprite(const string& buildingTemplateName,
     auto buildingTemplate = TemplateManager::getInstance()->getBuildingTemplateBy(buildingTemplateName);
     auto spriteFrameCache = SpriteFrameCache::getInstance();
 
+    float shadowYPosition = 0.0f;
     string spriteTextureName;
     bool hasShadow = false;
 
@@ -75,14 +78,17 @@ Sprite* Building::createBuildingStatusSprite(const string& buildingTemplateName,
         spriteTextureName = buildingTemplate->prepareToBuildStatusTextureName;
         break;
     case BuildingStatus::BeingBuilt:
+        shadowYPosition = buildingTemplate->shadowYPositionInBeingBuiltStatus;
         spriteTextureName = buildingTemplate->beingBuiltStatusTextureName;
         hasShadow = true;
         break;
     case BuildingStatus::Working:
+        shadowYPosition = buildingTemplate->shadowYPositionInWorkingStatus;
         spriteTextureName = buildingTemplate->workingStatusTextureName;
         hasShadow = true;
         break;
     case BuildingStatus::Destory:
+        shadowYPosition = buildingTemplate->shadowYPositionInDestroyStatus;
         spriteTextureName = buildingTemplate->destroyStatusTextureName;
         hasShadow = true;
         break;
@@ -103,7 +109,7 @@ Sprite* Building::createBuildingStatusSprite(const string& buildingTemplateName,
         auto shadowSprite = Sprite::create();
         auto shadowSpriteFrame = spriteFrameCache->getSpriteFrameByName(buildingTemplate->shadowTextureName);
         shadowSprite->setSpriteFrame(shadowSpriteFrame);
-        shadowSprite->setPosition(Vec2(buildStatusSpriteSize.width / 2.0f, buildingTemplate->shadowYPosition));
+        shadowSprite->setPosition(Vec2(buildStatusSpriteSize.width / 2.0f, shadowYPosition));
         buildingStatusSprite->addChild(shadowSprite, -1);
     }
 
@@ -170,11 +176,29 @@ void Building::initHPBar()
     hpBarBackground->setPosition(Vec2(contentSize.width / 2.0f, contentSize.height + 50.0f));
 }
 
+void Building::initBeingBuiltProgressBar()
+{
+    _beingBuildProgressBar = ui::LoadingBar::create(BEING_BUILT_PROGRESS_BAR);
+    _beingBuildProgressBar->setAnchorPoint(Vec2::ZERO);
+    _beingBuildProgressBar->setPercent(0.0f);
+
+    auto beingBuiltProgressBarBackground = Sprite::create(HP_BAR_BACKGROUND_TEXTURE_NAME);
+    beingBuiltProgressBarBackground->setCascadeOpacityEnabled(true);
+    beingBuiltProgressBarBackground->setScale(0.5f);
+    beingBuiltProgressBarBackground->addChild(_beingBuildProgressBar);
+    beingBuiltProgressBarBackground->setVisible(false);
+    addChild(beingBuiltProgressBarBackground);
+
+    auto contentSize = _buildingStatusSpriteMap[BuildingStatus::BeingBuilt]->getContentSize();
+    beingBuiltProgressBarBackground->setPosition(Vec2(contentSize.width / 2.0f, contentSize.height + 50.0f));
+}
+
 void Building::initBattleData(const string& buildingTemplateName)
 {
     auto buildingTemplate = TemplateManager::getInstance()->getBuildingTemplateBy(buildingTemplateName);
 
     _maxHp = _hp = buildingTemplate->maxHP;
+    _buildingTimeBySecond = buildingTemplate->buildingTimeBySecond;
 }
 
 void Building::clear()
@@ -198,6 +222,12 @@ void Building::update(float delta)
 
     followCursorInPrepareToBuildStatus();
     updateBottomGridTextureInPrepareToBuildStatus();
+
+    if (_buildingStatus == BuildingStatus::BeingBuilt)
+    {
+        hideHPBar();
+        updateBeingBuiltProgressBar(delta);
+    }
 }
 
 void Building::updateStatus(BuildingStatus buildingStatus)
@@ -211,6 +241,16 @@ void Building::updateStatus(BuildingStatus buildingStatus)
             auto buildingSize = buildStatusSpriteIter.second->getContentSize();
             setContentSize(buildingSize);
             buildStatusSpriteIter.second->setPosition(Vec2(buildingSize.width / 2.0f, buildingSize.height / 2.0f));
+
+            if (buildingStatus == BuildingStatus::BeingBuilt)
+            {
+                hideHPBar();
+                showBeingBuiltProgressBar();
+
+                auto onUpdateToWorkingStatus = CallFunc::create(CC_CALLBACK_0(Building::onConstructionComplete, this));
+                auto sequenceAction = Sequence::create(DelayTime::create(_buildingTimeBySecond), onUpdateToWorkingStatus, nullptr);
+                runAction(sequenceAction);
+            }
         }
         else
         {
@@ -226,13 +266,16 @@ BuildingStatus Building::getBuildingStatus()
     return _buildingStatus;
 }
 
-bool Building::canUpdateToWorkingStatus()
+bool Building::canBuild()
 {
-    return _canUpdateToWorkingStatus;
+    return _canBuild;
 }
 
 void Building::onPrepareToRemove()
 {
+    stopAllActions();
+    hideBeingBuiltProgressBar();
+
     updateStatus(BuildingStatus::Destory);
 }
 
@@ -295,7 +338,7 @@ void Building::updateBottomGridTextureInPrepareToBuildStatus()
         return;
     }
 
-    _canUpdateToWorkingStatus = true;
+    _canBuild = true;
 
     auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
     auto spriteFrameCache = SpriteFrameCache::getInstance();
@@ -312,11 +355,39 @@ void Building::updateBottomGridTextureInPrepareToBuildStatus()
         if (isInObstacleTile)
         {
             bottomGridSprite->setSpriteFrame(disableBuildSpriteFrame);
-            _canUpdateToWorkingStatus = false;
+            _canBuild = false;
         }
         else
         {
             bottomGridSprite->setSpriteFrame(enableBuildSpriteFrame);
         }
     }
+}
+
+void Building::showBeingBuiltProgressBar()
+{
+    auto background = _beingBuildProgressBar->getParent();
+    background->setVisible(true);
+}
+
+void Building::hideBeingBuiltProgressBar()
+{
+    auto background = _beingBuildProgressBar->getParent();
+    background->setVisible(false);
+}
+
+void Building::onConstructionComplete()
+{
+    hideBeingBuiltProgressBar();
+    showHPBar();
+
+    updateStatus(BuildingStatus::Working);
+}
+
+void Building::updateBeingBuiltProgressBar(float delta)
+{
+    auto percent = _passTimeBySecondInBeingBuiltStatus / _buildingTimeBySecond * 100.0f;
+    _beingBuildProgressBar->setPercent(percent);
+
+    _passTimeBySecondInBeingBuiltStatus += delta;
 }
