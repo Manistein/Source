@@ -113,6 +113,11 @@ int GameObject::getAttackPower()
     return _attackPower;
 }
 
+float GameObject::getExtraEnemyAttackRadius()
+{
+    return _extraEnemyAttackRadius;
+}
+
 void GameObject::costHP(int costHPAmount)
 {
     _hp = std::max(0, _hp - costHPAmount);

@@ -49,6 +49,7 @@ public:
     GameObjectType getGameObjectType();
     ForceType getForceType();
     int getAttackPower();
+    float getExtraEnemyAttackRadius();
 
     void showHPBar();
     void hideHPBar();
@@ -69,9 +70,10 @@ protected:
     int _hp = 0;
     int _maxHp = 0;
     ui::LoadingBar* _hpBar = nullptr;
-
+   
     int _attackPower = 0;
     int _maxAttackRadius = 0;
+    float _extraEnemyAttackRadius = 0.0f;   // µÐ·½GameObject¹¥»÷·¶Î§¼Ó³É
     BulletType _bulletType = BulletType::Invalid;
     DamageType _damageType = DamageType::Invalid;
 

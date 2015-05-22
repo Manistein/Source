@@ -199,6 +199,7 @@ void Building::initBattleData(const string& buildingTemplateName)
 
     _maxHp = _hp = buildingTemplate->maxHP;
     _buildingTimeBySecond = buildingTemplate->buildingTimeBySecond;
+    _extraEnemyAttackRadius = buildingTemplate->extraEnemyAttackRadius;
 }
 
 void Building::clear()

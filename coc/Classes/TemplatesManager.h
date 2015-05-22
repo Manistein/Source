@@ -58,6 +58,7 @@ struct BuildingTemplate
     float shadowYPositionInWorkingStatus = 0.0f;
     float shadowYPositionInDestroyStatus = 0.0f;
     float buildingTimeBySecond = 0.0f;
+    float extraEnemyAttackRadius = 0.0f;
     int maxHP = 0;
     float centerBottomGridYPosition = 0.0f;
 };

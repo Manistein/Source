@@ -449,8 +449,9 @@ bool Npc::isEnemyInAttackRange(GameObject* enemy)
     bool result = false;
 
     float distance = getDistanceFrom(enemy);
+    float extraAttackRadius = enemy->getExtraEnemyAttackRadius();
 
-    if (distance <= _maxAttackRadius)
+    if (distance <= _maxAttackRadius + extraAttackRadius)
     {
         result = true;
     }

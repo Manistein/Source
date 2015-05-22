@@ -226,6 +226,7 @@ bool TemplateManager::initBuildingTemplates()
             buildingTemplate->shadowYPositionInWorkingStatus = tabFileReader.getFloat(i, "ShadowYPositionInWorkingStatus");
             buildingTemplate->shadowYPositionInDestroyStatus = tabFileReader.getFloat(i, "ShadowYPositionInDestroyStatus");
             buildingTemplate->buildingTimeBySecond = tabFileReader.getFloat(i, "BuildingTimeBySecond");
+            buildingTemplate->extraEnemyAttackRadius = tabFileReader.getFloat(i, "ExtraEnemyAttackRadius");
             buildingTemplate->maxHP = tabFileReader.getInteger(i, "MaxHP");
             buildingTemplate->centerBottomGridYPosition = tabFileReader.getFloat(i, "CenterBottomGridYPosition");
 
