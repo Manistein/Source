@@ -48,6 +48,8 @@ private:
     void onConstructionComplete();
     void updateBeingBuiltProgressBar(float delta);
 
+    void addToRemoveQueue();
+
     map<BuildingStatus, Sprite*> _buildingStatusSpriteMap;
     vector<Sprite*> _bottomGridSpritesList;
     Vec2 _bottomGridsPlaneCenterPositionInLocalSpace; // 建筑物底部面片的中心位置

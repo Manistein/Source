@@ -5,9 +5,11 @@
 #include "GameWorldCallBackFunctionsManager.h"
 #include "MapManager.h"
 #include <functional>
+#include "GameObjectManager.h"
 
 const int MAX_BOTTOM_GRID_COUNT = 9;
 const int MIN_BOTTOM_GRID_COUNT = 1;
+const float BUILDING_DELAY_REMOVE_TIME = 2.0f;
 
 const string ENABLE_BUILD_GRID_FILE_NAME = "EnableBuildGBrid.png";
 const string DISABLE_BUILD_GRID_FILE_NAME = "DisableBuildGrid.png";
@@ -252,6 +254,12 @@ void Building::updateStatus(BuildingStatus buildingStatus)
                 auto sequenceAction = Sequence::create(DelayTime::create(_buildingTimeBySecond), onUpdateToWorkingStatus, nullptr);
                 runAction(sequenceAction);
             }
+            else if (buildingStatus == BuildingStatus::Destory)
+            {
+                auto onReadyToRemove = CallFunc::create(CC_CALLBACK_0(Building::addToRemoveQueue, this));
+                auto sequenceAction = Sequence::create(DelayTime::create(BUILDING_DELAY_REMOVE_TIME), onReadyToRemove, nullptr);
+                runAction(sequenceAction);
+            }
         }
         else
         {
@@ -391,4 +399,9 @@ void Building::updateBeingBuiltProgressBar(float delta)
     _beingBuildProgressBar->setPercent(percent);
 
     _passTimeBySecondInBeingBuiltStatus += delta;
+}
+
+void Building::addToRemoveQueue()
+{
+    GameObjectManager::getInstance()->addReadyToRemoveGameObject(_uniqueID);
 }
