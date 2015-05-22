@@ -221,6 +221,8 @@ bool TemplateManager::initBuildingTemplates()
             buildingTemplate->beingBuiltStatusTextureName = tabFileReader.getString(i, "BeingBuiltStatusTextureName");
             buildingTemplate->workingStatusTextureName = tabFileReader.getString(i, "WorkingStatusTextureName");
             buildingTemplate->destroyStatusTextureName = tabFileReader.getString(i, "DestroyStatusTextureName");
+            buildingTemplate->shadowTextureName = tabFileReader.getString(i, "ShadowTextureName");
+            buildingTemplate->shadowYPosition = tabFileReader.getFloat(i, "ShadowTextureYPosition");
             buildingTemplate->buildingTimeBySecond = tabFileReader.getFloat(i, "BuildingTimeBySecond");
             buildingTemplate->maxHP = tabFileReader.getInteger(i, "MaxHP");
             buildingTemplate->centerBottomGridYPosition = tabFileReader.getFloat(i, "CenterBottomGridYPosition");

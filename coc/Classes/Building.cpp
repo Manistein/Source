@@ -67,6 +67,7 @@ Sprite* Building::createBuildingStatusSprite(const string& buildingTemplateName,
     auto spriteFrameCache = SpriteFrameCache::getInstance();
 
     string spriteTextureName;
+    bool hasShadow = false;
 
     switch (buildingStatus)
     {
@@ -75,12 +76,15 @@ Sprite* Building::createBuildingStatusSprite(const string& buildingTemplateName,
         break;
     case BuildingStatus::BeingBuilt:
         spriteTextureName = buildingTemplate->beingBuiltStatusTextureName;
+        hasShadow = true;
         break;
     case BuildingStatus::Working:
         spriteTextureName = buildingTemplate->workingStatusTextureName;
+        hasShadow = true;
         break;
     case BuildingStatus::Destory:
         spriteTextureName = buildingTemplate->destroyStatusTextureName;
+        hasShadow = true;
         break;
     default:    break;
     }
@@ -91,6 +95,17 @@ Sprite* Building::createBuildingStatusSprite(const string& buildingTemplateName,
     buildingStatusSprite->setOpacity(opacity);
     addChild(buildingStatusSprite);
     _buildingStatusSpriteMap[buildingStatus] = buildingStatusSprite;
+
+    if (hasShadow)
+    {
+        auto buildStatusSpriteSize = buildingStatusSprite->getContentSize();
+
+        auto shadowSprite = Sprite::create();
+        auto shadowSpriteFrame = spriteFrameCache->getSpriteFrameByName(buildingTemplate->shadowTextureName);
+        shadowSprite->setSpriteFrame(shadowSpriteFrame);
+        shadowSprite->setPosition(Vec2(buildStatusSpriteSize.width / 2.0f, buildingTemplate->shadowYPosition));
+        buildingStatusSprite->addChild(shadowSprite, -1);
+    }
 
     return buildingStatusSprite;
 }
