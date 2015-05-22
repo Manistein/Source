@@ -44,6 +44,7 @@ bool Building::init(ForceType forceType, const string& buildingTemplateName, con
     initBuildingStatusSprites(buildingTemplateName);
     initBottomGridSprites(buildingTemplateName);
     updateStatus(BuildingStatus::PrepareToBuild);
+
     initHPBar();
     initBattleData(buildingTemplateName);
 
@@ -54,33 +55,44 @@ bool Building::init(ForceType forceType, const string& buildingTemplateName, con
 
 void Building::initBuildingStatusSprites(const string& buildingTemplateName)
 {
+    createBuildingStatusSprite(buildingTemplateName, BuildingStatus::PrepareToBuild, 180);
+    createBuildingStatusSprite(buildingTemplateName, BuildingStatus::BeingBuilt);
+    createBuildingStatusSprite(buildingTemplateName, BuildingStatus::Working);
+    createBuildingStatusSprite(buildingTemplateName, BuildingStatus::Destory);
+}
+
+Sprite* Building::createBuildingStatusSprite(const string& buildingTemplateName, BuildingStatus buildingStatus, int opacity /* = 255 */)
+{
     auto buildingTemplate = TemplateManager::getInstance()->getBuildingTemplateBy(buildingTemplateName);
     auto spriteFrameCache = SpriteFrameCache::getInstance();
 
-    auto prepareToBuildSpriteFrame = spriteFrameCache->getSpriteFrameByName(buildingTemplate->prepareToBuildStatusTextureName);
-    auto prepareToBuildSprite = Sprite::create();
-    prepareToBuildSprite->setSpriteFrame(prepareToBuildSpriteFrame);
-    prepareToBuildSprite->setOpacity(180);
-    addChild(prepareToBuildSprite);
-    _buildingStatusSpriteMap[BuildingStatus::PrepareToBuild] = prepareToBuildSprite;
+    string spriteTextureName;
 
-    auto beingBuiltSpriteFrame = spriteFrameCache->getSpriteFrameByName(buildingTemplate->beingBuiltStatusTextureName);
-    auto beingBuiltSprite = Sprite::create();
-    beingBuiltSprite->setSpriteFrame(beingBuiltSpriteFrame);
-    addChild(beingBuiltSprite);
-    _buildingStatusSpriteMap[BuildingStatus::BeingBuilt] = beingBuiltSprite;
+    switch (buildingStatus)
+    {
+    case BuildingStatus::PrepareToBuild:
+        spriteTextureName = buildingTemplate->prepareToBuildStatusTextureName;
+        break;
+    case BuildingStatus::BeingBuilt:
+        spriteTextureName = buildingTemplate->beingBuiltStatusTextureName;
+        break;
+    case BuildingStatus::Working:
+        spriteTextureName = buildingTemplate->workingStatusTextureName;
+        break;
+    case BuildingStatus::Destory:
+        spriteTextureName = buildingTemplate->destroyStatusTextureName;
+        break;
+    default:    break;
+    }
 
-    auto workingSpriteFrame = spriteFrameCache->getSpriteFrameByName(buildingTemplate->workingStatusTextureName);
-    auto workingSprite = Sprite::create();
-    workingSprite->setSpriteFrame(workingSpriteFrame);
-    addChild(workingSprite);
-    _buildingStatusSpriteMap[BuildingStatus::Working] = workingSprite;
+    auto buildingStatusSpriteFrame = spriteFrameCache->getSpriteFrameByName(spriteTextureName);
+    auto buildingStatusSprite = Sprite::create();
+    buildingStatusSprite->setSpriteFrame(buildingStatusSpriteFrame);
+    buildingStatusSprite->setOpacity(opacity);
+    addChild(buildingStatusSprite);
+    _buildingStatusSpriteMap[buildingStatus] = buildingStatusSprite;
 
-    auto destroySpriteFrame = spriteFrameCache->getSpriteFrameByName(buildingTemplate->destroyStatusTextureName);
-    auto destroySprite = Sprite::create();
-    destroySprite->setSpriteFrame(destroySpriteFrame);
-    addChild(destroySprite);
-    _buildingStatusSpriteMap[BuildingStatus::Destory] = destroySprite;
+    return buildingStatusSprite;
 }
 
 void Building::initBottomGridSprites(const string& buildingTemplateName)
@@ -234,16 +246,29 @@ void Building::followCursorInPrepareToBuildStatus()
     auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
     auto cursorPointInTileMap = mapManager->convertCursorPositionToTileMapSpace();
 
+    // 为了保证底座和地图内的格子保持对齐，并且保证底座中心位置位于鼠标光标上，需要按照如下步骤做
+    // 1）计算当底座中心位于鼠标光标上时，buiding的坐标，这里需要先setPosition，因为后面要取到经过位移后的bottomGrid的新坐标
+    // 2）找到bottomGrid的中心坐标，位于那一个tileNode内，并且获取tileNode的中心坐标
+    // 3）计算bottomGrid到tileNode中心的差值，并且让building坐标加上这个差值并且再次setPosition，以达到对齐效果
     Vec2 buildingPosition;
     buildingPosition.x = cursorPointInTileMap.x;
     buildingPosition.y = prepareToBuildSpriteSize.height / 2.0f - _bottomGridsPlaneCenterPositionInLocalSpace.y +
         cursorPointInTileMap.y;
 
+    setPosition(buildingPosition);
+
+    auto bottomGrid = _bottomGridSpritesList.front();
+    auto bottomGridWorldPosition = prepareToBuildSprite->convertToWorldSpace(bottomGrid->getPosition());
+    auto bottomGridInMapPosition = mapManager->convertToTileMapSpace(bottomGridWorldPosition);
+
     auto tileSize = mapManager->getTileSize();
-    auto tileSubscript = mapManager->getTileSubscript(buildingPosition);
-    auto tileNode = mapManager->getTileNodeAt((int)tileSubscript.x, (int)tileSubscript.y);
-    buildingPosition.x = tileNode->leftTopPosition.x;
-    buildingPosition.y = tileNode->leftTopPosition.y;
+    auto bottomGridSubscript = mapManager->getTileSubscript(bottomGridInMapPosition);
+    auto tileNode = mapManager->getTileNodeAt((int)bottomGridSubscript.x, (int)bottomGridSubscript.y);
+    auto tileTopPosition = tileNode->leftTopPosition;
+
+    Vec2 tileCenterPosition(tileTopPosition.x, tileTopPosition.y - tileSize.height / 2.0f);
+    buildingPosition.x += tileCenterPosition.x - bottomGridInMapPosition.x;
+    buildingPosition.y += tileCenterPosition.y- bottomGridInMapPosition.y;
 
     setPosition(buildingPosition);
 }

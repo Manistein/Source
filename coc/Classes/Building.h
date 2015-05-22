@@ -27,7 +27,10 @@ public:
     bool canUpdateToWorkingStatus();
 private:
     bool init(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID);
+
     void initBuildingStatusSprites(const string& buildingTemplateName);
+    Sprite* createBuildingStatusSprite(const string& buildingTemplateName, BuildingStatus buildingStatus, int opacity = 255);
+
     void initBottomGridSprites(const string& buildingTemplateName);
     void initHPBar();
     void initBattleData(const string& buildingTemplateName);
