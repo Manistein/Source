@@ -84,6 +84,9 @@
     <ClCompile Include="..\Classes\Building.cpp">
       <Filter>src\GameWorld\GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\SpecialEffectManager.cpp">
+      <Filter>src\GameWorld\GameManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -145,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Building.h">
       <Filter>src\GameWorld\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\SpecialEffectManager.h">
+      <Filter>src\GameWorld\GameManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
