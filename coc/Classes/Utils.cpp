@@ -1,5 +1,6 @@
 #include "Base.h"
 #include "Utils.h"
+#include "base/ccMacros.h"
 
 float GameUtils::computeRotatedDegree(const Vec2& beginPosition, const Vec2& endPosition)
 {
@@ -84,4 +85,31 @@ bool GameUtils::isVec2Equal(const Vec2& left, const Vec2& right)
     }
 
     return result;
+}
+
+Animation* GameUtils::createAnimationWithPList(const string& plistFileName)
+{
+    auto fileUtils = FileUtils::getInstance();
+    CCASSERT(fileUtils->isFileExist(plistFileName), StringUtils::format("%s is invalid", plistFileName.c_str()).c_str());
+
+    auto spriteFrameCache = SpriteFrameCache::getInstance();
+    spriteFrameCache->addSpriteFramesWithFile(plistFileName);
+
+    auto animation = Animation::create();
+
+    auto plistDataMap = fileUtils->getValueMapFromFile(plistFileName);
+    auto framesIter = plistDataMap.find("frames");
+    CCASSERT(framesIter != plistDataMap.end(), StringUtils::format("frames key is invalid in %s", plistFileName.c_str()).c_str());
+
+    auto framesMap = plistDataMap["frames"].asValueMap();
+    for (auto& iter : framesMap)
+    {
+        auto spriteFrame = spriteFrameCache->getSpriteFrameByName(iter.first);
+        if (spriteFrame)
+        {
+            animation->addSpriteFrame(spriteFrame);
+        }
+    }
+
+    return animation;
 }

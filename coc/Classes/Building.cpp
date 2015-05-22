@@ -202,6 +202,7 @@ void Building::initBattleData(const string& buildingTemplateName)
     _maxHp = _hp = buildingTemplate->maxHP;
     _buildingTimeBySecond = buildingTemplate->buildingTimeBySecond;
     _extraEnemyAttackRadius = buildingTemplate->extraEnemyAttackRadius;
+    _destroySpecialEffectTemplateName = buildingTemplate->destroySpecialEffectTemplateName;
 }
 
 void Building::clear()
@@ -256,6 +257,8 @@ void Building::updateStatus(BuildingStatus buildingStatus)
             }
             else if (buildingStatus == BuildingStatus::Destory)
             {
+                GameWorldCallBackFunctionsManager::getInstance()->_createSpecialEffect(_destroySpecialEffectTemplateName, getPosition(), false);
+
                 auto onReadyToRemove = CallFunc::create(CC_CALLBACK_0(Building::addToRemoveQueue, this));
                 auto sequenceAction = Sequence::create(DelayTime::create(BUILDING_DELAY_REMOVE_TIME), onReadyToRemove, nullptr);
                 runAction(sequenceAction);

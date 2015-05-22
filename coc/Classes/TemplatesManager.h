@@ -54,6 +54,7 @@ struct BuildingTemplate
     string workingStatusTextureName;
     string destroyStatusTextureName;
     string shadowTextureName;
+    string destroySpecialEffectTemplateName;
     float shadowYPositionInBeingBuiltStatus = 0.0f;
     float shadowYPositionInWorkingStatus = 0.0f;
     float shadowYPositionInDestroyStatus = 0.0f;
@@ -61,6 +62,12 @@ struct BuildingTemplate
     float extraEnemyAttackRadius = 0.0f;
     int maxHP = 0;
     float centerBottomGridYPosition = 0.0f;
+};
+
+struct SpecialEffectTemplate
+{
+    string animationPListName;
+    float perUnitIntervalBySecond = 0.0f;
 };
 
 class TemplateManager
@@ -72,15 +79,18 @@ public:
     const NpcTemplate* getNpcTemplateBy(const string& jobName);
     const BulletTemplate* getBulletTemplateBy(BulletType bulletType);
     const BuildingTemplate* getBuildingTemplateBy(const string& buildingTemplateName);
+    const SpecialEffectTemplate* getSpecialEffectTemplateBy(const string& templateName);
 private:
     bool init();
     bool initNpcTemplates();
     bool initBulletTemplates();
     bool initBuildingTemplates();
+    bool initSpecialEffectTemplates();
 
     map<string, NpcTemplate*> _npcTemplatesMap;
     map<BulletType, BulletTemplate*> _bulletTemplatesMap;
     map<string, BuildingTemplate*> _buildingTemplatesMap;
+    map<string, SpecialEffectTemplate*> _specialEffectTemplatesMap;
 
     TemplateManager(){}
     TemplateManager(const TemplateManager&);

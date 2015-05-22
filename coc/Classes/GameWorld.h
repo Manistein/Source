@@ -5,6 +5,7 @@ class Npc;
 class GameObjectManager;
 class GameObjectSelectBox;
 class BulletManager;
+class SpecialEffectManager;
 
 class GameWorld : public Node
 {
@@ -16,6 +17,7 @@ public:
     void removeGameObjectBy(int uniqueID);
 
     void createBullet(BulletType bulletType, int attackerID, int attackTargetID);
+    void createSpecialEffect(const string& templateName, const Vec2& inMapPosition, bool isRepeat);
 
     void onMouseLeftButtonDown();
     void onMouseLeftButtonUp();
@@ -40,6 +42,7 @@ private:
     GameObjectManager* _gameObjectManager = nullptr;
     GameObjectSelectBox* _gameObjectSelectBox = nullptr;
     BulletManager* _bulletManager = nullptr;
+    SpecialEffectManager* _specialEffectManager = nullptr;
 
     Vec2 _cursorPoint;
     Vec2 _previousClickedCursorPoint;

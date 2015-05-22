@@ -60,4 +60,5 @@ private:
     float _buildingTimeBySecond = 0.0f;
     float _passTimeBySecondInBeingBuiltStatus = 0.0f;
     ui::LoadingBar* _beingBuildProgressBar = nullptr;
+    string _destroySpecialEffectTemplateName;
 };

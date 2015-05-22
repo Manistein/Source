@@ -10,6 +10,7 @@
 #include "AutoFindPathHelper.h"
 #include "Utils.h"
 #include "Building.h"
+#include "SpecialEffectManager.h"
 
 static Vec2 s_mouseDownPoint;
 const float SINGLE_CLICK_AREA = 5.0f;
@@ -42,6 +43,7 @@ bool GameWorld::init()
     addChild(_gameObjectSelectBox);
 
     _bulletManager = BulletManager::getInstance();
+    _specialEffectManager = SpecialEffectManager::getInstance();
 
     GameWorldCallBackFunctionsManager::getInstance()->registerCallBackFunctions(this);
 
@@ -201,6 +203,15 @@ void GameWorld::createBullet(BulletType bulletType, int attackerID, int attackTa
     if (bullet)
     {
         _mapManager->addChildInGameObjectLayer(bullet);
+    }
+}
+
+void GameWorld::createSpecialEffect(const string& templateName, const Vec2& inMapPosition, bool isRepeat)
+{
+    auto specialEffect = _specialEffectManager->createSpecialEffect(templateName, inMapPosition, isRepeat);
+    if (specialEffect)
+    {
+        _mapManager->addChildInGameObjectLayer(specialEffect, 10);
     }
 }
 

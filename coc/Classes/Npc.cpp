@@ -491,32 +491,13 @@ float Npc::getDistanceFrom(GameObject* enemy)
 
 RepeatForever* Npc::createAnimateWidthPList(const string& plist, float animateDelayPerUnit, NpcStatus animateType)
 {
-    auto fileUtils = FileUtils::getInstance();
-    CCASSERT(fileUtils->isFileExist(plist), StringUtils::format("%s is invalid", plist.c_str()).c_str());
+    auto animation = GameUtils::createAnimationWithPList(plist);
 
-    auto spriteFrameCache = SpriteFrameCache::getInstance();
-    spriteFrameCache->addSpriteFramesWithFile(plist);
-
-    auto animation = Animation::create();
-
-    auto plistDataMap = fileUtils->getValueMapFromFile(plist);
-    auto framesIter = plistDataMap.find("frames");
-    CCASSERT(framesIter != plistDataMap.end(), StringUtils::format("frames key is invalid in %s", plist.c_str()).c_str());
-
-    auto framesMap = plistDataMap["frames"].asValueMap();
-    for (auto& iter : framesMap)
+    auto& contentSize = getContentSize();
+    if (contentSize.width == 0.0f || contentSize.height == 0.0f)
     {
-        auto spriteFrame = spriteFrameCache->getSpriteFrameByName(iter.first);
-        if (spriteFrame)
-        {
-            auto& contentSize = getContentSize();
-            if (contentSize.width == 0.0f || contentSize.height == 0.0f)
-            {
-                setContentSize(spriteFrame->getOriginalSizeInPixels());
-            }
-
-            animation->addSpriteFrame(spriteFrame);
-        }
+        auto spriteFrame = animation->getFrames().at(0)->getSpriteFrame();
+        setContentSize(spriteFrame->getOriginalSizeInPixels());
     }
 
     animation->setDelayPerUnit(animateDelayPerUnit);

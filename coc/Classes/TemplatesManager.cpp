@@ -44,6 +44,15 @@ TemplateManager::~TemplateManager()
         }
     }
     _buildingTemplatesMap.clear();
+
+    for (auto& iter : _specialEffectTemplatesMap)
+    {
+        if (iter.second)
+        {
+            CC_SAFE_DELETE(iter.second);
+        }
+    }
+    _specialEffectTemplatesMap.clear();
 }
 
 TemplateManager* TemplateManager::getInstance()
@@ -96,6 +105,19 @@ const BuildingTemplate* TemplateManager::getBuildingTemplateBy(const string& bui
     return buildingTemplate;
 }
 
+const SpecialEffectTemplate* TemplateManager::getSpecialEffectTemplateBy(const string& templateName)
+{
+    SpecialEffectTemplate* specialEffectTemplate = nullptr;
+
+    auto iter = _specialEffectTemplatesMap.find(templateName);
+    if (iter != _specialEffectTemplatesMap.end())
+    {
+        specialEffectTemplate = iter->second;
+    }
+
+    return specialEffectTemplate;
+}
+
 bool TemplateManager::init()
 {
     bool result = false;
@@ -103,6 +125,7 @@ bool TemplateManager::init()
     result = initNpcTemplates();
     result = initBulletTemplates();
     result = initBuildingTemplates();
+    result = initSpecialEffectTemplates();
 
     return result;
 }
@@ -222,6 +245,7 @@ bool TemplateManager::initBuildingTemplates()
             buildingTemplate->workingStatusTextureName = tabFileReader.getString(i, "WorkingStatusTextureName");
             buildingTemplate->destroyStatusTextureName = tabFileReader.getString(i, "DestroyStatusTextureName");
             buildingTemplate->shadowTextureName = tabFileReader.getString(i, "ShadowTextureName");
+            buildingTemplate->destroySpecialEffectTemplateName = tabFileReader.getString(i, "DestroySpecialEffectTemplateName");
             buildingTemplate->shadowYPositionInBeingBuiltStatus = tabFileReader.getFloat(i, "ShadowYPositionInBeingBuiltStatus");
             buildingTemplate->shadowYPositionInWorkingStatus = tabFileReader.getFloat(i, "ShadowYPositionInWorkingStatus");
             buildingTemplate->shadowYPositionInDestroyStatus = tabFileReader.getFloat(i, "ShadowYPositionInDestroyStatus");
@@ -232,6 +256,30 @@ bool TemplateManager::initBuildingTemplates()
 
             auto buildingTemplateName = tabFileReader.getString(i, "BuildingTemplateName");
             _buildingTemplatesMap[buildingTemplateName] = buildingTemplate;
+        }
+
+        result = true;
+    }
+
+    return result;
+}
+
+bool TemplateManager::initSpecialEffectTemplates()
+{
+    bool result = false;
+
+    TabFileReader tabFileReader;
+    if (tabFileReader.open("SpecialEffectTemplates.tab"))
+    {
+        for (int i = 0; i < tabFileReader.getRowCount(); i ++)
+        {
+            SpecialEffectTemplate* specialEffectTemplate = new SpecialEffectTemplate();
+
+            specialEffectTemplate->animationPListName = tabFileReader.getString(i, "AnimationPListName");
+            specialEffectTemplate->perUnitIntervalBySecond = tabFileReader.getFloat(i, "PerUnitIntervalBySecond");
+
+            auto templateName = tabFileReader.getString(i, "TemplateName");
+            _specialEffectTemplatesMap[templateName] = specialEffectTemplate;
         }
 
         result = true;

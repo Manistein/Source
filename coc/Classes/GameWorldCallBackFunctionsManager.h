@@ -14,6 +14,7 @@ public:
     std::function<void(int)> _removeGameObjectBy;
     std::function<list<Vec2>(const Vec2&, const Vec2&)> _computePathListBetween;
     std::function<MapManager*()> _getMapManager;
+    std::function<void(const string&, const Vec2&, bool)> _createSpecialEffect;
 private:
     GameWorldCallBackFunctionsManager(){};
     GameWorldCallBackFunctionsManager(const GameWorldCallBackFunctionsManager&);
