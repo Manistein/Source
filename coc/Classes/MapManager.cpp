@@ -38,6 +38,9 @@ bool MapManager::init(Node* parentNode, const std::string& titleMapFileName)
     Director::getInstance()->setProjection(Director::Projection::_2D);
     Director::getInstance()->setDepthTest(true);
 
+    glAlphaFunc(GL_GREATER, 0.1);
+    glEnable(GL_ALPHA_TEST);
+
     auto visibleSize = Director::getInstance()->getVisibleSize();
     POINT cursorInClientPoint;
     ::GetCursorPos(&cursorInClientPoint);

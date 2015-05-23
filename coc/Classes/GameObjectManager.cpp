@@ -97,7 +97,6 @@ void GameObjectManager::gameObjectsDepthSort(const Size& tileSize)
             if (building->getBuildingStatus() == BuildingStatus::PrepareToBuild)
             {
                 gameObjectIter.second->setPositionZ(MAX_GAME_OBJECT_COUNT);
-                gameObjectIter.second->setGlobalZOrder(MAX_GAME_OBJECT_COUNT);
             }
             else
             {

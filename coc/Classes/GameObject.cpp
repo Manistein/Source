@@ -64,7 +64,7 @@ void GameObject::depthSort(const Size& tileSize)
     position = CC_POINT_POINTS_TO_PIXELS(position);
     float newZ = -(position.y + tileSize.height / 3.0f) / (tileSize.height / 2.0f);
     setPositionZ(newZ);
-    setGlobalZOrder(MAX_GAME_OBJECT_COUNT + newZ);
+    //setGlobalZOrder(MAX_GAME_OBJECT_COUNT + newZ);
 }
 
 void GameObject::showHPBar()
