@@ -43,7 +43,10 @@ const float MAP_BORDER_MARGIN = 50.0f;
 const float MAP_MIN_SCALE = 0.3f;
 const float MAP_MAX_SCALE = 1.0f;
 const int LINEUP_MAX_ROW_COUNT = 5;
+
+// TileNodeµÄ±ê¼Ç
 const int OBSTACLE_ID = 2;
+const int ROAD_ID = 0;
 
 class MapManager
 {

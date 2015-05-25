@@ -246,8 +246,12 @@ void Building::updateStatus(BuildingStatus buildingStatus)
             setContentSize(buildingSize);
             buildStatusSpriteIter.second->setPosition(Vec2(buildingSize.width / 2.0f, buildingSize.height / 2.0f));
 
-            if (buildingStatus == BuildingStatus::BeingBuilt)
+            switch (buildingStatus)
             {
+            case BuildingStatus::BeingBuilt:
+            {
+                updateCoveredByBuildingTileNodesGID(OBSTACLE_ID);
+
                 hideHPBar();
                 showBeingBuiltProgressBar();
 
@@ -255,13 +259,25 @@ void Building::updateStatus(BuildingStatus buildingStatus)
                 auto sequenceAction = Sequence::create(DelayTime::create(_buildingTimeBySecond), onUpdateToWorkingStatus, nullptr);
                 runAction(sequenceAction);
             }
-            else if (buildingStatus == BuildingStatus::Destory)
+                break;
+            case BuildingStatus::Working:
             {
+                // 因为有些建筑物不需要经历建造阶段就可以直接进入working状态，因此这里需要再次更新占用格子的gid
+                updateCoveredByBuildingTileNodesGID(OBSTACLE_ID);
+            }
+                break;
+            case BuildingStatus::Destory:
+            {
+                updateCoveredByBuildingTileNodesGID(ROAD_ID);
+
                 GameWorldCallBackFunctionsManager::getInstance()->_createSpecialEffect(_destroySpecialEffectTemplateName, getPosition(), false);
 
                 auto onReadyToRemove = CallFunc::create(CC_CALLBACK_0(Building::addToRemoveQueue, this));
                 auto sequenceAction = Sequence::create(DelayTime::create(BUILDING_DELAY_REMOVE_TIME), onReadyToRemove, nullptr);
                 runAction(sequenceAction);
+            }
+                break;
+            default:    break;
             }
         }
         else
@@ -343,12 +359,12 @@ void Building::followCursorInPrepareToBuildStatus()
     setPosition(buildingPosition);
 }
 
-bool Building::isBottomGridCoverNpc(const Vec2& inMapPosition)
+bool Building::isBottomGridCoverNpc(const Vec2& bottomGridInMapPosition)
 {
     bool result = false;
 
     auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
-    auto coveredByBottomGridTileNodeSubscript = mapManager->getTileSubscript(inMapPosition);
+    auto coveredByBottomGridTileNodeSubscript = mapManager->getTileSubscript(bottomGridInMapPosition);
     auto coveredByBotomGridTileNode = mapManager->getTileNodeAt((int)coveredByBottomGridTileNodeSubscript.x, (int)coveredByBottomGridTileNodeSubscript.y);
 
     auto gameObjectManager = GameObjectManager::getInstance();
@@ -404,6 +420,23 @@ void Building::updateBottomGridTextureInPrepareToBuildStatus()
         {
             bottomGridSprite->setSpriteFrame(enableBuildSpriteFrame);
         }
+    }
+}
+
+void Building::updateCoveredByBuildingTileNodesGID(int tileNodeGID)
+{
+    auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
+    auto parentNode = _bottomGridSpritesList.at(0)->getParent();
+
+    for (auto& bottomGrid : _bottomGridSpritesList)
+    {
+        auto bottomGridWorldPosition = parentNode->convertToWorldSpace(bottomGrid->getPosition());
+        auto bottomGridInMapPosition = mapManager->convertToTileMapSpace(bottomGridWorldPosition);
+
+        auto coveredByBottomGridTileNodeSubscript = mapManager->getTileSubscript(bottomGridInMapPosition);
+        auto coveredByBottomGridTileNode = mapManager->getTileNodeAt((int)coveredByBottomGridTileNodeSubscript.x, (int)coveredByBottomGridTileNodeSubscript.y);
+
+        coveredByBottomGridTileNode->gid = tileNodeGID;
     }
 }
 
