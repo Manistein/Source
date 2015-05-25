@@ -343,6 +343,36 @@ void Building::followCursorInPrepareToBuildStatus()
     setPosition(buildingPosition);
 }
 
+bool Building::isBottomGridCoverNpc(const Vec2& inMapPosition)
+{
+    bool result = false;
+
+    auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
+    auto coveredByBottomGridTileNodeSubscript = mapManager->getTileSubscript(inMapPosition);
+    auto coveredByBotomGridTileNode = mapManager->getTileNodeAt((int)coveredByBottomGridTileNodeSubscript.x, (int)coveredByBottomGridTileNodeSubscript.y);
+
+    auto gameObjectManager = GameObjectManager::getInstance();
+    auto gameObjectMap = gameObjectManager->getGameObjectMap();
+    for (auto& gameObjectIter : gameObjectMap)
+    {
+        if (gameObjectIter.second->getGameObjectType() != GameObjectType::Npc)
+        {
+            continue;
+        }
+
+        auto gameObjectPosition = gameObjectIter.second->getPosition();
+        auto coveredByNpcTileNodeSubscript = mapManager->getTileSubscript(gameObjectPosition);
+        auto coveredByNpcTileNode = mapManager->getTileNodeAt((int)coveredByNpcTileNodeSubscript.x, (int)coveredByNpcTileNodeSubscript.y);
+        if (coveredByBotomGridTileNode == coveredByNpcTileNode)
+        {
+            result = true;
+            break;
+        }
+    }
+
+    return result;
+}
+
 void Building::updateBottomGridTextureInPrepareToBuildStatus()
 {
     if (_buildingStatus != BuildingStatus::PrepareToBuild)
@@ -364,7 +394,8 @@ void Building::updateBottomGridTextureInPrepareToBuildStatus()
         auto bottomGridTileMapPosition = mapManager->convertToTileMapSpace(bottomGridWorldPosition);
 
         bool isInObstacleTile = mapManager->isInObstacleTile(bottomGridTileMapPosition);
-        if (isInObstacleTile)
+        bool isCurrentBottomGridCoveredNpc = isBottomGridCoverNpc(bottomGridTileMapPosition);
+        if (isInObstacleTile || isCurrentBottomGridCoveredNpc)
         {
             bottomGridSprite->setSpriteFrame(disableBuildSpriteFrame);
             _canBuild = false;

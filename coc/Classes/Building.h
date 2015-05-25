@@ -41,6 +41,7 @@ private:
     void debugDraw() override;
 
     void followCursorInPrepareToBuildStatus();
+    bool isBottomGridCoverNpc(const Vec2& inMapPosition);
     void updateBottomGridTextureInPrepareToBuildStatus();
 
     void showBeingBuiltProgressBar();
