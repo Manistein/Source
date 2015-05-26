@@ -49,7 +49,18 @@ bool Building::init(ForceType forceType, const string& buildingTemplateName, con
 
     initBuildingStatusSprites(buildingTemplateName);
     initBottomGridSprites(buildingTemplateName);
-    updateStatus(BuildingStatus::PrepareToBuild);
+
+    if (_forceType == ForceType::Player)
+    {
+        updateStatus(BuildingStatus::PrepareToBuild);
+    }
+    else
+    {
+        updateStatus(BuildingStatus::PrepareToBuild);
+        auto onInitBuildingStatus = CallFunc::create(CC_CALLBACK_0(Building::onInitBuildingStatus, this, position, BuildingStatus::BeingBuilt));
+        auto sequenceAction = Sequence::create(DelayTime::create(0.017f), onInitBuildingStatus, nullptr);
+        runAction(sequenceAction);
+    }
 
     initHPBar();
     initBeingBuiltProgressBar();
@@ -351,25 +362,31 @@ void Building::debugDraw()
 
 void Building::followCursorInPrepareToBuildStatus()
 {
-    if (_buildingStatus != BuildingStatus::PrepareToBuild)
+    if (_buildingStatus != BuildingStatus::PrepareToBuild || _forceType == ForceType::AI)
     {
         return;
     }
 
-    auto prepareToBuildSprite = _buildingStatusSpriteMap[BuildingStatus::PrepareToBuild];
-    auto prepareToBuildSpriteSize = prepareToBuildSprite->getContentSize();
-
     auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
     auto cursorPointInTileMap = mapManager->convertCursorPositionToTileMapSpace();
+
+    ajustBuildingPosition(cursorPointInTileMap);
+}
+
+void Building::ajustBuildingPosition(const Vec2& inMapPosition)
+{
+    auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
+    auto prepareToBuildSprite = _buildingStatusSpriteMap[BuildingStatus::PrepareToBuild];
+    auto prepareToBuildSpriteSize = prepareToBuildSprite->getContentSize();
 
     // 为了保证底座和地图内的格子保持对齐，并且保证底座中心位置位于鼠标光标上，需要按照如下步骤做
     // 1）计算当底座中心位于鼠标光标上时，buiding的坐标，这里需要先setPosition，因为后面要取到经过位移后的bottomGrid的新坐标
     // 2）找到bottomGrid的中心坐标，位于那一个tileNode内，并且获取tileNode的中心坐标
     // 3）计算bottomGrid到tileNode中心的差值，并且让building坐标加上这个差值并且再次setPosition，以达到对齐效果
     Vec2 buildingPosition;
-    buildingPosition.x = cursorPointInTileMap.x;
+    buildingPosition.x = inMapPosition.x;
     buildingPosition.y = prepareToBuildSpriteSize.height / 2.0f - _bottomGridsPlaneCenterPositionInLocalSpace.y +
-        cursorPointInTileMap.y;
+        inMapPosition.y;
 
     setPosition(buildingPosition);
 
@@ -384,7 +401,7 @@ void Building::followCursorInPrepareToBuildStatus()
 
     Vec2 tileCenterPosition(tileTopPosition.x, tileTopPosition.y - tileSize.height / 2.0f);
     buildingPosition.x += tileCenterPosition.x - bottomGridInMapPosition.x;
-    buildingPosition.y += tileCenterPosition.y- bottomGridInMapPosition.y;
+    buildingPosition.y += tileCenterPosition.y - bottomGridInMapPosition.y;
 
     setPosition(buildingPosition);
 }
@@ -465,6 +482,12 @@ void Building::updateCoveredByBuildingTileNodesGID(int tileNodeGID)
 
         coveredByBottomGridTileNode->gid = tileNodeGID;
     }
+}
+
+void Building::onInitBuildingStatus(const Vec2& inMapPosition, BuildingStatus buildingStatus)
+{
+    ajustBuildingPosition(inMapPosition);
+    updateStatus(buildingStatus);
 }
 
 void Building::showBeingBuiltProgressBar()

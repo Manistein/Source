@@ -66,8 +66,9 @@ bool GameWorld::init()
         createGameObject(GameObjectType::Npc, ForceType::Player, "BlueBarbarian", Vec2(2100.0f, 2100.0f));
     }
 
-    createGameObject(GameObjectType::Npc, ForceType::AI, "BlueBarbarian", Vec2(3150.0f, 2150.0f));
+    //createGameObject(GameObjectType::Npc, ForceType::AI, "BlueBarbarian", Vec2(3150.0f, 2150.0f));
     createGameObject(GameObjectType::Building, ForceType::Player, "PurpleAnchorTower", Vec2(3150.0f, 2150.0f));
+    createGameObject(GameObjectType::Building, ForceType::AI, "PurpleAnchorTower", Vec2(3150.0f, 2150.0f));
 
     _director->setAlphaBlending(true);
 
@@ -186,7 +187,7 @@ void GameWorld::createGameObject(GameObjectType gameObjectType, ForceType forceT
     auto gameObject = _gameObjectManager->createGameObject(gameObjectType, forceType, jobName, position);
     _mapManager->addChildInGameObjectLayer(gameObject);
 
-    if (gameObjectType == GameObjectType::Building)
+    if (gameObjectType == GameObjectType::Building && forceType == ForceType::Player)
     {
         _holdingBuildingID = gameObject->getUniqueID();
     }

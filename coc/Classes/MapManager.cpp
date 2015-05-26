@@ -212,8 +212,11 @@ bool MapManager::isInObstacleTile(const Vec2& inMapPosition)
     if (gameObjectLayer)
     {
         auto tileSubscript = getTileSubscript(inMapPosition);
-        auto tileGID = gameObjectLayer->getTileGIDAt(tileSubscript);
-        if (tileGID == OBSTACLE_ID)
+        int columnIndex = (int)tileSubscript.x;
+        int rowIndex = (int)tileSubscript.y;
+
+        auto tileNode = getTileNodeAt(columnIndex, rowIndex);
+        if (tileNode->gid == OBSTACLE_ID)
         {
             result = true;
         }

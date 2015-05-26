@@ -49,9 +49,11 @@ private:
     void debugDraw() override;
 
     void followCursorInPrepareToBuildStatus();
+    void ajustBuildingPosition(const Vec2& inMapPosition);
     bool isBottomGridCoverNpc(const Vec2& bottomGridInMapPosition);
     void updateBottomGridTextureInPrepareToBuildStatus();
     void updateCoveredByBuildingTileNodesGID(int tileNodeGID);
+    void onInitBuildingStatus(const Vec2& inMapPosition, BuildingStatus buildingStatus);
 
     void showBeingBuiltProgressBar();
     void hideBeingBuiltProgressBar();
