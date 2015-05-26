@@ -222,7 +222,7 @@ void GameWorld::syncCursorPoint(const Vec2& cursorPoint)
     _gameObjectSelectBox->syncCursorPoint(cursorPoint);
 }
 
-list<Vec2> GameWorld::computePathListBetween(const Vec2& inMapStartPosition, const Vec2& inMapEndPosition)
+list<Vec2> GameWorld::computePathListBetween(const Vec2& inMapStartPosition, const Vec2& inMapEndPosition, bool isAllowEndTileNodeToMoveIn /*= false*/)
 {
     list<Vec2> pointPathList;
 
@@ -232,6 +232,13 @@ list<Vec2> GameWorld::computePathListBetween(const Vec2& inMapStartPosition, con
     auto endTileSubscript = _mapManager->getTileSubscript(inMapEndPosition);
     auto endTileNode = _mapManager->getTileNodeAt((int)endTileSubscript.x, (int)endTileSubscript.y);
     auto distanceBetweenTileAndNpc = inMapEndPosition - endTileNode->leftTopPosition;
+
+    // 临时允许npc可以移动到最后一个障碍格内
+    int originalGID = endTileNode->gid;
+    if (isAllowEndTileNodeToMoveIn)
+    {
+        endTileNode->gid = PASSABLE_ID;
+    }
 
     if (endTileNode->gid != OBSTACLE_ID)
     {
@@ -252,8 +259,16 @@ list<Vec2> GameWorld::computePathListBetween(const Vec2& inMapStartPosition, con
         }
         else
         {
-            pointPathList.push_front(inMapEndPosition);
+            if (!GameUtils::isVec2Equal(inMapStartPosition, inMapEndPosition))
+            {
+                pointPathList.push_front(inMapEndPosition);
+            }
         }
+    }
+
+    if (isAllowEndTileNodeToMoveIn)
+    {
+        endTileNode->gid = originalGID;
     }
 
     return pointPathList;

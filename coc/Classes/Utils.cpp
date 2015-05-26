@@ -61,6 +61,15 @@ float GameUtils::computeRotatedDegree(const Vec2& beginPosition, const Vec2& end
     return rotation;
 }
 
+
+float GameUtils::computeDistanceBetween(const Vec2& beginPosition, const Vec2& endPosition)
+{
+    float distance = sqrt((endPosition.x - beginPosition.x) * (endPosition.x - beginPosition.x) +
+        (endPosition.y - beginPosition.y) * (endPosition.y - beginPosition.y));
+
+    return distance;
+}
+
 bool GameUtils::isFloatEqual(float left, float right)
 {
     bool result = false;

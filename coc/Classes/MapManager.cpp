@@ -38,7 +38,7 @@ bool MapManager::init(Node* parentNode, const std::string& titleMapFileName)
     Director::getInstance()->setProjection(Director::Projection::_2D);
     Director::getInstance()->setDepthTest(true);
 
-    glAlphaFunc(GL_GREATER, 0.1);
+    glAlphaFunc(GL_GREATER, (GLclampf)0.1);
     glEnable(GL_ALPHA_TEST);
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
@@ -261,6 +261,11 @@ void MapManager::resolveMapShakeWhenMove()
 Size MapManager::getTileSize()
 {
     return _tileMap->getTileSize();
+}
+
+Size MapManager::getMapSize()
+{
+    return _tileMap->getMapSize();
 }
 
 Point MapManager::getTileSubscript(const Vec2& inMapPosition)

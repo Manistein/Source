@@ -46,7 +46,7 @@ const int LINEUP_MAX_ROW_COUNT = 5;
 
 // TileNodeµÄ±ê¼Ç
 const int OBSTACLE_ID = 2;
-const int ROAD_ID = 0;
+const int PASSABLE_ID = 0;
 
 class MapManager
 {
@@ -61,6 +61,7 @@ public:
     void syncCursorPoint(const Vec2& cursorPoint);
 
     Size getTileSize();
+    Size getMapSize();
     Point getTileSubscript(const Vec2& inMapPosition);
     DebugInfo getDebugInfo(TileMapLayerType tileMapLayerType);
 

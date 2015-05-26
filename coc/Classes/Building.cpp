@@ -268,7 +268,7 @@ void Building::updateStatus(BuildingStatus buildingStatus)
                 break;
             case BuildingStatus::Destory:
             {
-                updateCoveredByBuildingTileNodesGID(ROAD_ID);
+                updateCoveredByBuildingTileNodesGID(PASSABLE_ID);
 
                 GameWorldCallBackFunctionsManager::getInstance()->_createSpecialEffect(_destroySpecialEffectTemplateName, getPosition(), false);
 
@@ -425,15 +425,12 @@ void Building::updateBottomGridTextureInPrepareToBuildStatus()
 
 void Building::updateCoveredByBuildingTileNodesGID(int tileNodeGID)
 {
+    auto bottomGridInMapPositionList = getBottomGridInMapPositionList();
     auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
-    auto parentNode = _bottomGridSpritesList.at(0)->getParent();
 
-    for (auto& bottomGrid : _bottomGridSpritesList)
+    for (auto& inMapPosition : bottomGridInMapPositionList)
     {
-        auto bottomGridWorldPosition = parentNode->convertToWorldSpace(bottomGrid->getPosition());
-        auto bottomGridInMapPosition = mapManager->convertToTileMapSpace(bottomGridWorldPosition);
-
-        auto coveredByBottomGridTileNodeSubscript = mapManager->getTileSubscript(bottomGridInMapPosition);
+        auto coveredByBottomGridTileNodeSubscript = mapManager->getTileSubscript(inMapPosition);
         auto coveredByBottomGridTileNode = mapManager->getTileNodeAt((int)coveredByBottomGridTileNodeSubscript.x, (int)coveredByBottomGridTileNodeSubscript.y);
 
         coveredByBottomGridTileNode->gid = tileNodeGID;
@@ -471,4 +468,22 @@ void Building::updateBeingBuiltProgressBar(float delta)
 void Building::addToRemoveQueue()
 {
     GameObjectManager::getInstance()->addReadyToRemoveGameObject(_uniqueID);
+}
+
+vector<Vec2> Building::getBottomGridInMapPositionList()
+{
+    vector<Vec2> bottomGridInMapPositionList;
+
+    auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
+    auto parentNode = _bottomGridSpritesList.at(0)->getParent();
+
+    for (auto& bottomGrid : _bottomGridSpritesList)
+    {
+        auto bottomGridWorldPosition = parentNode->convertToWorldSpace(bottomGrid->getPosition());
+        auto bottomGridInMapPosition = mapManager->convertToTileMapSpace(bottomGridWorldPosition);
+
+        bottomGridInMapPositionList.push_back(bottomGridInMapPosition);
+    }
+
+    return bottomGridInMapPositionList;
 }

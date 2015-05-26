@@ -8,6 +8,9 @@
 #include "GameWorldCallBackFunctionsManager.h"
 #include "Utils.h"
 #include "Building.h"
+#include <functional>
+#include "math/CCGeometry.h"
+#include "MapManager.h"
 
 const string SHADOW_TEXTURE_NAME = "Shadow.png";
 const string SHOW_WORLD_POSITION_CHILD_NAME = "ShowWorldPositionChildName";
@@ -342,13 +345,21 @@ void Npc::runFightWithEnemyAI(float delta)
                 if (_coolDownTimeInMoveStatus >= COOL_DOWN_TIME_IN_MOVE_STATUS_INTERVAL)
                 {
                     auto npcPosition = getPosition();
-                    auto enemyPosition = enemy->getPosition();
+                    auto enemyPosition = computeArrivePositionBy(enemy);
 
                     if (_gotoTargetPositionPathList.empty() ||
                         !_gotoTargetPositionPathList.empty() && _gotoTargetPositionPathList.back() != enemyPosition)
                     {
                         _gotoTargetPositionPathList.clear();
-                        _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition);
+
+                        if (enemy->getGameObjectType() == GameObjectType::Npc)
+                        {
+                            _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition, false);
+                        }
+                        else
+                        {
+                            _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition, true);
+                        }
 
                         if (_gotoTargetPositionPathList.empty())
                         {
@@ -368,10 +379,18 @@ void Npc::runFightWithEnemyAI(float delta)
             case NpcStatus::Attack:
             {
                 auto npcPosition = getPosition();
-                auto enemyPosition = enemy->getPosition();
+                auto enemyPosition = computeArrivePositionBy(enemy);
 
                 _gotoTargetPositionPathList.clear();
-                _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition);
+                if (enemy->getGameObjectType() == GameObjectType::Npc)
+                {
+                    _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition, false);
+                }
+                else
+                {
+                    _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition, true);
+                }
+
                 if (_gotoTargetPositionPathList.empty())
                 {
                     tryUpdateStatus(NpcStatus::Stand);
@@ -478,15 +497,42 @@ bool Npc::isReadyToRemove()
     return _oldStatus == NpcStatus::Die;
 }
 
+cocos2d::Vec2 Npc::computeArrivePositionBy(GameObject* enemy)
+{
+    Vec2 arrivePosition;
+    if (enemy->getGameObjectType() == GameObjectType::Npc)
+    {
+        arrivePosition = enemy->getPosition();
+    }
+    else if (enemy->getGameObjectType() == GameObjectType::Building)
+    {
+        auto selfPosition = getPosition();
+
+        auto building = static_cast<Building*>(enemy);
+        auto bottomGridInMapPositionList = building->getBottomGridInMapPositionList();
+        float minDistance = FLT_MAX;
+        for (auto& bottomGridInMapPosition : bottomGridInMapPositionList)
+        {
+            float distance = GameUtils::computeDistanceBetween(selfPosition, bottomGridInMapPosition);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                arrivePosition = bottomGridInMapPosition;
+            }
+        }
+    }
+
+    return arrivePosition;
+}
+
 float Npc::getDistanceFrom(GameObject* enemy)
 {
-    auto enemyPosition = enemy->getPosition();
-    auto position = getPosition();
+    auto enemyPosition = computeArrivePositionBy(enemy);
+    auto npcPosition = getPosition();
 
-    float distance = sqrt((enemyPosition.x - position.x) * (enemyPosition.x - position.x) +
-        (enemyPosition.y - position.y) * (enemyPosition.y - position.y));
+    float distanceResult = GameUtils::computeDistanceBetween(enemyPosition, npcPosition);
 
-    return distance;
+    return distanceResult;
 }
 
 RepeatForever* Npc::createAnimateWidthPList(const string& plist, float animateDelayPerUnit, NpcStatus animateType)
@@ -768,7 +814,7 @@ void Npc::moveTo(const Vec2& targetPosition)
 
     auto startPosition = getPosition();
     _gotoTargetPositionPathList.clear();
-    _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(startPosition, targetPosition);
+    _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(startPosition, targetPosition, false);
 
     if (_gotoTargetPositionPathList.empty())
     {
@@ -947,7 +993,7 @@ void Npc::onPrepareToRemove()
 list<Vec2> Npc::getPathListTo(const Vec2& inMapEndPosition)
 {
     auto inMapStartPosition = getPosition();
-    list<Vec2> pathList = _gameWorld->_computePathListBetween(inMapStartPosition, inMapEndPosition);
+    list<Vec2> pathList = _gameWorld->_computePathListBetween(inMapStartPosition, inMapEndPosition, false);
 
     return pathList;
 }

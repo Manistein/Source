@@ -29,6 +29,7 @@ enum class FaceDirection
 const float COOL_DOWN_TIME_IN_MOVE_STATUS_INTERVAL = 1.0f;
 
 class GameWorldCallBackFunctionsManager;
+class Building;
 
 class Npc : public GameObject
 {
@@ -65,6 +66,7 @@ private:
     void runFightWithEnemyAI(float delta);
     bool isEnemyInAttackRange(GameObject* enemy);
     bool isEnemyInAlertRange(GameObject* enemy);
+    Vec2 computeArrivePositionBy(GameObject* enemy);
     float getDistanceFrom(GameObject* enemy);
     float _coolDownTimeInMoveStatus = COOL_DOWN_TIME_IN_MOVE_STATUS_INTERVAL;
 

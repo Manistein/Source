@@ -28,7 +28,7 @@ public:
 
     void syncCursorPoint(const Vec2& cursorPoint);
 
-    list<Vec2> computePathListBetween(const Vec2& inMapStartPosition, const Vec2& inMapEndPosition);
+    list<Vec2> computePathListBetween(const Vec2& inMapStartPosition, const Vec2& inMapEndPosition, bool isAllowEndTileNodeToMoveIn = false);
     MapManager* getMapManager();
 
     MapManager* _mapManager = nullptr;

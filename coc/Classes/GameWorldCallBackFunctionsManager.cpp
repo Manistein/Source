@@ -19,7 +19,7 @@ void GameWorldCallBackFunctionsManager::registerCallBackFunctions(GameWorld* gam
 {
     _createBullet = CC_CALLBACK_3(GameWorld::createBullet, gameWorld);
     _removeGameObjectBy = CC_CALLBACK_1(GameWorld::removeGameObjectBy, gameWorld);
-    _computePathListBetween = CC_CALLBACK_2(GameWorld::computePathListBetween, gameWorld);
+    _computePathListBetween = CC_CALLBACK_3(GameWorld::computePathListBetween, gameWorld);
     _getMapManager = CC_CALLBACK_0(GameWorld::getMapManager, gameWorld);
     _createSpecialEffect = CC_CALLBACK_3(GameWorld::createSpecialEffect, gameWorld);
 }
