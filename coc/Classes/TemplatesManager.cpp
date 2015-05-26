@@ -255,6 +255,8 @@ bool TemplateManager::initBuildingTemplates()
             buildingTemplate->centerBottomGridYPosition = tabFileReader.getFloat(i, "CenterBottomGridYPosition");
             buildingTemplate->bottomGridColumnCount = tabFileReader.getInteger(i, "BottomGridColumnCount");
             buildingTemplate->bottomGridRowCount = tabFileReader.getInteger(i, "BottomGridRowCount");
+            buildingTemplate->defenceNpcName = tabFileReader.getString(i, "DefenceNpcName");
+            buildingTemplate->defenceNpcYPosition = tabFileReader.getFloat(i, "DefenceNpcYPosition");
 
             auto buildingTemplateName = tabFileReader.getString(i, "BuildingTemplateName");
             _buildingTemplatesMap[buildingTemplateName] = buildingTemplate;

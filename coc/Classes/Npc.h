@@ -36,7 +36,7 @@ class Npc : public GameObject
 public:
     ~Npc();
 
-    static Npc* create(ForceType forceType, const string& jobName, const Vec2& position, int uniqueID);
+    static Npc* create(ForceType forceType, GameObjectType npcType, const string& jobName, const Vec2& position, int uniqueID);
 
     void moveTo(const Vec2& targetPosition);
     void setReadyToMoveStatus(bool isReadyToMove);
@@ -46,8 +46,10 @@ public:
     bool isReadyToRemove() override;
 
     void clearDebugDraw() override;
+    const Vec2& getPosition() const override;
+    void initDefenceInBuildingNpcInMapPosition();
 private:
-    bool init(ForceType forceType, const string& jobName, const Vec2& position, int uniqueID);
+    bool init(ForceType forceType, GameObjectType npcType, const string& jobName, const Vec2& position, int uniqueID);
     void clear();
 
     void initAnimates(const string& jobName);
@@ -64,6 +66,9 @@ private:
     void onPrepareToRemove() override;
 
     void runFightWithEnemyAI(float delta);
+    void runDefenceInBuildingAI(float delta);
+    void searchEnemy();
+
     bool isEnemyInAttackRange(GameObject* enemy);
     bool isEnemyInAlertRange(GameObject* enemy);
     Vec2 computeArrivePositionBy(GameObject* enemy);
@@ -147,4 +152,6 @@ private:
     bool _isReadyToMove = false;
 
     GameWorldCallBackFunctionsManager* _gameWorld = nullptr;
+
+    Vec2 _inMapPosition;
 };

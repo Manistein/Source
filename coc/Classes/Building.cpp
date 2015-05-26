@@ -6,6 +6,7 @@
 #include "MapManager.h"
 #include <functional>
 #include "GameObjectManager.h"
+#include "Npc.h"
 
 const int MAX_BOTTOM_GRID_COUNT = 9;
 const int MIN_BOTTOM_GRID_COUNT = 1;
@@ -38,6 +39,8 @@ bool Building::init(ForceType forceType, const string& buildingTemplateName, con
     {
         return false;
     }
+
+    _buildingTemplateName = buildingTemplateName;
 
     _gameObjectType = GameObjectType::Building;
     _buildingStatus = BuildingStatus::PrepareToBuild;
@@ -190,6 +193,41 @@ void Building::initBattleData(const string& buildingTemplateName)
     _destroySpecialEffectTemplateName = buildingTemplate->destroySpecialEffectTemplateName;
 }
 
+Npc* Building::createDefenceNpc(const string& buildingTemplateName)
+{
+    Npc* defenceNpc = nullptr;
+
+    auto buildingTemplate = TemplateManager::getInstance()->getBuildingTemplateBy(buildingTemplateName);
+    if (buildingTemplate->defenceNpcName != "" && buildingTemplate->defenceNpcName != "Null")
+    {
+        auto workingStatusBuildingSprite = _buildingStatusSpriteMap[BuildingStatus::Working];
+        auto workingStatusBuildingSpriteSize = workingStatusBuildingSprite->getContentSize();
+
+        auto gameObjectManager = GameObjectManager::getInstance();
+        auto gameObject = gameObjectManager->createGameObject(GameObjectType::DefenceInBuildingNpc, 
+            _forceType, 
+            buildingTemplate->defenceNpcName, 
+            Vec2(workingStatusBuildingSpriteSize.width / 2.0f, 
+            buildingTemplate->defenceNpcYPosition));
+
+        defenceNpc = static_cast<Npc*>(gameObject);
+        workingStatusBuildingSprite->addChild(defenceNpc, 1);
+        defenceNpc->initDefenceInBuildingNpcInMapPosition();
+    }
+
+    return defenceNpc;
+}
+
+void Building::removeDefenceNpc()
+{
+    if (_defenceNpc != nullptr)
+    {
+        auto npcGID = _defenceNpc->getUniqueID();
+        GameObjectManager::getInstance()->removeGameObjectBy(npcGID);
+        _defenceNpc = nullptr;
+    }
+}
+
 void Building::clear()
 {
 
@@ -247,12 +285,19 @@ void Building::updateStatus(BuildingStatus buildingStatus)
                 break;
             case BuildingStatus::Working:
             {
+                _defenceNpc = createDefenceNpc(_buildingTemplateName);
+
                 // 因为有些建筑物不需要经历建造阶段就可以直接进入working状态，因此这里需要再次更新占用格子的gid
                 updateCoveredByBuildingTileNodesGID(OBSTACLE_ID);
             }
                 break;
             case BuildingStatus::Destory:
             {
+                if (_defenceNpc)
+                {
+                    removeDefenceNpc();
+                }
+
                 updateCoveredByBuildingTileNodesGID(PASSABLE_ID);
 
                 GameWorldCallBackFunctionsManager::getInstance()->_createSpecialEffect(_destroySpecialEffectTemplateName, getPosition(), false);

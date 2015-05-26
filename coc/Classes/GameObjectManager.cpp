@@ -103,7 +103,7 @@ void GameObjectManager::gameObjectsDepthSort(const Size& tileSize)
                 gameObjectIter.second->depthSort(tileSize);
             }
         }
-        else
+        else if (gameObjectIter.second->getGameObjectType() != GameObjectType::DefenceInBuildingNpc)
         {
             gameObjectIter.second->depthSort(tileSize);
         }

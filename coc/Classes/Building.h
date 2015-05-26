@@ -12,6 +12,8 @@ enum class BuildingStatus
     Total
 };
 
+class Npc;
+
 class Building : public GameObject
 {
 public:
@@ -36,6 +38,11 @@ private:
     void initHPBar();
     void initBeingBuiltProgressBar();
     void initBattleData(const string& buildingTemplateName);
+
+    Npc* createDefenceNpc(const string& buildingTemplateName);
+    void removeDefenceNpc();
+    Npc* _defenceNpc = nullptr;
+
     void clear();
 
     void onPrepareToRemove() override;
@@ -64,4 +71,5 @@ private:
     float _passTimeBySecondInBeingBuiltStatus = 0.0f;
     ui::LoadingBar* _beingBuildProgressBar = nullptr;
     string _destroySpecialEffectTemplateName;
+    string _buildingTemplateName;
 };

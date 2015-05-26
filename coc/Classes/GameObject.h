@@ -5,6 +5,7 @@ enum class GameObjectType
     Invalid,
 
     Npc,
+    DefenceInBuildingNpc,
     Building,
 };
 

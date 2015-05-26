@@ -161,10 +161,11 @@ GameObject* GameObjectFactory::create(GameObjectType gameObjectType, ForceType f
 
     switch (gameObjectType)
     {
+        case GameObjectType::DefenceInBuildingNpc:
         case GameObjectType::Npc:
         {
             g_uniqueID++;
-            gameObject = Npc::create(forceType, jobName, position, g_uniqueID);
+            gameObject = Npc::create(forceType, gameObjectType, jobName, position, g_uniqueID);
         }
         break;
         case GameObjectType::Building:

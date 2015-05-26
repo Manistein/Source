@@ -23,10 +23,10 @@ Npc::~Npc()
     clear();
 }
 
-Npc* Npc::create(ForceType forceType, const string& jobName, const Vec2& position, int uniqueID)
+Npc* Npc::create(ForceType forceType, GameObjectType npcType, const string& jobName, const Vec2& position, int uniqueID)
 {
     auto npc = new Npc();
-    if (npc && npc->init(forceType, jobName, position, uniqueID))
+    if (npc && npc->init(forceType, npcType, jobName, position, uniqueID))
     {
         npc->autorelease();
     }
@@ -38,7 +38,7 @@ Npc* Npc::create(ForceType forceType, const string& jobName, const Vec2& positio
     return npc;
 }
 
-bool Npc::init(ForceType forceType, const string& jobName, const Vec2& position, int uniqueID)
+bool Npc::init(ForceType forceType, GameObjectType npcType, const string& jobName, const Vec2& position, int uniqueID)
 {
     _forceType = forceType;
 
@@ -57,7 +57,7 @@ bool Npc::init(ForceType forceType, const string& jobName, const Vec2& position,
     setPosition(position);
     _uniqueID = uniqueID;
 
-    _gameObjectType = GameObjectType::Npc;
+    _gameObjectType = npcType;
 
     _gameWorld = GameWorldCallBackFunctionsManager::getInstance();
 
@@ -294,7 +294,15 @@ void Npc::update(float delta)
 {
     GameObject::update(delta);
 
-    runFightWithEnemyAI(delta);
+    if (_gameObjectType == GameObjectType::Npc)
+    {
+        runFightWithEnemyAI(delta);
+    }
+    else if (_gameObjectType == GameObjectType::DefenceInBuildingNpc)
+    {
+        hideHPBar();
+        runDefenceInBuildingAI(delta);
+    }
 }
 
 void Npc::tryUpdateStatus(NpcStatus newStatus)
@@ -431,34 +439,68 @@ void Npc::runFightWithEnemyAI(float delta)
     }
     else
     {
-        if (_forceType == ForceType::Player && _oldStatus == NpcStatus::Move ||
-            _isReadyToMove)
+        searchEnemy();
+    }
+}
+
+void Npc::runDefenceInBuildingAI(float delta)
+{
+    if (_enemyUniqueID != ENEMY_UNIQUE_ID_INVALID)
+    {
+        auto enemy = GameObjectManager::getInstance()->getGameObjectBy(_enemyUniqueID);
+        if (!enemy || enemy->isReadyToRemove())
         {
+            setEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
+            tryUpdateStatus(NpcStatus::Stand);
+
             return;
         }
 
-        auto gameObjectMap = GameObjectManager::getInstance()->getGameObjectMap();
-        for (auto& gameObjectIter : gameObjectMap)
+        if (isEnemyInAttackRange(enemy))
         {
-            Building* buildingObject = nullptr;
-            if (gameObjectIter.second->getGameObjectType() == GameObjectType::Building)
-            {
-                buildingObject = static_cast<Building*>(gameObjectIter.second);
-            }
+            tryUpdateStatus(NpcStatus::Attack);
+        }
+        else
+        {
+            setEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
+            tryUpdateStatus(NpcStatus::Stand);
+        }
+    }
+    else
+    {
+        searchEnemy();
+    }
+}
 
-            if (_forceType == gameObjectIter.second->getForceType() || 
-                gameObjectIter.second->isReadyToRemove() ||
-                (buildingObject && buildingObject->getBuildingStatus() == BuildingStatus::PrepareToBuild))
-            {
-                continue;
-            }
+void Npc::searchEnemy()
+{
+    if (_forceType == ForceType::Player && _oldStatus == NpcStatus::Move ||
+        _isReadyToMove)
+    {
+        return;
+    }
 
-            if (isEnemyInAttackRange(gameObjectIter.second) || isEnemyInAlertRange(gameObjectIter.second))
-            {
-                setEnemyUniqueID(gameObjectIter.first);
+    auto gameObjectMap = GameObjectManager::getInstance()->getGameObjectMap();
+    for (auto& gameObjectIter : gameObjectMap)
+    {
+        Building* buildingObject = nullptr;
+        if (gameObjectIter.second->getGameObjectType() == GameObjectType::Building)
+        {
+            buildingObject = static_cast<Building*>(gameObjectIter.second);
+        }
 
-                break;
-            }
+        if (_forceType == gameObjectIter.second->getForceType() ||
+            gameObjectIter.second->isReadyToRemove() ||
+            (buildingObject && buildingObject->getBuildingStatus() == BuildingStatus::PrepareToBuild))
+        {
+            continue;
+        }
+
+        if (isEnemyInAttackRange(gameObjectIter.second) || isEnemyInAlertRange(gameObjectIter.second))
+        {
+            setEnemyUniqueID(gameObjectIter.first);
+
+            break;
         }
     }
 }
@@ -528,7 +570,7 @@ cocos2d::Vec2 Npc::computeArrivePositionBy(GameObject* enemy)
 float Npc::getDistanceFrom(GameObject* enemy)
 {
     auto enemyPosition = computeArrivePositionBy(enemy);
-    auto npcPosition = getPosition();
+    Vec2 npcPosition = getPosition();
 
     float distanceResult = GameUtils::computeDistanceBetween(enemyPosition, npcPosition);
 
@@ -592,6 +634,11 @@ bool Npc::canSwitchMoveToMove()
 {
     bool result = true;
 
+    if (_gameObjectType == GameObjectType::DefenceInBuildingNpc)
+    {
+        result = false;
+    }
+
     return result;
 }
 
@@ -646,6 +693,11 @@ bool Npc::canSwitchStandToStand()
 bool Npc::canSwitchStandToMove()
 {
     bool result = true;
+
+    if (_gameObjectType == GameObjectType::DefenceInBuildingNpc)
+    {
+        result = false;
+    }
 
     return result;
 }
@@ -705,6 +757,12 @@ bool Npc::canSwitchAttackToAttack()
 bool Npc::canSwitchAttackToMove()
 {
     bool result = false;
+
+    if (_gameObjectType == GameObjectType::DefenceInBuildingNpc)
+    {
+        result = false;
+        return result;
+    }
 
     if (_forceType == ForceType::Player && isSelected())
     {
@@ -770,6 +828,11 @@ bool Npc::canSwitchDieToDie()
 bool Npc::canSwitchDieToMove()
 {
     bool result = false;
+
+    if (_gameObjectType == GameObjectType::DefenceInBuildingNpc)
+    {
+        result = false;
+    }
 
     return result;
 }
@@ -996,4 +1059,30 @@ list<Vec2> Npc::getPathListTo(const Vec2& inMapEndPosition)
     list<Vec2> pathList = _gameWorld->_computePathListBetween(inMapStartPosition, inMapEndPosition, false);
 
     return pathList;
+}
+
+const Vec2& Npc::getPosition() const
+{
+    if (_gameObjectType == GameObjectType::DefenceInBuildingNpc)
+    {
+        return _inMapPosition;
+    }
+    else
+    {
+        return GameObject::getPosition();
+    }
+}
+
+void Npc::initDefenceInBuildingNpcInMapPosition()
+{
+    auto parentNode = getParent();
+    if (!parentNode || _gameObjectType != GameObjectType::DefenceInBuildingNpc)
+    {
+        return;
+    }
+
+    auto worldPosition = parentNode->convertToWorldSpace(GameObject::getPosition());
+
+    auto mapManger = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
+    _inMapPosition = mapManger->convertToTileMapSpace(worldPosition);
 }

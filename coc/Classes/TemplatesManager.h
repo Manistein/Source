@@ -64,6 +64,8 @@ struct BuildingTemplate
     float centerBottomGridYPosition = 0.0f;
     int bottomGridColumnCount = 0;
     int bottomGridRowCount = 0;
+    string defenceNpcName;
+    float defenceNpcYPosition = 0.0f;
 };
 
 struct SpecialEffectTemplate
