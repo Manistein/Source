@@ -128,44 +128,29 @@ void Building::initBottomGridSprites(const string& buildingTemplateName)
     auto prepareToBuildSprite = _buildingStatusSpriteMap[BuildingStatus::PrepareToBuild];
     auto prepareToBuildSpriteSize = prepareToBuildSprite->getContentSize();
 
-    if (prepareToBuildSpriteSize.width <= tileSize.width && prepareToBuildSpriteSize.height <= tileSize.height)
+    Vec2 centerBottomGridPosition(prepareToBuildSprite->getContentSize().width / 2.0f, buildingTemplate->centerBottomGridYPosition);
+    Vec2 firstQueryGridPosition(centerBottomGridPosition.x, centerBottomGridPosition.y + tileSize.height);
+    _bottomGridsPlaneCenterPositionInLocalSpace = centerBottomGridPosition;
+
+    for (int i = 0; i < buildingTemplate->bottomGridRowCount; i++)
     {
-        Vec2 centerBottomGridPosition(prepareToBuildSprite->getContentSize().width / 2.0f, buildingTemplate->centerBottomGridYPosition);
+        Vec2 tempGridPostion;
 
-        auto gridSprite = Sprite::create();
-        auto gridSpriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(ENABLE_BUILD_GRID_FILE_NAME);
-        gridSprite->setSpriteFrame(gridSpriteFrame);
-        gridSprite->setPosition(centerBottomGridPosition);
-        prepareToBuildSprite->addChild(gridSprite);
+        tempGridPostion.x = firstQueryGridPosition.x - i * tileSize.width / 2.0f;
+        tempGridPostion.y = firstQueryGridPosition.y - i * tileSize.height / 2.0f;
 
-        _bottomGridSpritesList.push_back(gridSprite);
-    }
-    else
-    {
-        Vec2 centerBottomGridPosition(prepareToBuildSprite->getContentSize().width / 2.0f, buildingTemplate->centerBottomGridYPosition);
-        Vec2 firstQueryGridPosition(centerBottomGridPosition.x, centerBottomGridPosition.y + tileSize.height);
-        _bottomGridsPlaneCenterPositionInLocalSpace = centerBottomGridPosition;
-
-        for (int i = 0; i < 3; i++)
+        for (int j = 0; j < buildingTemplate->bottomGridColumnCount; j++)
         {
-            Vec2 tempGridPostion;
+            auto gridSprite = Sprite::create();
+            auto gridSpriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(ENABLE_BUILD_GRID_FILE_NAME);
+            gridSprite->setSpriteFrame(gridSpriteFrame);
+            gridSprite->setPosition(tempGridPostion);
+            prepareToBuildSprite->addChild(gridSprite, -1);
 
-            tempGridPostion.x = firstQueryGridPosition.x - i * tileSize.width / 2.0f;
-            tempGridPostion.y = firstQueryGridPosition.y - i * tileSize.height / 2.0f;
+            _bottomGridSpritesList.push_back(gridSprite);
 
-            for (int j = 0; j < 3; j++)
-            {
-                auto gridSprite = Sprite::create();
-                auto gridSpriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(ENABLE_BUILD_GRID_FILE_NAME);
-                gridSprite->setSpriteFrame(gridSpriteFrame);
-                gridSprite->setPosition(tempGridPostion);
-                prepareToBuildSprite->addChild(gridSprite, -1);
-
-                _bottomGridSpritesList.push_back(gridSprite);
-
-                tempGridPostion.x += tileSize.width / 2.0f;
-                tempGridPostion.y -= tileSize.height / 2.0f;
-            }
+            tempGridPostion.x += tileSize.width / 2.0f;
+            tempGridPostion.y -= tileSize.height / 2.0f;
         }
     }
 }

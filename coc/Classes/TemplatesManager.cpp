@@ -253,6 +253,8 @@ bool TemplateManager::initBuildingTemplates()
             buildingTemplate->extraEnemyAttackRadius = tabFileReader.getFloat(i, "ExtraEnemyAttackRadius");
             buildingTemplate->maxHP = tabFileReader.getInteger(i, "MaxHP");
             buildingTemplate->centerBottomGridYPosition = tabFileReader.getFloat(i, "CenterBottomGridYPosition");
+            buildingTemplate->bottomGridColumnCount = tabFileReader.getInteger(i, "BottomGridColumnCount");
+            buildingTemplate->bottomGridRowCount = tabFileReader.getInteger(i, "BottomGridRowCount");
 
             auto buildingTemplateName = tabFileReader.getString(i, "BuildingTemplateName");
             _buildingTemplatesMap[buildingTemplateName] = buildingTemplate;

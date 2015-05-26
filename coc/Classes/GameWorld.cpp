@@ -67,7 +67,7 @@ bool GameWorld::init()
     }
 
     createGameObject(GameObjectType::Npc, ForceType::AI, "BlueBarbarian", Vec2(3150.0f, 2150.0f));
-    createGameObject(GameObjectType::Building, ForceType::Player, "BaseCamp", Vec2(3150.0f, 2150.0f));
+    createGameObject(GameObjectType::Building, ForceType::Player, "PurpleAnchorTower", Vec2(3150.0f, 2150.0f));
 
     _director->setAlphaBlending(true);
 

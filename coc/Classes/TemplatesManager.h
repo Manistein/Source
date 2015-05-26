@@ -62,6 +62,8 @@ struct BuildingTemplate
     float extraEnemyAttackRadius = 0.0f;
     int maxHP = 0;
     float centerBottomGridYPosition = 0.0f;
+    int bottomGridColumnCount = 0;
+    int bottomGridRowCount = 0;
 };
 
 struct SpecialEffectTemplate
