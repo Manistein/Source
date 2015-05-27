@@ -301,8 +301,6 @@ void Building::updateStatus(BuildingStatus buildingStatus)
                     removeDefenceNpc();
                 }
 
-                updateCoveredByBuildingTileNodesGID(PASSABLE_ID);
-
                 GameWorldCallBackFunctionsManager::getInstance()->_createSpecialEffect(_destroySpecialEffectTemplateName, getPosition(), false);
 
                 auto onReadyToRemove = CallFunc::create(CC_CALLBACK_0(Building::addToRemoveQueue, this));
@@ -519,6 +517,7 @@ void Building::updateBeingBuiltProgressBar(float delta)
 
 void Building::addToRemoveQueue()
 {
+    updateCoveredByBuildingTileNodesGID(PASSABLE_ID);
     GameObjectManager::getInstance()->addReadyToRemoveGameObject(_uniqueID);
 }
 
