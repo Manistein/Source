@@ -312,6 +312,11 @@ float MapManager::getMapScale()
     return _tileMap->getScale();
 }
 
+const Vector<TMXObjectGroup*>&  MapManager::getEditedGameObjectGroup()
+{
+    return _tileMap->getObjectGroups();
+}
+
 cocos2d::Vec2 MapManager::convertCursorPositionToTileMapSpace()
 {
     return _tileMap->convertToNodeSpace(_cursorPoint);

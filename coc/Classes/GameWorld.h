@@ -13,7 +13,7 @@ public:
     ~GameWorld();
 	CREATE_FUNC(GameWorld);
 
-    void createGameObject(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position);
+    GameObject* createGameObject(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position);
     void removeGameObjectBy(int uniqueID);
 
     void createBullet(BulletType bulletType, int attackerID, int attackTargetID);
@@ -34,6 +34,8 @@ public:
     MapManager* _mapManager = nullptr;
 private:
     bool init() override;
+    void initEditedGameObjects();
+
     void update(float deltaTime) override;
     void onMouseScroll(Event* event);
     void constructBuilding();

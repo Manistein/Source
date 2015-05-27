@@ -65,6 +65,7 @@ public:
     Point getTileSubscript(const Vec2& inMapPosition);
     DebugInfo getDebugInfo(TileMapLayerType tileMapLayerType);
     float getMapScale();
+    const Vector<TMXObjectGroup*>&  getEditedGameObjectGroup();
 
     Vec2 convertCursorPositionToTileMapSpace();
     Vec2 convertToTileMapSpace(const Vec2& worldPosition);

@@ -59,6 +59,14 @@ bool GameWorld::init()
     director->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameWorld::onMouseMove, this));
     director->getEventDispatcher()->addCustomEventListener("ClearDebugDraw", CC_CALLBACK_0(GameWorld::onClearDebugDraw, this));
 
+    //_director->setAlphaBlending(true);
+
+    srand(::timeGetTime());
+
+    initEditedGameObjects();
+
+    scheduleUpdate();
+
     for (int i = 0; i < 1; i++)
     {
         createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2000.0f, 2000.0f));
@@ -68,15 +76,76 @@ bool GameWorld::init()
 
     //createGameObject(GameObjectType::Npc, ForceType::AI, "BlueBarbarian", Vec2(3150.0f, 2150.0f));
     createGameObject(GameObjectType::Building, ForceType::Player, "PurpleAnchorTower", Vec2(3150.0f, 2150.0f));
-    createGameObject(GameObjectType::Building, ForceType::AI, "PurpleAnchorTower", Vec2(3150.0f, 2150.0f));
-
-    _director->setAlphaBlending(true);
-
-    srand(::timeGetTime());
-
-    scheduleUpdate();
+    //createGameObject(GameObjectType::Building, ForceType::AI, "PurpleAnchorTower", Vec2(3150.0f, 2150.0f));
 
     return true;
+}
+
+void GameWorld::initEditedGameObjects()
+{
+    auto editedGameObjectGroups = _mapManager->getEditedGameObjectGroup();
+    auto mapSize = _mapManager->getMapSize();
+    auto tileSize = _mapManager->getTileSize();
+
+    for (int i = 0; i < editedGameObjectGroups.size(); i ++)
+    {
+        ForceType forceType = ForceType::Invalid;
+        GameObjectType gameObjectType = GameObjectType::Invalid;
+
+        auto objectLayer = editedGameObjectGroups.at(i);
+        auto objectLayerName = objectLayer->getGroupName();
+        if (objectLayerName == "playerBuildingEditLayer")
+        {
+            forceType = ForceType::Player;
+            gameObjectType = GameObjectType::Building;
+        }
+        else if (objectLayerName == "aiBuildingEditLayer")
+        {
+            forceType = ForceType::AI;
+            gameObjectType = GameObjectType::Building;
+        }
+        else
+        {
+            CCASSERT(false, "Can not parse %s", objectLayerName.c_str());
+        }
+
+        auto editedObjectsInfoList = objectLayer->getObjects();
+        for (auto& editedObjectInfo : editedObjectsInfoList)
+        {
+            float inTileMapEditorXPosition = 0.0f;
+            float inTileMapEditorYPosition = 0.0f;
+            string gameObjectTemplateName;
+
+            auto editedObjectValueMap = editedObjectInfo.asValueMap();
+            for (auto& valueIter : editedObjectValueMap)
+            {
+                if (valueIter.first == "x")
+                {
+                    inTileMapEditorXPosition = valueIter.second.asFloat();
+                }
+                else if (valueIter.first == "y")
+                {
+                    inTileMapEditorYPosition = valueIter.second.asFloat();
+                }
+                else if (valueIter.first == "name")
+                {
+                    gameObjectTemplateName = valueIter.second.asString();
+                }
+            }
+
+            int columnIndex = inTileMapEditorXPosition / tileSize.height;
+            int rowIndex = (mapSize.height * tileSize.height - inTileMapEditorYPosition) / tileSize.height;
+            auto tileNode = _mapManager->getTileNodeAt(columnIndex, rowIndex);
+            auto gameObject = createGameObject(gameObjectType, forceType, gameObjectTemplateName, tileNode->leftTopPosition);
+
+            if (forceType == ForceType::Player && gameObjectType == GameObjectType::Building)
+            {
+                auto building = static_cast<Building*>(gameObject);
+                building->updateStatus(BuildingStatus::BeingBuilt);
+            }
+        }
+
+    }
 }
 
 void GameWorld::update(float deltaTime)
@@ -182,7 +251,7 @@ void GameWorld::onMouseMove(EventCustom* eventCustom)
     syncCursorPoint(*cursorPointVec);
 }
 
-void GameWorld::createGameObject(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
+GameObject* GameWorld::createGameObject(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
 {
     auto gameObject = _gameObjectManager->createGameObject(gameObjectType, forceType, jobName, position);
     _mapManager->addChildInGameObjectLayer(gameObject);
@@ -191,6 +260,8 @@ void GameWorld::createGameObject(GameObjectType gameObjectType, ForceType forceT
     {
         _holdingBuildingID = gameObject->getUniqueID();
     }
+
+    return gameObject;
 }
 
 void GameWorld::removeGameObjectBy(int uniqueID)
