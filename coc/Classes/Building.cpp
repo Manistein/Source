@@ -50,16 +50,13 @@ bool Building::init(ForceType forceType, const string& buildingTemplateName, con
     initBuildingStatusSprites(buildingTemplateName);
     initBottomGridSprites(buildingTemplateName);
 
-    if (_forceType == ForceType::Player)
+    // 所有势力的Building都需要先更新为PrepareToBuild状态，
+    updateStatus(BuildingStatus::PrepareToBuild);
+
+    if (_forceType == ForceType::AI)
     {
-        updateStatus(BuildingStatus::PrepareToBuild);
-    }
-    else
-    {
-        updateStatus(BuildingStatus::PrepareToBuild);
-        auto onInitBuildingStatus = CallFunc::create(CC_CALLBACK_0(Building::onInitBuildingStatus, this, position, BuildingStatus::BeingBuilt));
-        auto sequenceAction = Sequence::create(DelayTime::create(0.017f), onInitBuildingStatus, nullptr);
-        runAction(sequenceAction);
+        // 只有当building被addChild到tileMap时，才能准确计算占用哪些格子，因此需要延时更新到BeingBuilt状态，
+        delayUpdateAIForceBuildingToBeingBuiltStatus(position);
     }
 
     initHPBar();
@@ -484,7 +481,14 @@ void Building::updateCoveredByBuildingTileNodesGID(int tileNodeGID)
     }
 }
 
-void Building::onInitBuildingStatus(const Vec2& inMapPosition, BuildingStatus buildingStatus)
+void Building::delayUpdateAIForceBuildingToBeingBuiltStatus(const Vec2& inMapPosition)
+{
+    auto onInitBuildingStatus = CallFunc::create(CC_CALLBACK_0(Building::onUpdateAIForceBuildingStatus, this, inMapPosition, BuildingStatus::BeingBuilt));
+    auto sequenceAction = Sequence::create(DelayTime::create(0.017f), onInitBuildingStatus, nullptr);
+    runAction(sequenceAction);
+}
+
+void Building::onUpdateAIForceBuildingStatus(const Vec2& inMapPosition, BuildingStatus buildingStatus)
 {
     ajustBuildingPosition(inMapPosition);
     updateStatus(buildingStatus);
