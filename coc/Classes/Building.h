@@ -50,6 +50,7 @@ private:
     void followCursorInPrepareToBuildStatus();
     void ajustBuildingPosition(const Vec2& inMapPosition);
     bool isBottomGridCoverNpc(const Vec2& bottomGridInMapPosition);
+    vector<Sprite*> getInObstacleTileNodeBottomGidSpriteList();
     void updateBottomGridTextureInPrepareToBuildStatus();
     void updateCoveredByBuildingTileNodesGID(int tileNodeGID);
     void delayUpdateAIForceBuildingToBeingBuiltStatus(const Vec2& inMapPosition);
@@ -67,7 +68,6 @@ private:
     Vec2 _bottomGridsPlaneCenterPositionInLocalSpace; // 建筑物底部面片的中心位置
 
     BuildingStatus _buildingStatus;
-    bool _canBuild = true;
 
     float _buildingTimeBySecond = 0.0f;
     float _passTimeBySecondInBeingBuiltStatus = 0.0f;

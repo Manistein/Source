@@ -329,7 +329,10 @@ BuildingStatus Building::getBuildingStatus()
 
 bool Building::canBuild()
 {
-    return _canBuild;
+    auto inObstacleTileNodeBottomGridSpriteList = getInObstacleTileNodeBottomGidSpriteList();
+    bool canBuild = inObstacleTileNodeBottomGridSpriteList.empty();
+
+    return canBuild;
 }
 
 void Building::onPrepareToRemove()
@@ -428,19 +431,11 @@ bool Building::isBottomGridCoverNpc(const Vec2& bottomGridInMapPosition)
     return result;
 }
 
-void Building::updateBottomGridTextureInPrepareToBuildStatus()
+vector<Sprite*> Building::getInObstacleTileNodeBottomGidSpriteList()
 {
-    if (_buildingStatus != BuildingStatus::PrepareToBuild)
-    {
-        return;
-    }
-
-    _canBuild = true;
+    vector<Sprite*> inObstacleTileNodeBottomGirdSpriteList;
 
     auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
-    auto spriteFrameCache = SpriteFrameCache::getInstance();
-    auto enableBuildSpriteFrame = spriteFrameCache->getSpriteFrameByName(ENABLE_BUILD_GRID_FILE_NAME);
-    auto disableBuildSpriteFrame = spriteFrameCache->getSpriteFrameByName(DISABLE_BUILD_GRID_FILE_NAME);
 
     for (auto& bottomGridSprite : _bottomGridSpritesList)
     {
@@ -452,13 +447,33 @@ void Building::updateBottomGridTextureInPrepareToBuildStatus()
         bool isCurrentBottomGridCoveredNpc = isBottomGridCoverNpc(bottomGridTileMapPosition);
         if (isInObstacleTile || isCurrentBottomGridCoveredNpc)
         {
-            bottomGridSprite->setSpriteFrame(disableBuildSpriteFrame);
-            _canBuild = false;
+            inObstacleTileNodeBottomGirdSpriteList.push_back(bottomGridSprite);
         }
-        else
-        {
-            bottomGridSprite->setSpriteFrame(enableBuildSpriteFrame);
-        }
+    }
+
+    return inObstacleTileNodeBottomGirdSpriteList;
+}
+
+void Building::updateBottomGridTextureInPrepareToBuildStatus()
+{
+    if (_buildingStatus != BuildingStatus::PrepareToBuild)
+    {
+        return;
+    }
+
+    auto spriteFrameCache = SpriteFrameCache::getInstance();
+    auto enableBuildSpriteFrame = spriteFrameCache->getSpriteFrameByName(ENABLE_BUILD_GRID_FILE_NAME);
+    auto disableBuildSpriteFrame = spriteFrameCache->getSpriteFrameByName(DISABLE_BUILD_GRID_FILE_NAME);
+
+    for (auto& bottomGridSprite : _bottomGridSpritesList)
+    {
+        bottomGridSprite->setSpriteFrame(enableBuildSpriteFrame);
+    }
+
+    auto inObstacleTileNodeBottomGridSpriteList = getInObstacleTileNodeBottomGidSpriteList();
+    for (auto& bottomGridSprite : inObstacleTileNodeBottomGridSpriteList)
+    {
+        bottomGridSprite->setSpriteFrame(disableBuildSpriteFrame);
     }
 }
 
@@ -486,7 +501,16 @@ void Building::delayUpdateAIForceBuildingToBeingBuiltStatus(const Vec2& inMapPos
 void Building::onUpdateAIForceBuildingStatus(const Vec2& inMapPosition, BuildingStatus buildingStatus)
 {
     ajustBuildingPosition(inMapPosition);
-    updateStatus(buildingStatus);
+
+    if (canBuild())
+    {
+        updateStatus(buildingStatus);
+    }
+    else
+    {
+        GameObjectManager::getInstance()->addReadyToRemoveGameObject(_uniqueID);
+        log("can not build here");
+    }
 }
 
 void Building::showBeingBuiltProgressBar()
