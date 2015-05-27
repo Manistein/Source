@@ -66,6 +66,8 @@ struct BuildingTemplate
     int bottomGridRowCount = 0;
     string defenceNpcName;
     float defenceNpcYPosition = 0.0f;
+    float attackRange = 0.0f;
+    float attackPower = 0.0f;
 };
 
 struct SpecialEffectTemplate

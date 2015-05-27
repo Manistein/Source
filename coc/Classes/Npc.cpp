@@ -1080,3 +1080,18 @@ void Npc::initDefenceInBuildingNpcInMapPosition()
     auto mapManger = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
     _inMapPosition = mapManger->convertToTileMapSpace(worldPosition);
 }
+
+void Npc::setAlertRange(float alertRange)
+{
+    _maxAlertRadius = alertRange;
+}
+
+void Npc::setAttackRange(float attackRange)
+{
+    _maxAttackRadius = attackRange;
+}
+
+void Npc::setAttackPoser(float attackPower)
+{
+    _attackPower = attackPower;
+}
