@@ -307,6 +307,11 @@ DebugInfo MapManager::getDebugInfo(TileMapLayerType tileMapLayerType)
     return tileDebugInfo;
 }
 
+float MapManager::getMapScale()
+{
+    return _tileMap->getScale();
+}
+
 cocos2d::Vec2 MapManager::convertCursorPositionToTileMapSpace()
 {
     return _tileMap->convertToNodeSpace(_cursorPoint);

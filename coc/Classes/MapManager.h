@@ -64,6 +64,7 @@ public:
     Size getMapSize();
     Point getTileSubscript(const Vec2& inMapPosition);
     DebugInfo getDebugInfo(TileMapLayerType tileMapLayerType);
+    float getMapScale();
 
     Vec2 convertCursorPositionToTileMapSpace();
     Vec2 convertToTileMapSpace(const Vec2& worldPosition);

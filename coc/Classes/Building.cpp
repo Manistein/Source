@@ -246,11 +246,6 @@ bool Building::isReadyToRemove()
     return _buildingStatus == BuildingStatus::Destory;
 }
 
-void Building::clearDebugDraw()
-{
-
-}
-
 void Building::update(float delta)
 {
     GameObject::update(delta);

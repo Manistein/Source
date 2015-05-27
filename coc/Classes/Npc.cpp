@@ -284,12 +284,6 @@ void Npc::debugDraw()
     npcStatusLabel->setString(statusName);
 }
 
-void Npc::clearDebugDraw()
-{
-    _debugDrawNode->clear();
-    _debugDrawNode->setVisible(false);
-}
-
 void Npc::update(float delta)
 {
     GameObject::update(delta);

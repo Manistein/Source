@@ -20,7 +20,6 @@ public:
     static Building* create(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID);
 
     bool isReadyToRemove() override;
-    void clearDebugDraw() override;
 
     void update(float delta) override;
     void updateStatus(BuildingStatus buildingStatus);

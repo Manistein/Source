@@ -155,6 +155,12 @@ void GameObject::update(float delta)
     updateHP();
 }
 
+void GameObject::clearDebugDraw()
+{
+    _debugDrawNode->clear();
+    _debugDrawNode->setVisible(false);
+}
+
 GameObject* GameObjectFactory::create(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
 {
     GameObject* gameObject = nullptr;

@@ -4,6 +4,8 @@
 #include "GameWorld.h"
 #include "Npc.h"
 #include "Building.h"
+#include "GameWorldCallBackFunctionsManager.h"
+#include "MapManager.h"
 
 static GameObjectManager* s_gameObjectManager = nullptr;
 
@@ -343,9 +345,12 @@ void GameObjectManager::clearGameObjectDebugDraw()
 
 Rect GameObjectManager::computeGameObjectRect(GameObject* gameObject)
 {
+    auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
+    float mapScale = mapManager->getMapScale();
+
     auto parentNode = gameObject->getParent();
     auto worldPosition = parentNode->convertToWorldSpace(gameObject->getPosition());
-    auto contentSize = gameObject->getContentSize();
+    auto contentSize = gameObject->getContentSize() * mapScale;
 
     return Rect(worldPosition.x - contentSize.width / 2.0f, worldPosition.y - contentSize.height / 2.0f, contentSize.width, contentSize.height);
 }

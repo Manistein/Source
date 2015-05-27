@@ -45,7 +45,6 @@ public:
 
     bool isReadyToRemove() override;
 
-    void clearDebugDraw() override;
     const Vec2& getPosition() const override;
     void initDefenceInBuildingNpcInMapPosition();
 private:
