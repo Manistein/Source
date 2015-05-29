@@ -33,6 +33,7 @@ struct NpcTemplate
     float perSecondMoveSpeedByPixel = 0.0f;
     BulletType bulletType = BulletType::Invalid;
     DamageType damageType = DamageType::Invalid;
+    float aoeDamageRadius = 0.0f; // 非AOE伤害的Npc无视这个参数
 
     float shadowYPosition = 0.0f;
     float hpBarYPosition = 0.0f;

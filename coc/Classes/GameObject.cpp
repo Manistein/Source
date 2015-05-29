@@ -161,6 +161,16 @@ void GameObject::clearDebugDraw()
     _debugDrawNode->setVisible(false);
 }
 
+DamageType GameObject::getDamageType()
+{
+    return _damageType;
+}
+
+float GameObject::getAoeDamageRadius()
+{
+    return _aoeDamageRadius;
+}
+
 GameObject* GameObjectFactory::create(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
 {
     GameObject* gameObject = nullptr;

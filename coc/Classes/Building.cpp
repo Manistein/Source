@@ -221,7 +221,7 @@ Npc* Building::createDefenceNpc(const string& buildingTemplateName)
         defenceNpc = static_cast<Npc*>(gameObject);
         workingStatusBuildingSprite->addChild(defenceNpc, 1);
         defenceNpc->initDefenceInBuildingNpcInMapPosition();
-        defenceNpc->setAttackPoser(buildingTemplate->attackPower);
+        defenceNpc->setAttackPower(buildingTemplate->attackPower);
         defenceNpc->setAttackRange(buildingTemplate->attackRange);
     }
 

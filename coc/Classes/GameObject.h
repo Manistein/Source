@@ -22,6 +22,7 @@ enum class BulletType
     Invalid,
 
     Arrow,
+    Magic,
 };
 
 enum class DamageType
@@ -51,6 +52,8 @@ public:
     ForceType getForceType();
     int getAttackPower();
     float getExtraEnemyAttackRadius();
+    DamageType getDamageType();
+    float getAoeDamageRadius();
 
     void showHPBar();
     void hideHPBar();
@@ -77,6 +80,7 @@ protected:
     float _extraEnemyAttackRadius = 0.0f;   // µÐ·½GameObject¹¥»÷·¶Î§¼Ó³É
     BulletType _bulletType = BulletType::Invalid;
     DamageType _damageType = DamageType::Invalid;
+    float _aoeDamageRadius = 0.0f;
 
     int _level = 0;
     int _maxLevel = 0;

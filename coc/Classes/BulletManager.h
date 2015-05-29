@@ -8,9 +8,8 @@ public:
     static BulletManager* getInstance();
     Node* createBullet(BulletType bulletType, int attackerID, int attackTargetID);
 private:
-    Node* createArrow(BulletType bulletType, GameObject* attacker, GameObject* target);
-
-    void onBulletMoveEnd(Node* bullet, int attackTargetID, int damageAmount);
+    void onNormalDamageBulletMoveEnd(Node* bullet, int attackTargetID, int damageAmount);
+    void onAOEDamageBulletMoveEnd(Node* bullet, GameObject* attacker, const Vec2& endPosition);
 
     BulletManager(){}
     BulletManager(const BulletManager&);

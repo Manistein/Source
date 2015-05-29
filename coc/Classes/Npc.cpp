@@ -221,6 +221,7 @@ void Npc::initBattleData(const string& jobName)
     _perSecondMoveSpeedByPixel = npcTemplate->perSecondMoveSpeedByPixel;
     _bulletType = npcTemplate->bulletType;
     _damageType = npcTemplate->damageType;
+    _aoeDamageRadius = npcTemplate->aoeDamageRadius;
 }
 
 void Npc::initDebugDraw()
@@ -1091,7 +1092,7 @@ void Npc::setAttackRange(float attackRange)
     _maxAttackRadius = attackRange;
 }
 
-void Npc::setAttackPoser(float attackPower)
+void Npc::setAttackPower(float attackPower)
 {
     _attackPower = attackPower;
 }

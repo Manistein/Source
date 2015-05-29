@@ -49,7 +49,7 @@ public:
     void initDefenceInBuildingNpcInMapPosition();
     void setAlertRange(float alertRange);
     void setAttackRange(float attackRange);
-    void setAttackPoser(float attackPower);
+    void setAttackPower(float attackPower);
 private:
     bool init(ForceType forceType, GameObjectType npcType, const string& jobName, const Vec2& position, int uniqueID);
     void clear();

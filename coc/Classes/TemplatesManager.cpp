@@ -9,6 +9,7 @@ static TemplateManager* s_templateManager = nullptr;
 static unordered_map<string, BulletType> s_bulletTypeStringToEnum = {
     { "Invalid", BulletType::Invalid },
     { "Arrow", BulletType::Arrow },
+    { "Magic", BulletType::Magic },
 };
 
 static unordered_map<string, DamageType> s_damageTypeStringToEnum = {
@@ -185,6 +186,8 @@ bool TemplateManager::initNpcTemplates()
             {
                 npcTemplate->damageType = s_damageTypeStringToEnum[damageTypeName];
             }
+
+            npcTemplate->aoeDamageRadius = tabFileReader.getFloat(i, "AOEDamageRadius");
 
             npcTemplate->shadowYPosition = tabFileReader.getFloat(i, "ShadowYPosition");
             npcTemplate->hpBarYPosition = tabFileReader.getFloat(i, "HpBarYPosition");
