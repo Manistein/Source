@@ -866,13 +866,13 @@ void Npc::switchDieToAttack()
     onAttack();
 }
 
-void Npc::moveTo(const Vec2& targetPosition)
+void Npc::moveTo(const Vec2& targetPosition, bool isAllowEndTileNodeToMoveIn /* = false */)
 {
     _isReadyToMove = false;
 
     auto startPosition = getPosition();
     _gotoTargetPositionPathList.clear();
-    _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(startPosition, targetPosition, false);
+    _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(startPosition, targetPosition, isAllowEndTileNodeToMoveIn);
 
     if (_gotoTargetPositionPathList.empty())
     {

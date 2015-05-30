@@ -233,7 +233,7 @@ int GameObjectManager::getGameObjectSelectedByPlayerCount()
     return count;
 }
 
-void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position)
+void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position, bool isAllowEndTileNodeToMoveIn)
 {
     for (auto& gameObjectIter : _gameObjectMap)
     {
@@ -245,7 +245,7 @@ void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position)
         if (gameObjectIter.second->isSelected() && gameObjectIter.second->getForceType() == ForceType::Player)
         {
             auto npc = static_cast<Npc*>(gameObjectIter.second);
-            npc->moveTo(position);
+            npc->moveTo(position, isAllowEndTileNodeToMoveIn);
         }
     }
 }

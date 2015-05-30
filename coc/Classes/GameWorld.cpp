@@ -69,16 +69,16 @@ bool GameWorld::init()
 
     for (int i = 0; i < 1; i++)
     {
-        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2000.0f, 2000.0f));
-        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2050.0f, 2050.0f));
-        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2100.0f, 2100.0f));
+        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueBarbarian", Vec2(2000.0f, 2000.0f));
+        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueBarbarian", Vec2(2050.0f, 2050.0f));
+        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueBarbarian", Vec2(2100.0f, 2100.0f));
     }
 
     createGameObject(GameObjectType::Npc, ForceType::AI, "PinkArcher", Vec2(3150.0f, 2150.0f));
     createGameObject(GameObjectType::Npc, ForceType::AI, "PinkArcher", Vec2(3150.0f, 2050.0f));
     createGameObject(GameObjectType::Npc, ForceType::AI, "PinkArcher", Vec2(3150.0f, 1950.0f));
 
-    createGameObject(GameObjectType::Building, ForceType::Player, "PurpleAnchorTower", Vec2(3150.0f, 1950.0f));
+    //createGameObject(GameObjectType::Building, ForceType::Player, "PurpleAnchorTower", Vec2(3150.0f, 1950.0f));
 
     return true;
 }
@@ -206,9 +206,14 @@ void GameWorld::onMouseRightButtonDown()
 
     _gameObjectManager->cancelEnemySelected();
     auto enemy = _gameObjectManager->selectEnemyBy(_cursorPoint);
+    bool hasSelectEnemyBuildingToAttack = false;
     if (enemy)
     {
         _gameObjectManager->setSelectedGameObjectEnemyUniqueID(enemy->getUniqueID());
+        if (enemy->getGameObjectType() == GameObjectType::Building)
+        {
+            hasSelectEnemyBuildingToAttack = true;
+        }
     }
     else
     {
@@ -218,7 +223,7 @@ void GameWorld::onMouseRightButtonDown()
 
 
     auto inMapCursorPosition = _mapManager->convertCursorPositionToTileMapSpace();
-    if (_mapManager->isInObstacleTile(inMapCursorPosition) || 
+    if ((_mapManager->isInObstacleTile(inMapCursorPosition) && !hasSelectEnemyBuildingToAttack) ||
         GameUtils::isVec2Equal(_cursorPoint, _previousClickedCursorPoint))
     {
         return;
@@ -229,7 +234,8 @@ void GameWorld::onMouseRightButtonDown()
     auto gameObjectSelectedByPlayerCount = _gameObjectManager->getGameObjectSelectedByPlayerCount();
     if (gameObjectSelectedByPlayerCount == 1)
     {
-        _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition);
+        bool isAllowEndTileNodeToMoveIn = hasSelectEnemyBuildingToAttack;
+        _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition, isAllowEndTileNodeToMoveIn);
     }
     else
     {

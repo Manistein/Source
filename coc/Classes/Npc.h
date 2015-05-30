@@ -38,7 +38,7 @@ public:
 
     static Npc* create(ForceType forceType, GameObjectType npcType, const string& jobName, const Vec2& position, int uniqueID);
 
-    void moveTo(const Vec2& targetPosition);
+    void moveTo(const Vec2& targetPosition, bool isAllowEndTileNodeToMoveIn = false); // 如果最后一个参数是true，即便是最后一个节点是障碍物，也是可以去计算寻路路径的
     void setReadyToMoveStatus(bool isReadyToMove);
 
     NpcStatus getNpcStatus();

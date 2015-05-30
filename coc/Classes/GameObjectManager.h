@@ -38,7 +38,7 @@ public:
 
     int getGameObjectSelectedByPlayerCount();
 
-    void npcSelectedByPlayerMoveTo(const Vec2& position);
+    void npcSelectedByPlayerMoveTo(const Vec2& position, bool isAllowEndTileNodeToMoveIn = false);
     void setSelectedNpcMoveTargetList(ForceType forceType, const vector<Vec2>& npcMoveTargetList);
     void npcMoveToTargetOneByOne();
 
