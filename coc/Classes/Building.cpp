@@ -528,7 +528,11 @@ void Building::hideBeingBuiltProgressBar()
 void Building::onConstructionComplete()
 {
     hideBeingBuiltProgressBar();
-    showHPBar();
+
+    if (isSelected())
+    {
+        showHPBar();
+    }
 
     updateStatus(BuildingStatus::Working);
 }
