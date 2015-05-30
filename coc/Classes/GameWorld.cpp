@@ -202,6 +202,19 @@ void GameWorld::onMouseRightButtonDown()
 {
     cancelConstructBuilding();
 
+    _gameObjectManager->cancelEnemySelected();
+    auto enemy = _gameObjectManager->selectEnemyBy(_cursorPoint);
+    if (enemy)
+    {
+        _gameObjectManager->setSelectedGameObjectEnemyUniqueID(enemy->getUniqueID());
+    }
+    else
+    {
+        _gameObjectManager->setSelectedGameObjectEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
+        _gameObjectManager->cancelEnemySelected();
+    }
+
+
     auto inMapCursorPosition = _mapManager->convertCursorPositionToTileMapSpace();
     if (_mapManager->isInObstacleTile(inMapCursorPosition) || 
         GameUtils::isVec2Equal(_cursorPoint, _previousClickedCursorPoint))
@@ -212,7 +225,6 @@ void GameWorld::onMouseRightButtonDown()
     _previousClickedCursorPoint = _cursorPoint;
 
     auto gameObjectSelectedByPlayerCount = _gameObjectManager->getGameObjectSelectedByPlayerCount();
-
     if (gameObjectSelectedByPlayerCount == 1)
     {
         _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition);
@@ -221,17 +233,6 @@ void GameWorld::onMouseRightButtonDown()
     {
         auto npcMoveTargetList = _mapManager->getNpcMoveTargetListBy(gameObjectSelectedByPlayerCount);
         _gameObjectManager->setSelectedNpcMoveTargetList(ForceType::Player, npcMoveTargetList);
-    }
-
-    auto enemy = _gameObjectManager->selectEnemyBy(_cursorPoint);
-    if (enemy)
-    {
-        _gameObjectManager->setSelectedGameObjectEnemyUniqueID(enemy->getUniqueID());
-    }
-    else
-    {
-        _gameObjectManager->setSelectedGameObjectEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
-        _gameObjectManager->cancelEnemySelected();
     }
 }
 
