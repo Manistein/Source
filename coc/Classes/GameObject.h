@@ -61,7 +61,7 @@ public:
     void addHP(int addHPAmount);
     void updateHP();
 
-    void setEnemyUniqueID(int uniqueID);
+    virtual void setEnemyUniqueID(int uniqueID);
 
     void update(float delta) override;
     virtual void clearDebugDraw();

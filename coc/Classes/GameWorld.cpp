@@ -69,14 +69,16 @@ bool GameWorld::init()
 
     for (int i = 0; i < 1; i++)
     {
-        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueEnchanter", Vec2(2000.0f, 2000.0f));
-        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueEnchanter", Vec2(2050.0f, 2050.0f));
-        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueEnchanter", Vec2(2100.0f, 2100.0f));
+        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2000.0f, 2000.0f));
+        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2050.0f, 2050.0f));
+        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueArcher", Vec2(2100.0f, 2100.0f));
     }
 
-    createGameObject(GameObjectType::Npc, ForceType::AI, "PurpleEnchanter", Vec2(3150.0f, 2150.0f));
-    createGameObject(GameObjectType::Npc, ForceType::AI, "PurpleEnchanter", Vec2(3150.0f, 2050.0f));
-    createGameObject(GameObjectType::Npc, ForceType::AI, "PurpleEnchanter", Vec2(3150.0f, 1950.0f));
+    createGameObject(GameObjectType::Npc, ForceType::AI, "PinkArcher", Vec2(3150.0f, 2150.0f));
+    createGameObject(GameObjectType::Npc, ForceType::AI, "PinkArcher", Vec2(3150.0f, 2050.0f));
+    createGameObject(GameObjectType::Npc, ForceType::AI, "PinkArcher", Vec2(3150.0f, 1950.0f));
+
+    createGameObject(GameObjectType::Building, ForceType::Player, "PurpleAnchorTower", Vec2(3150.0f, 1950.0f));
 
     return true;
 }

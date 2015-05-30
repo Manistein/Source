@@ -27,6 +27,8 @@ public:
 
     bool canBuild();
     vector<Vec2> getBottomGridInMapPositionList();
+
+    void setEnemyUniqueID(int uniqueID) override;
 private:
     bool init(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID);
 

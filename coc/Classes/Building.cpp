@@ -568,3 +568,13 @@ vector<Vec2> Building::getBottomGridInMapPositionList()
 
     return bottomGridInMapPositionList;
 }
+
+void Building::setEnemyUniqueID(int uniqueID)
+{
+    GameObject::setEnemyUniqueID(uniqueID);
+
+    if (_defenceNpc)
+    {
+        _defenceNpc->setEnemyUniqueID(uniqueID);
+    }
+}
