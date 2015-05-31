@@ -41,6 +41,9 @@ struct NpcTemplate
     float moveAnimateDelayPerUnit = 0.0f;
     float standAnimateDelayPerUnit = 0.0f;
     float dieAnimateDelayPerUnit = 0.0f;
+
+    string blueSelectedTipsTextureName;
+    string redSelectedTipsTextureName;
 };
 
 struct BulletTemplate
@@ -69,6 +72,9 @@ struct BuildingTemplate
     float defenceNpcYPosition = 0.0f;
     float attackRange = 0.0f;
     float attackPower = 0.0f;
+
+    string blueSelectedTipsTextureName;
+    string redSelectedTipsTextureName;
 };
 
 struct SpecialEffectTemplate

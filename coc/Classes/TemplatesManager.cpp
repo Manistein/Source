@@ -196,6 +196,9 @@ bool TemplateManager::initNpcTemplates()
             npcTemplate->standAnimateDelayPerUnit = tabFileReader.getFloat(i, "StandAnimateDelayPerUnit");
             npcTemplate->dieAnimateDelayPerUnit = tabFileReader.getFloat(i, "DieAnimateDelayPerUnit");
 
+            npcTemplate->blueSelectedTipsTextureName = tabFileReader.getString(i, "BlueSelectedTipsTextureName");
+            npcTemplate->redSelectedTipsTextureName = tabFileReader.getString(i, "RedSelectedTipsTextureName");
+
             _npcTemplatesMap[jobName] = npcTemplate;
         }
 
@@ -262,6 +265,8 @@ bool TemplateManager::initBuildingTemplates()
             buildingTemplate->defenceNpcYPosition = tabFileReader.getFloat(i, "DefenceNpcYPosition");
             buildingTemplate->attackRange = tabFileReader.getFloat(i, "AttackRange");
             buildingTemplate->attackPower = tabFileReader.getFloat(i, "AttackPower");
+            buildingTemplate->blueSelectedTipsTextureName = tabFileReader.getString(i, "BlueSelectedTipsTextureName");
+            buildingTemplate->redSelectedTipsTextureName = tabFileReader.getString(i, "RedSelectedTipsTextureName");
 
             auto buildingTemplateName = tabFileReader.getString(i, "BuildingTemplateName");
             _buildingTemplatesMap[buildingTemplateName] = buildingTemplate;

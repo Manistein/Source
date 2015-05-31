@@ -60,6 +60,7 @@ private:
     void initHPBar(const string& jobName);
     void initBattleData(const string& jobName);
     void initDebugDraw();
+    void initSelectedTips(const string& jobName);
 
     void update(float delta) override;
     void tryUpdateStatus(NpcStatus newStatus);

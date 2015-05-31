@@ -39,6 +39,7 @@ private:
     void initHPBar();
     void initBeingBuiltProgressBar();
     void initBattleData(const string& buildingTemplateName);
+    void initSelectedTips(const string& buildingTemplateName);
 
     Npc* createDefenceNpc(const string& buildingTemplateName);
     void removeDefenceNpc();

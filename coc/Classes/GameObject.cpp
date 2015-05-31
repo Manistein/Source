@@ -46,6 +46,9 @@ bool GameObject::init()
 
     addChild(hpBarBackground);
 
+    _selectedTips = Sprite::create();
+    addChild(_selectedTips, -1);
+
     _debugDrawNode = DrawNode::create();
     _debugDrawNode->setCascadeOpacityEnabled(true);
     addChild(_debugDrawNode, 1);
@@ -90,6 +93,7 @@ void GameObject::setSelected(bool isSelect)
         hideHPBar();
     }
 
+    _selectedTips->setVisible(isSelect);
     _isSelected = isSelect;
 }
 

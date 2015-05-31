@@ -53,6 +53,7 @@ bool Npc::init(ForceType forceType, GameObjectType npcType, const string& jobNam
     initHPBar(jobName);
     initBattleData(jobName);
     initDebugDraw();
+    initSelectedTips(jobName);
 
     setPosition(position);
     _uniqueID = uniqueID;
@@ -241,6 +242,27 @@ void Npc::initDebugDraw()
     npcStatusLabel->setPosition(Vec2(0.0f, 20.0f));
     npcStatusLabel->setName(SHOW_NPC_STATUS_CHILD_NAME);
     _debugDrawNode->addChild(npcStatusLabel, 1);
+}
+
+void Npc::initSelectedTips(const string& jobName)
+{
+    auto npcTemplate = TemplateManager::getInstance()->getNpcTemplateBy(jobName);
+    auto spriteFrameCache = SpriteFrameCache::getInstance();
+    auto blueSelectedTips = spriteFrameCache->getSpriteFrameByName(npcTemplate->blueSelectedTipsTextureName);
+    auto redSelectedTips = spriteFrameCache->getSpriteFrameByName(npcTemplate->redSelectedTipsTextureName);
+
+    if (_forceType == ForceType::Player)
+    {
+        _selectedTips->setSpriteFrame(blueSelectedTips);
+    }
+    else
+    {
+        _selectedTips->setSpriteFrame(redSelectedTips);
+    }
+
+    auto shadowPosition = _shadowSprite->getPosition();
+    _selectedTips->setPosition(shadowPosition);
+    _selectedTips->setVisible(false);
 }
 
 void Npc::debugDraw()
@@ -1096,3 +1118,4 @@ void Npc::setAttackPower(float attackPower)
 {
     _attackPower = attackPower;
 }
+

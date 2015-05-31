@@ -62,6 +62,7 @@ bool Building::init(ForceType forceType, const string& buildingTemplateName, con
     initHPBar();
     initBeingBuiltProgressBar();
     initBattleData(buildingTemplateName);
+    initSelectedTips(buildingTemplateName);
 
     scheduleUpdate();
 
@@ -201,6 +202,24 @@ void Building::initBattleData(const string& buildingTemplateName)
     _destroySpecialEffectTemplateName = buildingTemplate->destroySpecialEffectTemplateName;
 }
 
+void Building::initSelectedTips(const string& buildingTemplateName)
+{
+    auto buildingTemplate = TemplateManager::getInstance()->getBuildingTemplateBy(buildingTemplateName);
+    auto spriteFrameCache = SpriteFrameCache::getInstance();
+
+    auto blueSelectedTips = spriteFrameCache->getSpriteFrameByName(buildingTemplate->blueSelectedTipsTextureName);
+    auto redSelectedTips = spriteFrameCache->getSpriteFrameByName(buildingTemplate->redSelectedTipsTextureName);
+
+    if (_forceType == ForceType::Player)
+    {
+        _selectedTips->setSpriteFrame(blueSelectedTips);
+    }
+    else
+    {
+        _selectedTips->setSpriteFrame(redSelectedTips);
+    }
+}
+
 Npc* Building::createDefenceNpc(const string& buildingTemplateName)
 {
     Npc* defenceNpc = nullptr;
@@ -273,6 +292,9 @@ void Building::updateStatus(BuildingStatus buildingStatus)
             auto buildingSize = buildStatusSpriteIter.second->getContentSize();
             setContentSize(buildingSize);
             buildStatusSpriteIter.second->setPosition(Vec2(buildingSize.width / 2.0f, buildingSize.height / 2.0f));
+            
+            auto buildingTemplate = TemplateManager::getInstance()->getBuildingTemplateBy(_buildingTemplateName);
+            float selectedTipsYPosition = _bottomGridsPlaneCenterPositionInLocalSpace.y;
 
             switch (buildingStatus)
             {
@@ -286,6 +308,8 @@ void Building::updateStatus(BuildingStatus buildingStatus)
                 auto onUpdateToWorkingStatus = CallFunc::create(CC_CALLBACK_0(Building::onConstructionComplete, this));
                 auto sequenceAction = Sequence::create(DelayTime::create(_buildingTimeBySecond), onUpdateToWorkingStatus, nullptr);
                 runAction(sequenceAction);
+
+                selectedTipsYPosition = buildingTemplate->shadowYPositionInBeingBuiltStatus;
             }
                 break;
             case BuildingStatus::Working:
@@ -294,6 +318,8 @@ void Building::updateStatus(BuildingStatus buildingStatus)
 
                 // 因为有些建筑物不需要经历建造阶段就可以直接进入working状态，因此这里需要再次更新占用格子的gid
                 updateCoveredByBuildingTileNodesGID(OBSTACLE_ID);
+
+                selectedTipsYPosition = buildingTemplate->shadowYPositionInWorkingStatus;
             }
                 break;
             case BuildingStatus::Destory:
@@ -308,10 +334,14 @@ void Building::updateStatus(BuildingStatus buildingStatus)
                 auto onReadyToRemove = CallFunc::create(CC_CALLBACK_0(Building::addToRemoveQueue, this));
                 auto sequenceAction = Sequence::create(DelayTime::create(BUILDING_DELAY_REMOVE_TIME), onReadyToRemove, nullptr);
                 runAction(sequenceAction);
+
+                selectedTipsYPosition = buildingTemplate->shadowYPositionInDestroyStatus;
             }
                 break;
             default:    break;
             }
+
+            _selectedTips->setPosition(Vec2(buildingSize.width / 2.0f, selectedTipsYPosition));
         }
         else
         {

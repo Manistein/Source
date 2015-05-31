@@ -108,7 +108,7 @@ void GameWorld::initEditedGameObjects()
         }
         else
         {
-            CCASSERT(false, "Can not parse %s", objectLayerName.c_str());
+            CCASSERT("Can not parse %s", objectLayerName.c_str());
         }
 
         auto editedObjectsInfoList = objectLayer->getObjects();

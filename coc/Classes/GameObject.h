@@ -94,6 +94,7 @@ protected:
     ForceType _forceType = ForceType::Invalid;
 
     DrawNode* _debugDrawNode = nullptr;
+    Sprite* _selectedTips = nullptr;
 };
 
 class GameObjectFactory
