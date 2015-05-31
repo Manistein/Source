@@ -9,6 +9,8 @@ static int g_uniqueID = 0;
 const string PLAYER_HP_BAR_TEXTURE_NAME = "PlayerHPBar.png";
 const string AI_HP_BAR_TEXTURE_NAME = "AIHPBar.png";
 
+const float MAX_SHOW_HP_BAR_TIME_LIMIT_AFTER_BEING_ATTACKED = 3.0f;
+
 GameObject::~GameObject()
 {
 
@@ -124,6 +126,9 @@ float GameObject::getExtraEnemyAttackRadius()
 
 void GameObject::costHP(int costHPAmount)
 {
+    _showHPBarTotalTimeAfterBeingAttacked = 0.0f;
+    showHPBar();
+
     _hp = std::max(0, _hp - costHPAmount);
 
     if (_hp <= 0)
@@ -157,6 +162,13 @@ void GameObject::update(float delta)
     }
 
     updateHP();
+
+    _showHPBarTotalTimeAfterBeingAttacked += delta;
+    if (!isSelected() &&
+        _showHPBarTotalTimeAfterBeingAttacked >= MAX_SHOW_HP_BAR_TIME_LIMIT_AFTER_BEING_ATTACKED)
+    {
+        hideHPBar();
+    }
 }
 
 void GameObject::clearDebugDraw()

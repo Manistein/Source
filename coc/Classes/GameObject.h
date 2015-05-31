@@ -57,7 +57,7 @@ public:
 
     void showHPBar();
     void hideHPBar();
-    void costHP(int costHPAmount);
+    virtual void costHP(int costHPAmount);
     void addHP(int addHPAmount);
     void updateHP();
 
@@ -95,6 +95,8 @@ protected:
 
     DrawNode* _debugDrawNode = nullptr;
     Sprite* _selectedTips = nullptr;
+
+    float _showHPBarTotalTimeAfterBeingAttacked = 0.0f;
 };
 
 class GameObjectFactory

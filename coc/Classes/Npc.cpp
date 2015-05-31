@@ -1118,4 +1118,3 @@ void Npc::setAttackPower(float attackPower)
 {
     _attackPower = attackPower;
 }
-
