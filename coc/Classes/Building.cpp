@@ -220,6 +220,21 @@ void Building::initSelectedTips(const string& buildingTemplateName)
     }
 }
 
+void Building::initBottomGridInMapPositionList()
+{
+    auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
+    auto parentNode = _bottomGridSpritesList.at(0)->getParent();
+
+    for (auto& bottomGrid : _bottomGridSpritesList)
+    {
+        auto bottomGridWorldPosition = parentNode->convertToWorldSpace(bottomGrid->getPosition());
+        auto bottomGridInMapPosition = mapManager->convertToTileMapSpace(bottomGridWorldPosition);
+
+        _bottomGridInMapPositionList.push_back(bottomGridInMapPosition);
+    }
+
+}
+
 Npc* Building::createDefenceNpc(const string& buildingTemplateName)
 {
     Npc* defenceNpc = nullptr;
@@ -300,6 +315,11 @@ void Building::updateStatus(BuildingStatus buildingStatus)
             {
             case BuildingStatus::BeingBuilt:
             {
+                if (_bottomGridInMapPositionList.empty())
+                {
+                    initBottomGridInMapPositionList();
+                }
+
                 updateCoveredByBuildingTileNodesGID(OBSTACLE_ID);
 
                 hideHPBar();
@@ -316,6 +336,11 @@ void Building::updateStatus(BuildingStatus buildingStatus)
             {
                 _defenceNpc = createDefenceNpc(_buildingTemplateName);
 
+                if (_bottomGridInMapPositionList.empty())
+                {
+                    initBottomGridInMapPositionList();
+                }
+
                 // 因为有些建筑物不需要经历建造阶段就可以直接进入working状态，因此这里需要再次更新占用格子的gid
                 updateCoveredByBuildingTileNodesGID(OBSTACLE_ID);
 
@@ -328,6 +353,8 @@ void Building::updateStatus(BuildingStatus buildingStatus)
                 {
                     removeDefenceNpc();
                 }
+
+                _selectedTips->setVisible(false);
 
                 GameWorldCallBackFunctionsManager::getInstance()->_createSpecialEffect(_destroySpecialEffectTemplateName, getPosition(), false);
 
@@ -534,6 +561,8 @@ void Building::onUpdateAIForceBuildingStatus(const Vec2& inMapPosition, Building
 
     if (canBuild())
     {
+        // 之所以要在这个阶段才计算建筑物底部块的坐标，是因为要先等底部坐标和网格对齐，才能准确计算
+        initBottomGridInMapPositionList();
         updateStatus(buildingStatus);
     }
     else
@@ -581,22 +610,9 @@ void Building::addToRemoveQueue()
     GameObjectManager::getInstance()->addReadyToRemoveGameObject(_uniqueID);
 }
 
-vector<Vec2> Building::getBottomGridInMapPositionList()
+const vector<Vec2>& Building::getBottomGridInMapPositionList()
 {
-    vector<Vec2> bottomGridInMapPositionList;
-
-    auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
-    auto parentNode = _bottomGridSpritesList.at(0)->getParent();
-
-    for (auto& bottomGrid : _bottomGridSpritesList)
-    {
-        auto bottomGridWorldPosition = parentNode->convertToWorldSpace(bottomGrid->getPosition());
-        auto bottomGridInMapPosition = mapManager->convertToTileMapSpace(bottomGridWorldPosition);
-
-        bottomGridInMapPositionList.push_back(bottomGridInMapPosition);
-    }
-
-    return bottomGridInMapPositionList;
+    return _bottomGridInMapPositionList;
 }
 
 void Building::setEnemyUniqueID(int uniqueID)

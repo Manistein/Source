@@ -49,6 +49,7 @@ bool GameObject::init()
     addChild(hpBarBackground);
 
     _selectedTips = Sprite::create();
+    _selectedTips->setVisible(false);
     addChild(_selectedTips, -1);
 
     _debugDrawNode = DrawNode::create();

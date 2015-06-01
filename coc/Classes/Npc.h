@@ -26,7 +26,8 @@ enum class FaceDirection
     Total
 };
 
-const float COOL_DOWN_TIME_IN_MOVE_STATUS_INTERVAL = 1.0f;
+const float IN_MOVE_STATUS_COOL_DOWN_TIME_INTERVAL = 1.0f;
+const float SEARCH_ENEMY_COOL_DOWN_TIME_INTERVAL = 0.17f;    //Ã¿ÃëËÑË÷10´Î
 
 class GameWorldCallBackFunctionsManager;
 class Building;
@@ -70,13 +71,14 @@ private:
 
     void runFightWithEnemyAI(float delta);
     void runDefenceInBuildingAI(float delta);
-    void searchEnemy();
+    void searchEnemy(float delta);
 
     bool isEnemyInAttackRange(GameObject* enemy);
     bool isEnemyInAlertRange(GameObject* enemy);
     Vec2 computeArrivePositionBy(GameObject* enemy);
     float getDistanceFrom(GameObject* enemy);
-    float _coolDownTimeInMoveStatus = COOL_DOWN_TIME_IN_MOVE_STATUS_INTERVAL;
+    float _coolDownTimeInMoveStatus = IN_MOVE_STATUS_COOL_DOWN_TIME_INTERVAL;
+    float _searchEnemyCoolDownTime = SEARCH_ENEMY_COOL_DOWN_TIME_INTERVAL;
 
     struct SwitchStatusFunction 
     {

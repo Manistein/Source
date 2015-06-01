@@ -367,7 +367,7 @@ void Npc::runFightWithEnemyAI(float delta)
             case NpcStatus::Move:
             {
                 _coolDownTimeInMoveStatus += delta;
-                if (_coolDownTimeInMoveStatus >= COOL_DOWN_TIME_IN_MOVE_STATUS_INTERVAL)
+                if (_coolDownTimeInMoveStatus >= IN_MOVE_STATUS_COOL_DOWN_TIME_INTERVAL)
                 {
                     auto npcPosition = getPosition();
                     auto enemyPosition = computeArrivePositionBy(enemy);
@@ -456,7 +456,7 @@ void Npc::runFightWithEnemyAI(float delta)
     }
     else
     {
-        searchEnemy();
+        searchEnemy(delta);
     }
 }
 
@@ -485,19 +485,23 @@ void Npc::runDefenceInBuildingAI(float delta)
     }
     else
     {
-        searchEnemy();
+        searchEnemy(delta);
     }
 }
 
-void Npc::searchEnemy()
+void Npc::searchEnemy(float delta)
 {
+    _searchEnemyCoolDownTime -= delta;
     if (_forceType == ForceType::Player && _oldStatus == NpcStatus::Move ||
-        _isReadyToMove)
+        _isReadyToMove ||
+        _searchEnemyCoolDownTime > 0.0f)
     {
         return;
     }
 
-    auto gameObjectMap = GameObjectManager::getInstance()->getGameObjectMap();
+    _searchEnemyCoolDownTime = SEARCH_ENEMY_COOL_DOWN_TIME_INTERVAL;
+
+    auto& gameObjectMap = GameObjectManager::getInstance()->getGameObjectMap();
     for (auto& gameObjectIter : gameObjectMap)
     {
         Building* buildingObject = nullptr;
@@ -568,7 +572,7 @@ cocos2d::Vec2 Npc::computeArrivePositionBy(GameObject* enemy)
         auto selfPosition = getPosition();
 
         auto building = static_cast<Building*>(enemy);
-        auto bottomGridInMapPositionList = building->getBottomGridInMapPositionList();
+        auto& bottomGridInMapPositionList = building->getBottomGridInMapPositionList();
         float minDistance = FLT_MAX;
         for (auto& bottomGridInMapPosition : bottomGridInMapPositionList)
         {
@@ -1032,6 +1036,8 @@ void Npc::onAttack()
 
 void Npc::onDie()
 {
+    _selectedTips->setVisible(false);
+
     _gotoTargetPositionPathList.clear();
 
     auto shadowPosition = _shadowSprite->getPosition();

@@ -140,7 +140,7 @@ void GameWorld::initEditedGameObjects()
             if (forceType == ForceType::Player && gameObjectType == GameObjectType::Building)
             {
                 auto building = static_cast<Building*>(gameObject);
-                building->updateStatus(BuildingStatus::BeingBuilt);
+                building->updateStatus(BuildingStatus::Working);
             }
         }
 

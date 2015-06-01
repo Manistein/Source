@@ -26,7 +26,7 @@ public:
     BuildingStatus getBuildingStatus();
 
     bool canBuild();
-    vector<Vec2> getBottomGridInMapPositionList();
+    const vector<Vec2>& getBottomGridInMapPositionList();
 
     void setEnemyUniqueID(int uniqueID) override;
 private:
@@ -40,6 +40,7 @@ private:
     void initBeingBuiltProgressBar();
     void initBattleData(const string& buildingTemplateName);
     void initSelectedTips(const string& buildingTemplateName);
+    void initBottomGridInMapPositionList();
 
     Npc* createDefenceNpc(const string& buildingTemplateName);
     void removeDefenceNpc();
@@ -77,4 +78,6 @@ private:
     ui::LoadingBar* _beingBuildProgressBar = nullptr;
     string _destroySpecialEffectTemplateName;
     string _buildingTemplateName;
+
+    vector<Vec2> _bottomGridInMapPositionList;
 };
