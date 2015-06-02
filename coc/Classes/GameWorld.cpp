@@ -58,12 +58,14 @@ bool GameWorld::init()
     director->getEventDispatcher()->addCustomEventListener("MouseRightButtonUp", CC_CALLBACK_0(GameWorld::onMouseRightButtonUp, this));
     director->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameWorld::onMouseMove, this));
     director->getEventDispatcher()->addCustomEventListener("ClearDebugDraw", CC_CALLBACK_0(GameWorld::onClearDebugDraw, this));
+    director->getEventDispatcher()->addCustomEventListener("CreateNpcAroundPlayerBaseCamp", CC_CALLBACK_0(GameWorld::createNpcAroundPlayerBaseCamp, this));
 
     //_director->setAlphaBlending(true);
 
     srand(::timeGetTime());
 
     initEditedGameObjects();
+    initMapGIDTable();
 
     scheduleUpdate();
 
@@ -142,8 +144,30 @@ void GameWorld::initEditedGameObjects()
                 auto building = static_cast<Building*>(gameObject);
                 building->updateStatus(BuildingStatus::Working);
             }
+
+            if (gameObjectTemplateName == "BaseCamp")
+            {
+                if (forceType == ForceType::Player)
+                {
+                    _playerBaseCampUniqueID = gameObject->getUniqueID();
+                }
+                else
+                {
+                    _aiBaseCampUniqueID = gameObject->getUniqueID();
+                }
+            }
         }
 
+    }
+}
+
+void GameWorld::initMapGIDTable()
+{
+    auto mapSize = _mapManager->getMapSize();
+    _mapGIDTable.resize(mapSize.width);
+    for (int i = 0; i < (int)_mapGIDTable.size(); i ++)
+    {
+        _mapGIDTable[i].resize(mapSize.height);
     }
 }
 
@@ -383,5 +407,126 @@ void GameWorld::cancelConstructBuilding()
         }
 
         _holdingBuildingID = GAME_OBJECT_UNIQUE_ID_INVALID;
+    }
+}
+
+vector<Vec2> GameWorld::computeNpcCreatePointList(ForceType forceType, int readyToCreateNpcCount)
+{
+    vector<Vec2> npcCreatePointList;
+
+    int baseCampUniqueID = GAME_OBJECT_UNIQUE_ID_INVALID;
+    if (forceType == ForceType::Player)
+    {
+        baseCampUniqueID = _playerBaseCampUniqueID;
+    }
+    else
+    {
+        baseCampUniqueID = _aiBaseCampUniqueID;
+    }
+
+    auto mapSize = _mapManager->getMapSize();
+    for (int columnIndex = 0; columnIndex < (int)mapSize.width; columnIndex++)
+    {
+        for (int rowIndex = 0; rowIndex < (int)mapSize.height; rowIndex ++)
+        {
+            auto tileNode = _mapManager->getTileNodeAt(columnIndex, rowIndex);
+            _mapGIDTable[columnIndex][rowIndex] = tileNode->gid;
+        }
+    }
+
+    // 计算场景中已存在的npc占用的格子，这样做是为了避免新创建的npc创建在已被其他npc占用的格子上，出现重合现象
+    auto& gameObjectMap = _gameObjectManager->getGameObjectMap();
+    for (auto& gameObjectIter : gameObjectMap)
+    {
+        auto gameObject = gameObjectIter.second;
+        if (gameObject->getGameObjectType() == GameObjectType::Npc)
+        {
+            auto gameObjectPosition = gameObject->getPosition();
+            auto gameObjectOccupyTileNodeSubscript = _mapManager->getTileSubscript(gameObjectPosition);
+            _mapGIDTable[(int)gameObjectOccupyTileNodeSubscript.x][(int)gameObjectOccupyTileNodeSubscript.y] = OBSTACLE_ID;
+        }
+    }
+
+    // 这里需要寻找围绕基地的bottomGrid的那些可以作为npc创建点的节点，此时需要遍历*标识的节点
+    // * * * * *
+    // * # # # *
+    // * # # # *
+    // * # # # *
+    // * * * * *
+    // 因此需要找到处于左上角*的下标，和处于右下角*的下标，然后以此为依据进行遍历
+    auto baseCamp = _gameObjectManager->getGameObjectBy(baseCampUniqueID);
+    if (baseCamp)
+    {
+        auto baseCampObject = static_cast<Building*>(baseCamp);
+        auto& baseCampBottomGridPositionList = baseCampObject->getBottomGridInMapPositionList();
+        auto firstBottomGridPosition = baseCampBottomGridPositionList.front();
+        auto lastBottomGridPosition = baseCampBottomGridPositionList.back();
+
+        auto firstBottomGridOccupyTileNodeSubscript = _mapManager->getTileSubscript(firstBottomGridPosition);
+        auto lastBottomGridOccupyTileNodeSubscript = _mapManager->getTileSubscript(lastBottomGridPosition);
+
+        int leftTopStartSearchColumnIndex = std::max(0, (int)(firstBottomGridOccupyTileNodeSubscript.x - 1));
+        int leftTopStartSearchRowIndex = std::max(0, (int)(lastBottomGridOccupyTileNodeSubscript.y - 1));
+
+        int rightBottomStartSearchColumnIndex = std::min((int)(lastBottomGridOccupyTileNodeSubscript.x + 1), (int)(mapSize.width - 1));
+        int rightBottomStartSearchRowIndex = std::min((int)(lastBottomGridOccupyTileNodeSubscript.y + 1), (int)(mapSize.height - 1));
+
+        while ((int)npcCreatePointList.size() < readyToCreateNpcCount)
+        {
+            for (int columnIndex = leftTopStartSearchColumnIndex; columnIndex <= rightBottomStartSearchColumnIndex; columnIndex ++)
+            {
+                if (_mapGIDTable[columnIndex][leftTopStartSearchRowIndex] != OBSTACLE_ID)
+                {
+                    auto tileNodeInTopLine = _mapManager->getTileNodeAt(columnIndex, leftTopStartSearchRowIndex);
+                    npcCreatePointList.push_back(tileNodeInTopLine->leftTopPosition);
+
+                    _mapGIDTable[columnIndex][leftTopStartSearchRowIndex] = OBSTACLE_ID;
+                }
+
+                if (_mapGIDTable[columnIndex][rightBottomStartSearchRowIndex] != OBSTACLE_ID)
+                {
+                    auto tileNodeInBottomLine = _mapManager->getTileNodeAt(columnIndex, rightBottomStartSearchRowIndex);
+                    npcCreatePointList.push_back(tileNodeInBottomLine->leftTopPosition);
+
+                    _mapGIDTable[columnIndex][rightBottomStartSearchRowIndex] = OBSTACLE_ID;
+                }
+            }
+
+            for (int rowIndex = leftTopStartSearchRowIndex; rowIndex <= rightBottomStartSearchRowIndex; rowIndex ++)
+            {
+                if (_mapGIDTable[leftTopStartSearchColumnIndex][rowIndex] != OBSTACLE_ID)
+                {
+                    auto tileNodeInLeftLine = _mapManager->getTileNodeAt(leftTopStartSearchColumnIndex, rowIndex);
+                    npcCreatePointList.push_back(tileNodeInLeftLine->leftTopPosition);
+
+                    _mapGIDTable[leftTopStartSearchColumnIndex][rowIndex] = OBSTACLE_ID;
+                }
+
+                if (_mapGIDTable[rightBottomStartSearchColumnIndex][rowIndex] != OBSTACLE_ID)
+                {
+                    auto tileNodeInRightLine = _mapManager->getTileNodeAt(rightBottomStartSearchColumnIndex, rowIndex);
+                    npcCreatePointList.push_back(tileNodeInRightLine->leftTopPosition);
+
+                    _mapGIDTable[rightBottomStartSearchColumnIndex][rowIndex] = OBSTACLE_ID;
+                }
+            }
+
+            leftTopStartSearchColumnIndex = std::max(leftTopStartSearchColumnIndex - 1, 0);
+            leftTopStartSearchRowIndex = std::max(leftTopStartSearchRowIndex - 1, 0);
+
+            rightBottomStartSearchColumnIndex = std::min(rightBottomStartSearchColumnIndex + 1, (int)(mapSize.width - 1));
+            rightBottomStartSearchRowIndex = std::min(rightBottomStartSearchRowIndex + 1, (int)(mapSize.height - 1));
+        }
+    }
+
+    return npcCreatePointList;
+}
+
+void GameWorld::createNpcAroundPlayerBaseCamp()
+{
+    auto npcCreatePointList = computeNpcCreatePointList(ForceType::Player, 10);
+    for (auto& point : npcCreatePointList)
+    {
+        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueEnchanter", point);
     }
 }

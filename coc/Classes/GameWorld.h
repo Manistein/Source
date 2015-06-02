@@ -31,15 +31,20 @@ public:
     list<Vec2> computePathListBetween(const Vec2& inMapStartPosition, const Vec2& inMapEndPosition, bool isAllowEndTileNodeToMoveIn = false);
     MapManager* getMapManager();
 
+    void createNpcAroundPlayerBaseCamp();
+
     MapManager* _mapManager = nullptr;
 private:
     bool init() override;
     void initEditedGameObjects();
+    void initMapGIDTable();
 
     void update(float deltaTime) override;
     void onMouseScroll(Event* event);
     void constructBuilding();
     void cancelConstructBuilding();
+
+    vector<Vec2> computeNpcCreatePointList(ForceType forceType, int readyToCreateNpcCount);
 
     GameObjectManager* _gameObjectManager = nullptr;
     GameObjectSelectBox* _gameObjectSelectBox = nullptr;
@@ -52,4 +57,7 @@ private:
     bool _isLeftMouseButtonDown = false;
 
     int _holdingBuildingID = GAME_OBJECT_UNIQUE_ID_INVALID;
+    int _playerBaseCampUniqueID = GAME_OBJECT_UNIQUE_ID_INVALID;
+    int _aiBaseCampUniqueID = GAME_OBJECT_UNIQUE_ID_INVALID;
+    vector<vector<int>> _mapGIDTable;   // 这个表用于寻找npc出兵点位置，如果场景中有npc，那么此npc所占用的格子算作障碍格
 };

@@ -72,6 +72,10 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
     {
         Director::getInstance()->end();
     }
+    else if (keyCode == EventKeyboard::KeyCode::KEY_1)
+    {
+        _director->getEventDispatcher()->dispatchCustomEvent("CreateNpcAroundPlayerBaseCamp");
+    }
     else if (keyCode == EventKeyboard::KeyCode::KEY_F5)
     {
         if (g_setting.allowDebugDraw)
