@@ -292,9 +292,9 @@ Point MapManager::getTileSubscript(const Vec2& inMapPosition)
     return tileSubscript;
 }
 
-DebugInfo MapManager::getDebugInfo(TileMapLayerType tileMapLayerType)
+MapDebugInfo MapManager::getMapDebugInfo(TileMapLayerType tileMapLayerType)
 {
-    DebugInfo tileDebugInfo;
+    MapDebugInfo tileDebugInfo;
 
     auto currentTileMapLayer = _tileMap->getLayer(s_tileMapLayerTypeToString[tileMapLayerType]);
     auto tileSubscript = getTileSubscript(_tileMap->convertToNodeSpace(_cursorPoint));

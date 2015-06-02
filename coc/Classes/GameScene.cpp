@@ -40,8 +40,6 @@ bool GameScene::init()
     _gameUI = GameUI::create();
     addChild(_gameUI);
 
-    _gameUI->registerGameWorldCallBackFunctions(_gameWorld);
-
     auto glView = Director::getInstance()->getOpenGLView();
     auto windowHandle = glView->getWin32Window();
     ::GetClientRect(windowHandle, &_clientRect);

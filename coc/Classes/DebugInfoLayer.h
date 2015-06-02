@@ -17,4 +17,5 @@ private:
     Label* _currentHoverTileTextureNameLabel = nullptr;
     Label* _currentHoverTileGIDLabel = nullptr;
     Label* _currentTileMapLayerNameLabel = nullptr;
+    Label* _gameObjectCountLabel = nullptr;
 };

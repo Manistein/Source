@@ -4,6 +4,7 @@
 #include "DebugInfoLayer.h"
 #include "GameObject.h"
 #include "GameWorld.h"
+#include "GameWorldCallBackFunctionsManager.h"
 
 bool GameUI::init()
 {
@@ -22,14 +23,9 @@ bool GameUI::init()
     return true;
 }
 
-void GameUI::registerGameWorldCallBackFunctions(GameWorld* gameWorld)
-{
-    _gameWorld.getDebugInfo = CC_CALLBACK_1(MapManager::getDebugInfo, gameWorld->_mapManager);
-}
-
 void GameUI::update(float deltaTime)
 {
-    auto debugInfo = _gameWorld.getDebugInfo(TileMapLayerType::GameObjcetLayer);
+    auto& debugInfo = GameWorldCallBackFunctionsManager::getInstance()->_getDebugInfo();
     _debugInfoLayer->updateInfo(debugInfo);
 }
 

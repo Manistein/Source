@@ -1,7 +1,8 @@
 #include "Base.h"
 #include "GameObject.h"
-#include "GameWorldCallBackFunctionsManager.h"
+#include "MapManager.h"
 #include "GameWorld.h"
+#include "GameWorldCallBackFunctionsManager.h"
 
 static GameWorldCallBackFunctionsManager* s_gameWorldCallBackFunctionsManager = nullptr;
 
@@ -22,4 +23,5 @@ void GameWorldCallBackFunctionsManager::registerCallBackFunctions(GameWorld* gam
     _computePathListBetween = CC_CALLBACK_3(GameWorld::computePathListBetween, gameWorld);
     _getMapManager = CC_CALLBACK_0(GameWorld::getMapManager, gameWorld);
     _createSpecialEffect = CC_CALLBACK_3(GameWorld::createSpecialEffect, gameWorld);
+    _getDebugInfo = CC_CALLBACK_0(GameWorld::getDebugInfo, gameWorld);
 }

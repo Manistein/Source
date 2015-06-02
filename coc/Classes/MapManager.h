@@ -12,7 +12,7 @@ enum class TileMapLayerType
     Total
 };
 
-struct DebugInfo
+struct MapDebugInfo
 {
     Vec2 cursorPoint;
     Point tileSubscript;
@@ -63,7 +63,7 @@ public:
     Size getTileSize();
     Size getMapSize();
     Point getTileSubscript(const Vec2& inMapPosition);
-    DebugInfo getDebugInfo(TileMapLayerType tileMapLayerType);
+    MapDebugInfo getMapDebugInfo(TileMapLayerType tileMapLayerType);
     float getMapScale();
     const Vector<TMXObjectGroup*>&  getEditedGameObjectGroup();
 

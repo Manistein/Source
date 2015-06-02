@@ -1,11 +1,11 @@
 #include "Base.h"
 #include "GameObject.h"
 #include "GameObjectManager.h"
+#include "MapManager.h"
 #include "GameWorld.h"
 #include "Npc.h"
 #include "Building.h"
 #include "GameWorldCallBackFunctionsManager.h"
-#include "MapManager.h"
 
 static GameObjectManager* s_gameObjectManager = nullptr;
 

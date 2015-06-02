@@ -2,6 +2,7 @@
 
 class GameWorld;
 class MapManager;
+struct DebugInfo;
 
 class GameWorldCallBackFunctionsManager
 {
@@ -15,6 +16,7 @@ public:
     std::function<list<Vec2>(const Vec2&, const Vec2&, bool)> _computePathListBetween;
     std::function<MapManager*()> _getMapManager;
     std::function<void(const string&, const Vec2&, bool)> _createSpecialEffect;
+    std::function<const DebugInfo&()> _getDebugInfo;
 private:
     GameWorldCallBackFunctionsManager(){};
     GameWorldCallBackFunctionsManager(const GameWorldCallBackFunctionsManager&);

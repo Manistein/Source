@@ -475,7 +475,8 @@ vector<Vec2> GameWorld::computeNpcCreatePointList(ForceType forceType, int ready
         {
             for (int columnIndex = leftTopStartSearchColumnIndex; columnIndex <= rightBottomStartSearchColumnIndex; columnIndex ++)
             {
-                if (_mapGIDTable[columnIndex][leftTopStartSearchRowIndex] != OBSTACLE_ID)
+                if (_mapGIDTable[columnIndex][leftTopStartSearchRowIndex] != OBSTACLE_ID &&
+                    (int)npcCreatePointList.size() < readyToCreateNpcCount)
                 {
                     auto tileNodeInTopLine = _mapManager->getTileNodeAt(columnIndex, leftTopStartSearchRowIndex);
                     npcCreatePointList.push_back(tileNodeInTopLine->leftTopPosition);
@@ -483,7 +484,8 @@ vector<Vec2> GameWorld::computeNpcCreatePointList(ForceType forceType, int ready
                     _mapGIDTable[columnIndex][leftTopStartSearchRowIndex] = OBSTACLE_ID;
                 }
 
-                if (_mapGIDTable[columnIndex][rightBottomStartSearchRowIndex] != OBSTACLE_ID)
+                if (_mapGIDTable[columnIndex][rightBottomStartSearchRowIndex] != OBSTACLE_ID &&
+                    (int)npcCreatePointList.size() < readyToCreateNpcCount)
                 {
                     auto tileNodeInBottomLine = _mapManager->getTileNodeAt(columnIndex, rightBottomStartSearchRowIndex);
                     npcCreatePointList.push_back(tileNodeInBottomLine->leftTopPosition);
@@ -494,7 +496,8 @@ vector<Vec2> GameWorld::computeNpcCreatePointList(ForceType forceType, int ready
 
             for (int rowIndex = leftTopStartSearchRowIndex; rowIndex <= rightBottomStartSearchRowIndex; rowIndex ++)
             {
-                if (_mapGIDTable[leftTopStartSearchColumnIndex][rowIndex] != OBSTACLE_ID)
+                if (_mapGIDTable[leftTopStartSearchColumnIndex][rowIndex] != OBSTACLE_ID &&
+                    (int)npcCreatePointList.size() < readyToCreateNpcCount)
                 {
                     auto tileNodeInLeftLine = _mapManager->getTileNodeAt(leftTopStartSearchColumnIndex, rowIndex);
                     npcCreatePointList.push_back(tileNodeInLeftLine->leftTopPosition);
@@ -502,7 +505,8 @@ vector<Vec2> GameWorld::computeNpcCreatePointList(ForceType forceType, int ready
                     _mapGIDTable[leftTopStartSearchColumnIndex][rowIndex] = OBSTACLE_ID;
                 }
 
-                if (_mapGIDTable[rightBottomStartSearchColumnIndex][rowIndex] != OBSTACLE_ID)
+                if (_mapGIDTable[rightBottomStartSearchColumnIndex][rowIndex] != OBSTACLE_ID &&
+                    (int)npcCreatePointList.size() < readyToCreateNpcCount)
                 {
                     auto tileNodeInRightLine = _mapManager->getTileNodeAt(rightBottomStartSearchColumnIndex, rowIndex);
                     npcCreatePointList.push_back(tileNodeInRightLine->leftTopPosition);
@@ -529,4 +533,12 @@ void GameWorld::createNpcAroundPlayerBaseCamp()
     {
         createGameObject(GameObjectType::Npc, ForceType::Player, "BlueEnchanter", point);
     }
+}
+
+const DebugInfo& GameWorld::getDebugInfo()
+{
+    _debugInfo.mapDebugInfo = _mapManager->getMapDebugInfo(TileMapLayerType::GameObjcetLayer);
+    _debugInfo.gameObjectCount = (int)_gameObjectManager->getGameObjectMap().size();
+
+    return _debugInfo;
 }
