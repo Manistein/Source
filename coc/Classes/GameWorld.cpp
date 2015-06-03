@@ -466,7 +466,7 @@ vector<Vec2> GameWorld::computeNpcCreatePointList(ForceType forceType, int ready
         auto lastBottomGridOccupyTileNodeSubscript = _mapManager->getTileSubscript(lastBottomGridPosition);
 
         int leftTopStartSearchColumnIndex = std::max(0, (int)(firstBottomGridOccupyTileNodeSubscript.x - 1));
-        int leftTopStartSearchRowIndex = std::max(0, (int)(lastBottomGridOccupyTileNodeSubscript.y - 1));
+        int leftTopStartSearchRowIndex = std::max(0, (int)(firstBottomGridOccupyTileNodeSubscript.y - 1));
 
         int rightBottomStartSearchColumnIndex = std::min((int)(lastBottomGridOccupyTileNodeSubscript.x + 1), (int)(mapSize.width - 1));
         int rightBottomStartSearchRowIndex = std::min((int)(lastBottomGridOccupyTileNodeSubscript.y + 1), (int)(mapSize.height - 1));
@@ -528,7 +528,7 @@ vector<Vec2> GameWorld::computeNpcCreatePointList(ForceType forceType, int ready
 
 void GameWorld::createNpcAroundPlayerBaseCamp()
 {
-    auto npcCreatePointList = computeNpcCreatePointList(ForceType::Player, 10);
+    auto npcCreatePointList = computeNpcCreatePointList(ForceType::Player, 16);
     for (auto& point : npcCreatePointList)
     {
         createGameObject(GameObjectType::Npc, ForceType::Player, "BlueEnchanter", point);
