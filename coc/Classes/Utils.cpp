@@ -2,6 +2,8 @@
 #include "Utils.h"
 #include "base/ccMacros.h"
 
+static map<string, Animation*> s_animationMap;
+
 float GameUtils::computeRotatedDegree(const Vec2& beginPosition, const Vec2& endPosition)
 {
     float rotation = 0.0f;
@@ -96,21 +98,16 @@ bool GameUtils::isVec2Equal(const Vec2& left, const Vec2& right)
     return result;
 }
 
-Animation* GameUtils::createAnimationWithPList(const string& plistFileName)
+Animation* parseAnimationValueMap(ValueMap& plistDataMap)
 {
-    auto fileUtils = FileUtils::getInstance();
-    CCASSERT(fileUtils->isFileExist(plistFileName), StringUtils::format("%s is invalid", plistFileName.c_str()).c_str());
-
     auto spriteFrameCache = SpriteFrameCache::getInstance();
-    spriteFrameCache->addSpriteFramesWithFile(plistFileName);
 
     auto animation = Animation::create();
 
-    auto plistDataMap = fileUtils->getValueMapFromFile(plistFileName);
     auto framesIter = plistDataMap.find("frames");
-    CCASSERT(framesIter != plistDataMap.end(), StringUtils::format("frames key is invalid in %s", plistFileName.c_str()).c_str());
+    CCASSERT(framesIter != plistDataMap.end(), "plist file has not frames key");
 
-    auto framesMap = plistDataMap["frames"].asValueMap();
+    auto& framesMap = plistDataMap["frames"].asValueMap();
     vector<string> frameKeysList;
     for (auto& iter : framesMap)
     {
@@ -128,5 +125,32 @@ Animation* GameUtils::createAnimationWithPList(const string& plistFileName)
         }
     }
 
+    return animation;
+}
+
+Animation* GameUtils::createAnimationWithPList(const string& plistFileName)
+{
+    Animation* animation = nullptr;
+
+    auto fileUtils = FileUtils::getInstance();
+    CCASSERT(fileUtils->isFileExist(plistFileName), StringUtils::format("%s is invalid", plistFileName.c_str()).c_str());
+
+    auto animationIter = s_animationMap.find(plistFileName);
+    if (animationIter == s_animationMap.end())
+    {
+        auto spriteFrameCache = SpriteFrameCache::getInstance();
+        spriteFrameCache->addSpriteFramesWithFile(plistFileName);
+
+        ValueMap plistDataMap = fileUtils->getValueMapFromFile(plistFileName);
+
+        animation = parseAnimationValueMap(plistDataMap);
+        s_animationMap[plistFileName] = animation;
+        animation->retain();
+    }
+    else
+    {
+        animation = animationIter->second->clone();
+    }
+    
     return animation;
 }
