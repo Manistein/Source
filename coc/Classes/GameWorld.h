@@ -38,7 +38,7 @@ public:
     list<Vec2> computePathListBetween(const Vec2& inMapStartPosition, const Vec2& inMapEndPosition, bool isAllowEndTileNodeToMoveIn = false);
     MapManager* getMapManager();
     const DebugInfo& getDebugInfo();
-    void createNpcAroundPlayerBaseCamp();
+    void createNpcAroundBaseCamp(ForceType forceType, const string& npcTemplateName, int npcCount);
 private:
     bool init() override;
     void initEditedGameObjects();

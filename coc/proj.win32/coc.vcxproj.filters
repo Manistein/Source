@@ -87,6 +87,9 @@
     <ClCompile Include="..\Classes\SpecialEffectManager.cpp">
       <Filter>src\GameWorld\GameManager</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\ForceManager.cpp">
+      <Filter>src\GameWorld\GameManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -150,6 +153,9 @@
       <Filter>src\GameWorld\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\SpecialEffectManager.h">
+      <Filter>src\GameWorld\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ForceManager.h">
       <Filter>src\GameWorld\GameManager</Filter>
     </ClInclude>
   </ItemGroup>

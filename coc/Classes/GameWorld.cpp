@@ -11,6 +11,7 @@
 #include "Utils.h"
 #include "Building.h"
 #include "SpecialEffectManager.h"
+#include "ForceManager.h"
 
 static Vec2 s_mouseDownPoint;
 const float SINGLE_CLICK_AREA = 5.0f;
@@ -58,7 +59,7 @@ bool GameWorld::init()
     director->getEventDispatcher()->addCustomEventListener("MouseRightButtonUp", CC_CALLBACK_0(GameWorld::onMouseRightButtonUp, this));
     director->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameWorld::onMouseMove, this));
     director->getEventDispatcher()->addCustomEventListener("ClearDebugDraw", CC_CALLBACK_0(GameWorld::onClearDebugDraw, this));
-    director->getEventDispatcher()->addCustomEventListener("CreateNpcAroundPlayerBaseCamp", CC_CALLBACK_0(GameWorld::createNpcAroundPlayerBaseCamp, this));
+    director->getEventDispatcher()->addCustomEventListener("CreateNpcAroundPlayerBaseCamp", CC_CALLBACK_0(GameWorld::createNpcAroundBaseCamp, this, ForceType::Player, "BlueEnchanter", 16));
 
     //_director->setAlphaBlending(true);
 
@@ -526,12 +527,12 @@ vector<Vec2> GameWorld::computeNpcCreatePointList(ForceType forceType, int ready
     return npcCreatePointList;
 }
 
-void GameWorld::createNpcAroundPlayerBaseCamp()
+void GameWorld::createNpcAroundBaseCamp(ForceType forceType, const string& npcTemplateName, int npcCount)
 {
-    auto npcCreatePointList = computeNpcCreatePointList(ForceType::Player, 16);
+    auto npcCreatePointList = computeNpcCreatePointList(forceType, npcCount);
     for (auto& point : npcCreatePointList)
     {
-        createGameObject(GameObjectType::Npc, ForceType::Player, "BlueEnchanter", point);
+        createGameObject(GameObjectType::Npc, forceType, npcTemplateName, point);
     }
 }
 

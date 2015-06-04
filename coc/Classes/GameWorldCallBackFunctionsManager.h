@@ -17,6 +17,7 @@ public:
     std::function<MapManager*()> _getMapManager;
     std::function<void(const string&, const Vec2&, bool)> _createSpecialEffect;
     std::function<const DebugInfo&()> _getDebugInfo;
+    std::function<void(ForceType, const string&, int)> _createNpcAroundBaseCamp;
 private:
     GameWorldCallBackFunctionsManager(){};
     GameWorldCallBackFunctionsManager(const GameWorldCallBackFunctionsManager&);
