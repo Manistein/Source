@@ -4,6 +4,7 @@
 #include "GameWorldCallBackFunctionsManager.h"
 #include "GameObjectManager.h"
 #include "Building.h"
+#include "Npc.h"
 
 static ForceManager* s_forceManager = nullptr;
 
@@ -34,8 +35,35 @@ bool ForceManager::init()
 
 void ForceManager::onEnemyLaunchAttack()
 {
-    auto gameObjectManager = GameObjectManager::getInstance();
+    _readyToMoveEnemyIDList.clear();
+    vector<GameObject*> playerBuildingList;
 
+    auto gameObjectManager = GameObjectManager::getInstance();
+    auto& gameObjectMap = gameObjectManager->getGameObjectMap();
+    for (auto& gameObjectIter : gameObjectMap)
+    {
+        auto gameObject = gameObjectIter.second;
+        if (gameObject->getGameObjectType() == GameObjectType::Building &&
+            gameObject->getForceType() == ForceType::Player)
+        {
+            playerBuildingList.push_back(gameObject);
+        }
+        else if (gameObject->getGameObjectType() == GameObjectType::Npc &&
+            gameObject->getForceType() == ForceType::AI)
+        {
+            _readyToMoveEnemyIDList.push_back(gameObject->getUniqueID());
+        }
+    }
+
+    if (playerBuildingList.empty())
+    {
+        return;
+    }
+
+    int buildingListIndex = rand() % (int)playerBuildingList.size();
+    auto attackTarget = static_cast<Building*>(playerBuildingList.at(buildingListIndex));
+    _enemyMoveToPosition = attackTarget->getBottomGridInMapPositionList().at(0);
+    
 }
 
 void ForceManager::onEnemyReinforcementArrive()
@@ -72,5 +100,20 @@ void ForceManager::update(float delta)
     {
         _playerReinforceCoolDownTime = PLAYER_REINFORCE_TIME_INTERVAL;
         onPlayerReinforcePointIncrease();
+    }
+
+    if (!_readyToMoveEnemyIDList.empty())
+    {
+        auto readyToMoveGameObjectID = _readyToMoveEnemyIDList.back();
+        auto readyToMoveGameObject = GameObjectManager::getInstance()->getGameObjectBy(readyToMoveGameObjectID);
+        if (readyToMoveGameObject &&
+            !readyToMoveGameObject->isReadyToRemove() &&
+            readyToMoveGameObject->getGameObjectType() == GameObjectType::Npc)
+        {
+            auto readyToMoveNpc = static_cast<Npc*>(readyToMoveGameObject);
+            readyToMoveNpc->moveTo(_enemyMoveToPosition, true);
+
+            _readyToMoveEnemyIDList.pop_back();
+        }
     }
 }

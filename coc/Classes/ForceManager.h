@@ -27,6 +27,9 @@ private:
     float _enemyReinforceCoolDownTime = 0.0f;
     float _playerReinforceCoolDownTime = 0.0f;
 
+    list<int> _readyToMoveEnemyIDList;
+    Vec2 _enemyMoveToPosition;
+
     map<ForceType, ForceData> _forceDataMap;
     GameWorldCallBackFunctionsManager* _gameWorld = nullptr;
 
