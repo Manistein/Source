@@ -196,6 +196,8 @@ bool TemplateManager::initNpcTemplates()
             npcTemplate->standAnimateDelayPerUnit = tabFileReader.getFloat(i, "StandAnimateDelayPerUnit");
             npcTemplate->dieAnimateDelayPerUnit = tabFileReader.getFloat(i, "DieAnimateDelayPerUnit");
 
+            npcTemplate->reinforceRadius = tabFileReader.getFloat(i, "ReinforceRadius");
+
             npcTemplate->blueSelectedTipsTextureName = tabFileReader.getString(i, "BlueSelectedTipsTextureName");
             npcTemplate->redSelectedTipsTextureName = tabFileReader.getString(i, "RedSelectedTipsTextureName");
 

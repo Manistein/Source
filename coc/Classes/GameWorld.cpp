@@ -48,6 +48,8 @@ bool GameWorld::init()
 
     GameWorldCallBackFunctionsManager::getInstance()->registerCallBackFunctions(this);
 
+    _forceManager = ForceManager::getInstance();
+
     auto mouseListener = EventListenerMouse::create();
     mouseListener->onMouseScroll = CC_CALLBACK_1(GameWorld::onMouseScroll, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
@@ -182,6 +184,8 @@ void GameWorld::update(float deltaTime)
     _gameObjectManager->gameObjectsDepthSort(_mapManager->getTileSize());
     _gameObjectManager->npcMoveToTargetOneByOne();
     _gameObjectManager->removeAllReadyToRemoveGameObjects();
+
+    _forceManager->update(deltaTime);
 }
 
 void GameWorld::onMouseScroll(Event* event)
@@ -542,4 +546,14 @@ const DebugInfo& GameWorld::getDebugInfo()
     _debugInfo.gameObjectCount = (int)_gameObjectManager->getGameObjectMap().size();
 
     return _debugInfo;
+}
+
+int GameWorld::getEnemyBaseCampUniqueID()
+{
+    return _aiBaseCampUniqueID;
+}
+
+int GameWorld::getPlayerBaseCampUniqueID()
+{
+    return _playerBaseCampUniqueID;
 }

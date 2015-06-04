@@ -155,6 +155,11 @@ void GameObject::setEnemyUniqueID(int uniqueID)
     _enemyUniqueID = uniqueID;
 }
 
+int GameObject::getEnemyUniqueID()
+{
+    return _enemyUniqueID;
+}
+
 void GameObject::update(float delta)
 {
     if (g_setting.allowDebugDraw)

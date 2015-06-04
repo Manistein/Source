@@ -6,6 +6,7 @@ class GameObjectManager;
 class GameObjectSelectBox;
 class BulletManager;
 class SpecialEffectManager;
+class ForceManager;
 
 struct DebugInfo
 {
@@ -39,6 +40,9 @@ public:
     MapManager* getMapManager();
     const DebugInfo& getDebugInfo();
     void createNpcAroundBaseCamp(ForceType forceType, const string& npcTemplateName, int npcCount);
+
+    int getEnemyBaseCampUniqueID();
+    int getPlayerBaseCampUniqueID();
 private:
     bool init() override;
     void initEditedGameObjects();
@@ -56,6 +60,7 @@ private:
     BulletManager* _bulletManager = nullptr;
     SpecialEffectManager* _specialEffectManager = nullptr;
     MapManager* _mapManager = nullptr;
+    ForceManager* _forceManager = nullptr;
 
     Vec2 _cursorPoint;
     Vec2 _previousClickedCursorPoint;

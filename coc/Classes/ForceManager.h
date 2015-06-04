@@ -10,6 +10,8 @@ const float ENEMY_LAUNCH_ATTACK_TIME_INTERVAL = 60;
 const float ENEMY_REINFORCE_TIME_INTERVAL = 20;
 const float PLAYER_REINFORCE_TIME_INTERVAL = 30;
 
+class GameWorldCallBackFunctionsManager;
+
 class ForceManager
 {
 public:

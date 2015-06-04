@@ -624,3 +624,19 @@ void Building::setEnemyUniqueID(int uniqueID)
         _defenceNpc->setEnemyUniqueID(uniqueID);
     }
 }
+
+int Building::getEnemyUniqueID()
+{
+    int enemyUniqueID = GAME_OBJECT_UNIQUE_ID_INVALID;
+
+    if (_defenceNpc)
+    {
+        enemyUniqueID = _defenceNpc->getEnemyUniqueID();
+    }
+    else
+    {
+        enemyUniqueID = _enemyUniqueID;
+    }
+
+    return enemyUniqueID;
+}

@@ -71,7 +71,10 @@ private:
 
     void runFightWithEnemyAI(float delta);
     void runDefenceInBuildingAI(float delta);
-    void searchEnemy(float delta);
+
+    bool canSearchEnemy();
+    void searchNearbyEnemy();
+    GameObject* searchNearestNeedReinforceGameObject();
 
     bool isEnemyInAttackRange(GameObject* enemy);
     bool isEnemyInAlertRange(GameObject* enemy);
@@ -159,4 +162,5 @@ private:
     GameWorldCallBackFunctionsManager* _gameWorld = nullptr;
 
     Vec2 _inMapPosition;
+    float _reinforceRadius = 0.0f;
 };

@@ -41,6 +41,7 @@ struct NpcTemplate
     float moveAnimateDelayPerUnit = 0.0f;
     float standAnimateDelayPerUnit = 0.0f;
     float dieAnimateDelayPerUnit = 0.0f;
+    float reinforceRadius = 0.0f;
 
     string blueSelectedTipsTextureName;
     string redSelectedTipsTextureName;

@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "ForceManager.h"
 #include "GameWorldCallBackFunctionsManager.h"
+#include "GameObjectManager.h"
+#include "Building.h"
 
 static ForceManager* s_forceManager = nullptr;
 
@@ -10,6 +12,7 @@ ForceManager* ForceManager::getInstance()
     if (!s_forceManager)
     {
         s_forceManager = new ForceManager();
+        s_forceManager->init();
     }
 
     return s_forceManager;
@@ -31,6 +34,7 @@ bool ForceManager::init()
 
 void ForceManager::onEnemyLaunchAttack()
 {
+    auto gameObjectManager = GameObjectManager::getInstance();
 
 }
 

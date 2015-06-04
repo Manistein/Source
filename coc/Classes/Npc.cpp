@@ -223,6 +223,7 @@ void Npc::initBattleData(const string& jobName)
     _bulletType = npcTemplate->bulletType;
     _damageType = npcTemplate->damageType;
     _aoeDamageRadius = npcTemplate->aoeDamageRadius;
+    _reinforceRadius = npcTemplate->reinforceRadius;
 }
 
 void Npc::initDebugDraw()
@@ -310,6 +311,8 @@ void Npc::debugDraw()
 void Npc::update(float delta)
 {
     GameObject::update(delta);
+
+    _searchEnemyCoolDownTime -= delta;
 
     if (_gameObjectType == GameObjectType::Npc)
     {
@@ -456,7 +459,35 @@ void Npc::runFightWithEnemyAI(float delta)
     }
     else
     {
-        searchEnemy(delta);
+        if (canSearchEnemy())
+        {
+            searchNearbyEnemy();
+            bool canFindEnemy = _enemyUniqueID != GAME_OBJECT_UNIQUE_ID_INVALID;
+
+            if (_forceType == ForceType::AI &&
+                !canFindEnemy &&
+                _oldStatus == NpcStatus::Stand)
+            {
+                auto needReinforceGameObject = searchNearestNeedReinforceGameObject();
+                if (needReinforceGameObject)
+                {
+                    Vec2 arrivePosition;
+
+                    if (needReinforceGameObject->getGameObjectType() == GameObjectType::Building)
+                    {
+                        auto needReinforceBuilding = static_cast<Building*>(needReinforceGameObject);
+                        auto& bottomGridPositionList = needReinforceBuilding->getBottomGridInMapPositionList();
+                        arrivePosition = bottomGridPositionList.at(0);
+                    }
+                    else
+                    {
+                        arrivePosition = needReinforceGameObject->getPosition();
+                    }
+
+                    moveTo(arrivePosition, true);
+                }
+            }
+        }
     }
 }
 
@@ -485,22 +516,34 @@ void Npc::runDefenceInBuildingAI(float delta)
     }
     else
     {
-        searchEnemy(delta);
+        if (canSearchEnemy())
+        {
+            searchNearbyEnemy();
+        }
     }
 }
 
-void Npc::searchEnemy(float delta)
+bool Npc::canSearchEnemy()
 {
-    _searchEnemyCoolDownTime -= delta;
+    bool result = false;
+
     if (_forceType == ForceType::Player && _oldStatus == NpcStatus::Move ||
         _isReadyToMove ||
         _searchEnemyCoolDownTime > 0.0f)
     {
-        return;
+        result = false;
+    }
+    else
+    {
+        _searchEnemyCoolDownTime = SEARCH_ENEMY_COOL_DOWN_TIME_INTERVAL;
+        result = true;
     }
 
-    _searchEnemyCoolDownTime = SEARCH_ENEMY_COOL_DOWN_TIME_INTERVAL;
+    return result;
+}
 
+void Npc::searchNearbyEnemy()
+{
     auto& gameObjectMap = GameObjectManager::getInstance()->getGameObjectMap();
     for (auto& gameObjectIter : gameObjectMap)
     {
@@ -524,6 +567,42 @@ void Npc::searchEnemy(float delta)
             break;
         }
     }
+}
+
+GameObject* Npc::searchNearestNeedReinforceGameObject()
+{
+    GameObject* needReinforceGameObject = nullptr;
+
+    if (_forceType == ForceType::Player || 
+        _gameObjectType == GameObjectType::DefenceInBuildingNpc)
+    {
+        return needReinforceGameObject;
+    }
+
+    int needReinforceGameObjectID = GAME_OBJECT_UNIQUE_ID_INVALID;
+
+    float minDistance = FLT_MAX;
+    auto& gameObjectMap = GameObjectManager::getInstance()->getGameObjectMap();
+    for (auto& gameObjectIter : gameObjectMap)
+    {
+        auto gameObject = gameObjectIter.second;
+        if (gameObject->getForceType() == ForceType::AI)
+        {
+            int enemyID = gameObject->getEnemyUniqueID();
+            if (enemyID != GAME_OBJECT_UNIQUE_ID_INVALID)
+            {
+                float distance = GameUtils::computeDistanceBetween(getPosition(), gameObject->getPosition());
+                if (distance < _reinforceRadius && distance < minDistance)
+                {
+                    minDistance = distance;
+                    needReinforceGameObjectID = gameObject->getUniqueID();
+                }
+            }
+        }
+    }
+
+    needReinforceGameObject = GameObjectManager::getInstance()->getGameObjectBy(needReinforceGameObjectID);
+    return needReinforceGameObject;
 }
 
 bool Npc::isEnemyInAttackRange(GameObject* enemy)
