@@ -218,6 +218,8 @@ void Building::initSelectedTips(const string& buildingTemplateName)
     {
         _selectedTips->setSpriteFrame(redSelectedTips);
     }
+
+    _collisionRadius = _selectedTips->getContentSize().width / 2.0f;
 }
 
 void Building::initBottomGridInMapPositionList()

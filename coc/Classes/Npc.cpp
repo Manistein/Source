@@ -265,6 +265,8 @@ void Npc::initSelectedTips(const string& jobName)
     auto shadowPosition = _shadowSprite->getPosition();
     _selectedTips->setPosition(shadowPosition);
     _selectedTips->setVisible(false);
+
+    _collisionRadius = _selectedTips->getContentSize().width / 2.0f;
 }
 
 void Npc::debugDraw()
@@ -275,6 +277,7 @@ void Npc::debugDraw()
     _debugDrawNode->drawCircle(Vec2::ZERO, _maxAttackRadius, CC_DEGREES_TO_RADIANS(360), 50, true, 1.0f, 1.0f, Color4F(1.0f, 0.0f, 0.0f, 0.5f));
     _debugDrawNode->drawCircle(Vec2::ZERO, _maxAlertRadius, CC_DEGREES_TO_RADIANS(360), 50, true, 1.0f, 1.0f, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
     _debugDrawNode->drawCircle(Vec2::ZERO, _reinforceRadius, CC_DEGREES_TO_RADIANS(360), 50, true, 1.0f, 1.0f, Color4F(1.0f, 1.0f, 0.0f, 0.5f));
+    _debugDrawNode->drawCircle(Vec2(0.0f, _contentSize.width / 4.0f), _collisionRadius, CC_DEGREES_TO_RADIANS(360), 50, false, 1.0f, 1.0f, Color4F(1.0f, 0.0f, 0.0f, 1.0f));
 
     auto contentSize = getContentSize();
     Rect gameObjectRect(-contentSize.width / 2.0f, 0.0f, contentSize.width, contentSize.height);
@@ -318,6 +321,7 @@ void Npc::update(float delta)
 
     if (_gameObjectType == GameObjectType::Npc)
     {
+        collisionTest();
         runFightWithEnemyAI(delta);
     }
     else if (_gameObjectType == GameObjectType::DefenceInBuildingNpc)
@@ -336,6 +340,63 @@ void Npc::tryUpdateStatus(NpcStatus newStatus)
     {
         switchFunction();
         _oldStatus = newStatus;
+    }
+}
+
+void Npc::collisionTest()
+{
+    int collisionCount = 0;
+    float sumDifference = 0.0f;
+    Vec2 sumVector;
+
+    bool hasCollision = false;
+
+    auto& gameObjectMap = GameObjectManager::getInstance()->getGameObjectMap();
+    for (auto& gameObjectIter : gameObjectMap)
+    {
+        auto gameObject = gameObjectIter.second;
+        if (gameObject->isReadyToRemove() || 
+            gameObject->getGameObjectType() == GameObjectType::DefenceInBuildingNpc ||
+            gameObject->getUniqueID() == _uniqueID ||
+            gameObject->getForceType() != _forceType)
+        {
+            continue;
+        }
+
+        float gameObjectCollisionRadius = gameObject->getCollisionRadius();
+
+        float realDistance = GameUtils::computeDistanceBetween(_position, gameObject->getPosition());
+        float constraintDistance = _collisionRadius + gameObjectCollisionRadius;
+        if (realDistance < constraintDistance)
+        {
+            hasCollision = true;
+
+            auto unitMoveVector = _position - gameObject->getPosition();
+            unitMoveVector.normalize();
+
+            sumVector += unitMoveVector;
+            sumDifference += constraintDistance - realDistance;
+
+            collisionCount++;
+        }
+    }
+
+    if (hasCollision)
+    {
+        auto averageVector = sumVector / collisionCount;
+        auto averageDifference = sumDifference / collisionCount;
+        auto moveVector = averageVector * averageDifference;
+
+        auto newPosition = _position + moveVector;
+        auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
+
+        auto readyToMoveInTileNodeSubscript = mapManager->getTileSubscript(newPosition);
+        auto readyToMoveInTileNode = mapManager->getTileNodeAt((int)readyToMoveInTileNodeSubscript.x, (int)readyToMoveInTileNodeSubscript.y);
+
+        if (readyToMoveInTileNode->gid != OBSTACLE_ID)
+        {
+            setPosition(_position + moveVector);
+        }
     }
 }
 

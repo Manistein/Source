@@ -183,6 +183,11 @@ void GameObject::clearDebugDraw()
     _debugDrawNode->setVisible(false);
 }
 
+float GameObject::getCollisionRadius()
+{
+    return _collisionRadius;
+}
+
 DamageType GameObject::getDamageType()
 {
     return _damageType;

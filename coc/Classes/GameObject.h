@@ -66,6 +66,8 @@ public:
 
     void update(float delta) override;
     virtual void clearDebugDraw();
+
+    float getCollisionRadius();
 protected:
     GameObject();
     bool init() override;
@@ -98,6 +100,8 @@ protected:
     Sprite* _selectedTips = nullptr;
 
     float _showHPBarTotalTimeAfterBeingAttacked = 0.0f;
+
+    float _collisionRadius = 0.0f;
 };
 
 class GameObjectFactory

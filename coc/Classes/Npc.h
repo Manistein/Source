@@ -69,6 +69,7 @@ private:
     void debugDraw() override;
     void onPrepareToRemove() override;
 
+    void collisionTest();
     void runFightWithEnemyAI(float delta);
     void runDefenceInBuildingAI(float delta);
 
