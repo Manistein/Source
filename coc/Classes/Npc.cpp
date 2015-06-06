@@ -345,9 +345,56 @@ void Npc::tryUpdateStatus(NpcStatus newStatus)
 
 void Npc::collisionTest()
 {
+    if (_oldStatus == NpcStatus::Die)
+    {
+        return;
+    }
+
     int collisionCount = 0;
     float sumDifference = 0.0f;
     Vec2 sumVector;
+
+    Vec2 selfFaceDirectionVector;
+    switch (_faceDirection)
+    {
+    case FaceDirection::FaceToEast:
+    {
+        selfFaceDirectionVector.x = 1.0f;
+        selfFaceDirectionVector.y = 0.0f;
+    }
+        break;
+    case FaceDirection::FaceToNorthEast:
+    {
+        selfFaceDirectionVector.x = 1.0f;
+        selfFaceDirectionVector.y = 1.0f;
+    }
+        break;
+    case FaceDirection::FaceToNorthWest:
+    {
+        selfFaceDirectionVector.x = -1.0f;
+        selfFaceDirectionVector.y = 1.0f;
+    }
+        break;
+    case  FaceDirection::FaceToSouthEast:
+    {
+        selfFaceDirectionVector.x = 1.0f;
+        selfFaceDirectionVector.y = -1.0f;
+    }
+        break;
+    case FaceDirection::FaceToSouthWest:
+    {
+        selfFaceDirectionVector.x = -1.0f;
+        selfFaceDirectionVector.y = -1.0f;
+    }
+        break;
+    case FaceDirection::FaceToWest:
+    {
+        selfFaceDirectionVector.x = -1.0f;
+        selfFaceDirectionVector.y = 0.0f;
+    }
+        break;
+    default:    break;
+    }
 
     bool hasCollision = false;
 
@@ -363,15 +410,17 @@ void Npc::collisionTest()
             continue;
         }
 
+        auto unitMoveVector = _position - gameObject->getPosition();
+        float dot = selfFaceDirectionVector.dot(unitMoveVector);
+
         float gameObjectCollisionRadius = gameObject->getCollisionRadius();
 
         float realDistance = GameUtils::computeDistanceBetween(_position, gameObject->getPosition());
         float constraintDistance = _collisionRadius + gameObjectCollisionRadius;
-        if (realDistance < constraintDistance)
+        if (realDistance < constraintDistance && dot < 0.0f)
         {
             hasCollision = true;
 
-            auto unitMoveVector = _position - gameObject->getPosition();
             unitMoveVector.normalize();
 
             sumVector += unitMoveVector;

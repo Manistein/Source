@@ -34,7 +34,7 @@ bool GameWorld::init()
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("BuildingCommon.plist");
 
     _mapManager = new MapManager();
-    _mapManager->init(this, "isoMap.tmx");
+    _mapManager->init(this, "test3Map.tmx");
 
     _gameObjectManager = GameObjectManager::getInstance();
     _gameObjectManager->init(this);
