@@ -90,6 +90,9 @@
     <ClCompile Include="..\Classes\ForceManager.cpp">
       <Filter>src\GameWorld\GameManager</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\CustomMoveBy.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -157,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\ForceManager.h">
       <Filter>src\GameWorld\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\CustomMoveBy.h">
+      <Filter>src\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -11,6 +11,7 @@
 #include <functional>
 #include "math/CCGeometry.h"
 #include "MapManager.h"
+#include "CustomMoveBy.h"
 
 const string SHADOW_TEXTURE_NAME = "Shadow.png";
 const string SHOW_WORLD_POSITION_CHILD_NAME = "ShowWorldPositionChildName";
@@ -1070,7 +1071,8 @@ void Npc::onMoveTo()
 
         stopActionByTag(MOVE_TO_ACTION_TAG);
 
-        auto moveTo = MoveTo::create(moveToDuration, moveToPosition);
+        auto positionDelta = moveToPosition - getPosition();
+        auto moveBy = CustomMoveBy::create(moveToDuration, positionDelta);
 
         CallFunc* onMoveEndEvent = nullptr;
         if (_gotoTargetPositionPathList.empty())
@@ -1081,7 +1083,7 @@ void Npc::onMoveTo()
         {
             onMoveEndEvent = CallFunc::create(CC_CALLBACK_0(Npc::onMoveTo, this));
         }
-        auto sequenceAction = Sequence::create(moveTo, onMoveEndEvent, nullptr);
+        auto sequenceAction = Sequence::create(moveBy, onMoveEndEvent, nullptr);
         sequenceAction->setTag(MOVE_TO_ACTION_TAG);
 
         runAction(sequenceAction);
