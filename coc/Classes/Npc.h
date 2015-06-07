@@ -26,7 +26,7 @@ enum class FaceDirection
     Total
 };
 
-const float IN_MOVE_STATUS_COOL_DOWN_TIME_INTERVAL = 1.0f;
+const float HANDLE_ENEMY_IN_ALERT_RANGE_SITUATION_TIME_INTERVAL = 1.0f;
 const float SEARCH_ENEMY_COOL_DOWN_TIME_INTERVAL = 0.17f;    //Ã¿ÃëËÑË÷10´Î
 
 class GameWorldCallBackFunctionsManager;
@@ -79,9 +79,13 @@ private:
 
     bool isEnemyInAttackRange(GameObject* enemy);
     bool isEnemyInAlertRange(GameObject* enemy);
+    void updateStatusWhenEnemyInAlertRange(GameObject* enemy);
+    void updateStatusWhenEnemyLeaveAlertRange();
+    void reinforceOwnSide(GameObject* gameObject);
+
     Vec2 computeArrivePositionBy(GameObject* enemy);
     float getDistanceFrom(GameObject* enemy);
-    float _coolDownTimeInMoveStatus = IN_MOVE_STATUS_COOL_DOWN_TIME_INTERVAL;
+    float _handleEnemyInAlertRangeSituationCoolDownTime = HANDLE_ENEMY_IN_ALERT_RANGE_SITUATION_TIME_INTERVAL;
     float _searchEnemyCoolDownTime = SEARCH_ENEMY_COOL_DOWN_TIME_INTERVAL;
 
     struct SwitchStatusFunction 

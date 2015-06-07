@@ -219,7 +219,7 @@ void Building::initSelectedTips(const string& buildingTemplateName)
         _selectedTips->setSpriteFrame(redSelectedTips);
     }
 
-    _collisionRadius = _selectedTips->getContentSize().width / 2.0f;
+    _collisionRadius = _contentSize.width / 2.0f;
 }
 
 void Building::initBottomGridInMapPositionList()
@@ -412,6 +412,15 @@ void Building::debugDraw()
     _debugDrawNode->drawRect(Vec2(gameObjectRect.getMinX(), gameObjectRect.getMinY()),
         Vec2(gameObjectRect.getMaxX(), gameObjectRect.getMaxY()),
         Color4F(0.0f, 0.0f, 1.0f, 0.5f));
+
+    _debugDrawNode->drawCircle(Vec2(contentSize.width / 2.0f, contentSize.height / 2.0f), 
+        _collisionRadius, 
+        CC_DEGREES_TO_RADIANS(360), 
+        50, 
+        false, 
+        1.0f, 
+        1.0f, 
+        Color4F(1.0f, 0.0f, 0.0f, 1.0f));
 }
 
 void Building::followCursorInPrepareToBuildStatus()

@@ -456,6 +456,8 @@ void Npc::runFightWithEnemyAI(float delta)
         return;
     }
 
+    _handleEnemyInAlertRangeSituationCoolDownTime += delta;
+
     if (_enemyUniqueID != ENEMY_UNIQUE_ID_INVALID)
     {
         auto enemy = GameObjectManager::getInstance()->getGameObjectBy(_enemyUniqueID);
@@ -477,96 +479,16 @@ void Npc::runFightWithEnemyAI(float delta)
         }
         else if (isEnemyInAlertRange(enemy))
         {
-            switch (_oldStatus)
+            if (_handleEnemyInAlertRangeSituationCoolDownTime >= HANDLE_ENEMY_IN_ALERT_RANGE_SITUATION_TIME_INTERVAL)
             {
-            case NpcStatus::Move:
-            {
-                _coolDownTimeInMoveStatus += delta;
-                if (_coolDownTimeInMoveStatus >= IN_MOVE_STATUS_COOL_DOWN_TIME_INTERVAL)
-                {
-                    auto npcPosition = getPosition();
-                    auto enemyPosition = computeArrivePositionBy(enemy);
+                updateStatusWhenEnemyInAlertRange(enemy);
 
-                    if (_gotoTargetPositionPathList.empty() ||
-                        !_gotoTargetPositionPathList.empty() && _gotoTargetPositionPathList.back() != enemyPosition)
-                    {
-                        _gotoTargetPositionPathList.clear();
-
-                        if (enemy->getGameObjectType() == GameObjectType::Npc)
-                        {
-                            _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition, false);
-                        }
-                        else
-                        {
-                            _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition, true);
-                        }
-
-                        if (_gotoTargetPositionPathList.empty())
-                        {
-                            tryUpdateStatus(NpcStatus::Stand);
-                        }
-                        else
-                        {
-                            tryUpdateStatus(NpcStatus::Move);
-                        }
-                    }
-
-                    _coolDownTimeInMoveStatus = 0.0f;
-                }
-            }
-                break;
-            case NpcStatus::Stand:
-            case NpcStatus::Attack:
-            {
-                auto npcPosition = getPosition();
-                auto enemyPosition = computeArrivePositionBy(enemy);
-
-                _gotoTargetPositionPathList.clear();
-                if (enemy->getGameObjectType() == GameObjectType::Npc)
-                {
-                    _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition, false);
-                }
-                else
-                {
-                    _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition, true);
-                }
-
-                if (_gotoTargetPositionPathList.empty())
-                {
-                    tryUpdateStatus(NpcStatus::Stand);
-                }
-                else
-                {
-                    tryUpdateStatus(NpcStatus::Move);
-                }
-            }
-                break;
-            case NpcStatus::Die:
-            default:    break;
+                _handleEnemyInAlertRangeSituationCoolDownTime = 0.0f;
             }
         }
         else
         {
-            //ai控制的npc脱战，则立即站立，玩家控制的npc脱战以后，仍然可以移动。
-            if (_forceType == ForceType::Player)
-            {
-                return;
-            }
-
-            switch (_oldStatus)
-            {
-            case NpcStatus::Move:
-            case NpcStatus::Attack:
-            {
-                tryUpdateStatus(NpcStatus::Stand);
-            }
-                break;
-            case NpcStatus::Stand:
-            case NpcStatus::Die:
-            default:    break;
-            }
-
-            setEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
+            updateStatusWhenEnemyLeaveAlertRange();
         }
     }
     else
@@ -574,8 +496,8 @@ void Npc::runFightWithEnemyAI(float delta)
         if (canSearchEnemy())
         {
             searchNearbyEnemy();
-            bool canFindEnemy = _enemyUniqueID != GAME_OBJECT_UNIQUE_ID_INVALID;
 
+            bool canFindEnemy = _enemyUniqueID != GAME_OBJECT_UNIQUE_ID_INVALID;
             if (_forceType == ForceType::AI &&
                 !canFindEnemy &&
                 _oldStatus == NpcStatus::Stand)
@@ -583,20 +505,7 @@ void Npc::runFightWithEnemyAI(float delta)
                 auto needReinforceGameObject = searchNearestNeedReinforceGameObject();
                 if (needReinforceGameObject)
                 {
-                    Vec2 arrivePosition;
-
-                    if (needReinforceGameObject->getGameObjectType() == GameObjectType::Building)
-                    {
-                        auto needReinforceBuilding = static_cast<Building*>(needReinforceGameObject);
-                        auto& bottomGridPositionList = needReinforceBuilding->getBottomGridInMapPositionList();
-                        arrivePosition = bottomGridPositionList.at(0);
-                    }
-                    else
-                    {
-                        arrivePosition = needReinforceGameObject->getPosition();
-                    }
-
-                    moveTo(arrivePosition, true);
+                    reinforceOwnSide(needReinforceGameObject);
                 }
             }
         }
@@ -744,6 +653,113 @@ bool Npc::isEnemyInAlertRange(GameObject* enemy)
     }
 
     return result;
+}
+
+void Npc::updateStatusWhenEnemyInAlertRange(GameObject* enemy)
+{
+    switch (_oldStatus)
+    {
+    case NpcStatus::Move:
+    {
+        auto npcPosition = getPosition();
+        auto enemyPosition = computeArrivePositionBy(enemy);
+
+        if (_gotoTargetPositionPathList.empty() ||
+            !_gotoTargetPositionPathList.empty() && _gotoTargetPositionPathList.back() != enemyPosition)
+        {
+            _gotoTargetPositionPathList.clear();
+
+            if (enemy->getGameObjectType() == GameObjectType::Npc)
+            {
+                _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition, false);
+            }
+            else
+            {
+                _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition, true);
+            }
+
+            if (_gotoTargetPositionPathList.empty())
+            {
+                tryUpdateStatus(NpcStatus::Stand);
+            }
+            else
+            {
+                tryUpdateStatus(NpcStatus::Move);
+            }
+        }
+    }
+        break;
+    case NpcStatus::Stand:
+    case NpcStatus::Attack:
+    {
+        auto npcPosition = getPosition();
+        auto enemyPosition = computeArrivePositionBy(enemy);
+
+        _gotoTargetPositionPathList.clear();
+        if (enemy->getGameObjectType() == GameObjectType::Npc)
+        {
+            _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition, false);
+        }
+        else
+        {
+            _gotoTargetPositionPathList = _gameWorld->_computePathListBetween(npcPosition, enemyPosition, true);
+        }
+
+        if (_gotoTargetPositionPathList.empty())
+        {
+            tryUpdateStatus(NpcStatus::Stand);
+        }
+        else
+        {
+            tryUpdateStatus(NpcStatus::Move);
+        }
+    }
+        break;
+    case NpcStatus::Die:
+    default:    break;
+    }
+}
+
+void Npc::updateStatusWhenEnemyLeaveAlertRange()
+{
+    //ai控制的npc脱战，则立即站立，玩家控制的npc脱战以后，仍然可以移动。
+    if (_forceType == ForceType::Player)
+    {
+        return;
+    }
+
+    switch (_oldStatus)
+    {
+    case NpcStatus::Move:
+    case NpcStatus::Attack:
+    {
+        tryUpdateStatus(NpcStatus::Stand);
+    }
+        break;
+    case NpcStatus::Stand:
+    case NpcStatus::Die:
+    default:    break;
+    }
+
+    setEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
+}
+
+void Npc::reinforceOwnSide(GameObject* gameObject)
+{
+    Vec2 arrivePosition;
+
+    if (gameObject->getGameObjectType() == GameObjectType::Building)
+    {
+        auto needReinforceBuilding = static_cast<Building*>(gameObject);
+        auto& bottomGridPositionList = needReinforceBuilding->getBottomGridInMapPositionList();
+        arrivePosition = bottomGridPositionList.at(0);
+    }
+    else
+    {
+        arrivePosition = gameObject->getPosition();
+    }
+
+    moveTo(arrivePosition, true);
 }
 
 bool Npc::isReadyToRemove()
