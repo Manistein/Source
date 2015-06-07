@@ -345,7 +345,7 @@ void Npc::tryUpdateStatus(NpcStatus newStatus)
 
 void Npc::collisionTest()
 {
-    if (_oldStatus == NpcStatus::Die)
+    if (_oldStatus == NpcStatus::Die || _oldStatus == NpcStatus::Stand)
     {
         return;
     }
