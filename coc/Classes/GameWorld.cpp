@@ -34,7 +34,7 @@ bool GameWorld::init()
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("BuildingCommon.plist");
 
     _mapManager = new MapManager();
-    _mapManager->init(this, "test3Map.tmx");
+    _mapManager->init(this, "isoMap.tmx");
 
     _gameObjectManager = GameObjectManager::getInstance();
     _gameObjectManager->init(this);
@@ -329,7 +329,7 @@ void GameWorld::syncCursorPoint(const Vec2& cursorPoint)
     _gameObjectSelectBox->syncCursorPoint(cursorPoint);
 }
 
-list<Vec2> GameWorld::computePathListBetween(const Vec2& inMapStartPosition, const Vec2& inMapEndPosition, bool isAllowEndTileNodeToMoveIn /*= false*/)
+list<Vec2> GameWorld::computePathList(const Vec2& inMapStartPosition, const Vec2& inMapEndPosition, bool isAllowEndTileNodeToMoveIn /*= false*/)
 {
     list<Vec2> pointPathList;
 

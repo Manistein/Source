@@ -266,7 +266,7 @@ void Npc::initSelectedTips(const string& jobName)
     _selectedTips->setPosition(shadowPosition);
     _selectedTips->setVisible(false);
 
-    _collisionRadius = _selectedTips->getContentSize().width / 2.0f;
+    _collisionRadius = _selectedTips->getContentSize().width / 4.0f;
 }
 
 void Npc::debugDraw()
@@ -402,8 +402,9 @@ void Npc::collisionTest()
     for (auto& gameObjectIter : gameObjectMap)
     {
         auto gameObject = gameObjectIter.second;
-        if (gameObject->isReadyToRemove() || 
+        if (gameObject->isReadyToRemove() ||
             gameObject->getGameObjectType() == GameObjectType::DefenceInBuildingNpc ||
+            gameObject->getGameObjectType() == GameObjectType::Building ||
             gameObject->getUniqueID() == _uniqueID ||
             gameObject->getForceType() != _forceType)
         {
@@ -444,7 +445,7 @@ void Npc::collisionTest()
 
         if (readyToMoveInTileNode->gid != OBSTACLE_ID)
         {
-            setPosition(_position + moveVector);
+            setPosition(newPosition);
         }
     }
 }
