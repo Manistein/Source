@@ -28,6 +28,7 @@ enum class FaceDirection
 
 const float HANDLE_ENEMY_IN_ALERT_RANGE_SITUATION_TIME_INTERVAL = 1.0f;
 const float SEARCH_ENEMY_COOL_DOWN_TIME_INTERVAL = 0.17f;    //Ã¿ÃëËÑË÷10´Î
+const float COMPUTE_PATH_LIST_WHEN_COLLISION_TIME_INTERVAL = 2.0f;
 
 class GameWorldCallBackFunctionsManager;
 class Building;
@@ -87,6 +88,7 @@ private:
     float getDistanceFrom(GameObject* enemy);
     float _handleEnemyInAlertRangeSituationCoolDownTime = HANDLE_ENEMY_IN_ALERT_RANGE_SITUATION_TIME_INTERVAL;
     float _searchEnemyCoolDownTime = SEARCH_ENEMY_COOL_DOWN_TIME_INTERVAL;
+    float _computePathListWhenCollisionCoolDownTime = COMPUTE_PATH_LIST_WHEN_COLLISION_TIME_INTERVAL;
 
     struct SwitchStatusFunction 
     {

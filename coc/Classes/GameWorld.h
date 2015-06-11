@@ -36,7 +36,7 @@ public:
 
     void syncCursorPoint(const Vec2& cursorPoint);
 
-    list<Vec2> computePathList(const Vec2& inMapStartPosition, const Vec2& inMapEndPosition, bool isAllowEndTileNodeToMoveIn = false);
+    list<Vec2> computePathList(const Vec2& inMapStartPosition, const Vec2& inMapEndPosition, ForceType npcForceType, bool isAllowEndTileNodeToMoveIn = false);
     MapManager* getMapManager();
     const DebugInfo& getDebugInfo();
     void createNpcAroundBaseCamp(ForceType forceType, const string& npcTemplateName, int npcCount);
