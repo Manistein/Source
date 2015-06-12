@@ -448,26 +448,6 @@ void Npc::collisionTest()
         {
             setPosition(newPosition);
         }
-
-        if (!_gotoTargetPositionPathList.empty() && 
-            _computePathListWhenCollisionCoolDownTime <= 0.0f && 
-            _oldStatus != NpcStatus::Attack)
-        {
-            _computePathListWhenCollisionCoolDownTime = COMPUTE_PATH_LIST_WHEN_COLLISION_TIME_INTERVAL;
-
-            auto targetPosition = _gotoTargetPositionPathList.back();
-            _gotoTargetPositionPathList.clear();
-
-            _gotoTargetPositionPathList = _gameWorld->_computePathList(_position, targetPosition, true);
-            if (_gotoTargetPositionPathList.empty())
-            {
-                tryUpdateStatus(NpcStatus::Stand);
-            }
-            else
-            {
-                tryUpdateStatus(NpcStatus::Move);
-            }
-        }
     }
 }
 
