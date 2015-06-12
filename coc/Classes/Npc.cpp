@@ -403,7 +403,7 @@ void Npc::collisionTest()
     for (auto& gameObjectIter : gameObjectMap)
     {
         auto gameObject = gameObjectIter.second;
-        if (gameObject->isReadyToRemove() ||
+        if (gameObject->isReadyToRemove() || 
             gameObject->getGameObjectType() == GameObjectType::DefenceInBuildingNpc ||
             gameObject->getGameObjectType() == GameObjectType::Building ||
             gameObject->getUniqueID() == _uniqueID ||
@@ -458,7 +458,7 @@ void Npc::collisionTest()
             auto targetPosition = _gotoTargetPositionPathList.back();
             _gotoTargetPositionPathList.clear();
 
-            _gotoTargetPositionPathList = _gameWorld->_computePathList(_position, targetPosition, _forceType, true);
+            _gotoTargetPositionPathList = _gameWorld->_computePathList(_position, targetPosition, true);
             if (_gotoTargetPositionPathList.empty())
             {
                 tryUpdateStatus(NpcStatus::Stand);
@@ -693,11 +693,11 @@ void Npc::updateStatusWhenEnemyInAlertRange(GameObject* enemy)
 
             if (enemy->getGameObjectType() == GameObjectType::Npc)
             {
-                _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, _forceType, false);
+                _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, false);
             }
             else
             {
-                _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, _forceType, true);
+                _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, true);
             }
 
             if (_gotoTargetPositionPathList.empty())
@@ -720,11 +720,11 @@ void Npc::updateStatusWhenEnemyInAlertRange(GameObject* enemy)
         _gotoTargetPositionPathList.clear();
         if (enemy->getGameObjectType() == GameObjectType::Npc)
         {
-            _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, _forceType, false);
+            _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, false);
         }
         else
         {
-            _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, _forceType, true);
+            _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, true);
         }
 
         if (_gotoTargetPositionPathList.empty())
@@ -1127,7 +1127,7 @@ void Npc::moveTo(const Vec2& targetPosition, bool isAllowEndTileNodeToMoveIn /* 
 
     auto startPosition = getPosition();
     _gotoTargetPositionPathList.clear();
-    _gotoTargetPositionPathList = _gameWorld->_computePathList(startPosition, targetPosition, _forceType, isAllowEndTileNodeToMoveIn);
+    _gotoTargetPositionPathList = _gameWorld->_computePathList(startPosition, targetPosition, isAllowEndTileNodeToMoveIn);
 
     if (_gotoTargetPositionPathList.empty())
     {
@@ -1309,7 +1309,7 @@ void Npc::onPrepareToRemove()
 list<Vec2> Npc::getPathListTo(const Vec2& inMapEndPosition)
 {
     auto inMapStartPosition = getPosition();
-    list<Vec2> pathList = _gameWorld->_computePathList(inMapStartPosition, inMapEndPosition, _forceType, false);
+    list<Vec2> pathList = _gameWorld->_computePathList(inMapStartPosition, inMapEndPosition, false);
 
     return pathList;
 }

@@ -329,34 +329,9 @@ void GameWorld::syncCursorPoint(const Vec2& cursorPoint)
     _gameObjectSelectBox->syncCursorPoint(cursorPoint);
 }
 
-list<Vec2> GameWorld::computePathList(const Vec2& inMapStartPosition, const Vec2& inMapEndPosition, ForceType npcForceType, bool isAllowEndTileNodeToMoveIn /*= false*/)
+list<Vec2> GameWorld::computePathList(const Vec2& inMapStartPosition, const Vec2& inMapEndPosition, bool isAllowEndTileNodeToMoveIn /*= false*/)
 {
     list<Vec2> pointPathList;
-
-    // 为了能够使npc绕开挡道的己方势力行军，因此需要暂时将己方npc所占据的格子，标记为障碍物，完成路径计算后，再还原
-    vector<Vec2> npcOccupyTileSubscriptList;
-    auto& gameObjectMap = _gameObjectManager->getGameObjectMap();
-    for (auto& gameObjectIter : gameObjectMap)
-    {
-        auto gameObject = gameObjectIter.second;
-        if (gameObject->getGameObjectType() != GameObjectType::Npc ||
-            gameObject->getForceType() != npcForceType ||
-            gameObject->getGameObjectType() == GameObjectType::DefenceInBuildingNpc ||
-            gameObject->isReadyToRemove())
-        {
-            continue;
-        }
-
-        auto occupyTileSubscript = _mapManager->getTileSubscript(gameObject->getPosition());
-        auto tileNode = _mapManager->getTileNodeAt((int)occupyTileSubscript.x, (int)occupyTileSubscript.y);
-        
-        if (tileNode->gid != OBSTACLE_ID)
-        {
-            tileNode->gid = OBSTACLE_ID;
-            npcOccupyTileSubscriptList.push_back(occupyTileSubscript);
-        }
-    }
-
 
     auto startTileSubscript = _mapManager->getTileSubscript(inMapStartPosition);
     auto startTileNode = _mapManager->getTileNodeAt((int)startTileSubscript.x, (int)startTileSubscript.y);
@@ -401,13 +376,6 @@ list<Vec2> GameWorld::computePathList(const Vec2& inMapStartPosition, const Vec2
     if (isAllowEndTileNodeToMoveIn)
     {
         endTileNode->gid = originalGID;
-    }
-
-    // 完成路径计算后，还原暂时被标记为障碍物的格子
-    for (auto& tileNodeSubscript : npcOccupyTileSubscriptList)
-    {
-        auto tileNode = _mapManager->getTileNodeAt((int)tileNodeSubscript.x, (int)tileNodeSubscript.y);
-        tileNode->gid = 0;
     }
 
     return pointPathList;
