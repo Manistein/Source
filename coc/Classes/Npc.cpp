@@ -317,7 +317,6 @@ void Npc::update(float delta)
 {
     GameObject::update(delta);
 
-    _computePathListWhenCollisionCoolDownTime -= delta;
     _searchEnemyCoolDownTime -= delta;
 
     if (_gameObjectType == GameObjectType::Npc)
