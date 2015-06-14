@@ -102,14 +102,19 @@ void GameScene::onMouseMove(Event* event)
 
 void GameScene::onMouseDown(Event* event)
 {
+    if (_gameUI->isCursorInGameMainUI())
+    {
+        return;
+    }
+
     auto mouseEvent = static_cast<EventMouse*>(event);
     if (mouseEvent->getMouseButton() == MOUSE_LEFT_BUTTON)
     {
-        _director->getEventDispatcher()->dispatchCustomEvent("MouseLeftButtonDown");
+        _director->getEventDispatcher()->dispatchCustomEvent("GameWorldMouseLeftButtonDownEvent");
     }
     else
     {
-        _director->getEventDispatcher()->dispatchCustomEvent("MouseRightButtonDown");
+        _director->getEventDispatcher()->dispatchCustomEvent("GameWorldMouseRightButtonDownEvent");
     }
 }
 
@@ -118,10 +123,10 @@ void GameScene::onMouseUp(Event* event)
     auto mouseEvent = static_cast<EventMouse*>(event);
     if (mouseEvent->getMouseButton() == MOUSE_LEFT_BUTTON)
     {
-        _director->getEventDispatcher()->dispatchCustomEvent("MouseLeftButtonUp");
+        _director->getEventDispatcher()->dispatchCustomEvent("GameWorldMouseLeftButtonUpEvent");
     }
     else
     {
-        _director->getEventDispatcher()->dispatchCustomEvent("MouseRightButtonUp");
+        _director->getEventDispatcher()->dispatchCustomEvent("GameWorldMouseRightButtonUpEvent");
     }
 }

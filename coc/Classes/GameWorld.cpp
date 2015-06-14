@@ -55,10 +55,10 @@ bool GameWorld::init()
     _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
 
     auto director = Director::getInstance();
-    director->getEventDispatcher()->addCustomEventListener("MouseLeftButtonDown", CC_CALLBACK_0(GameWorld::onMouseLeftButtonDown, this));
-    director->getEventDispatcher()->addCustomEventListener("MouseLeftButtonUp", CC_CALLBACK_0(GameWorld::onMouseLeftButtonUp, this));
-    director->getEventDispatcher()->addCustomEventListener("MouseRightButtonDown", CC_CALLBACK_0(GameWorld::onMouseRightButtonDown, this));
-    director->getEventDispatcher()->addCustomEventListener("MouseRightButtonUp", CC_CALLBACK_0(GameWorld::onMouseRightButtonUp, this));
+    director->getEventDispatcher()->addCustomEventListener("GameWorldMouseLeftButtonDownEvent", CC_CALLBACK_0(GameWorld::onMouseLeftButtonDown, this));
+    director->getEventDispatcher()->addCustomEventListener("GameWorldMouseLeftButtonUpEvent", CC_CALLBACK_0(GameWorld::onMouseLeftButtonUp, this));
+    director->getEventDispatcher()->addCustomEventListener("GameWorldMouseRightButtonDownEvent", CC_CALLBACK_0(GameWorld::onMouseRightButtonDown, this));
+    director->getEventDispatcher()->addCustomEventListener("GameWorldMouseRightButtonUpEvent", CC_CALLBACK_0(GameWorld::onMouseRightButtonUp, this));
     director->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameWorld::onMouseMove, this));
     director->getEventDispatcher()->addCustomEventListener("ClearDebugDraw", CC_CALLBACK_0(GameWorld::onClearDebugDraw, this));
     director->getEventDispatcher()->addCustomEventListener("CreateNpcAroundPlayerBaseCamp", CC_CALLBACK_0(GameWorld::createNpcAroundBaseCamp, this, ForceType::Player, "BlueEnchanter", 16));

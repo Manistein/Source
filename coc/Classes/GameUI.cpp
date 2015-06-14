@@ -43,3 +43,16 @@ void GameUI::onMouseMove(EventCustom* eventCustom)
     Vec2* cursorPoint = (Vec2*)eventCustom->getUserData();
     syncCursorPoint(*cursorPoint);
 }
+
+bool GameUI::isCursorInGameMainUI()
+{
+    bool result = false;
+
+    auto gameMainPanel = _gameMainUI->getChildByName("Panel_GameMain");
+    if (gameMainPanel->getBoundingBox().containsPoint(_cursorPoint))
+    {
+        result = true;
+    }
+
+    return result;
+}

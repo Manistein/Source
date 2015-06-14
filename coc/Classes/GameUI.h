@@ -9,6 +9,8 @@ public:
     CREATE_FUNC(GameUI);
 
     void onMouseMove(EventCustom* eventCustom);
+
+    bool isCursorInGameMainUI();
 private:
     bool init() override;
     void update(float deltaTime) override;
