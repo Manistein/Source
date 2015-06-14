@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "GameWorld.h"
 #include "GameWorldCallBackFunctionsManager.h"
+#include "cocostudio/ActionTimeline/CSLoader.h"
 
 bool GameUI::init()
 {
@@ -15,6 +16,9 @@ bool GameUI::init()
 
     _debugInfoLayer = DebugInfoLayer::create();
     addChild(_debugInfoLayer);
+
+    _gameMainUI = CSLoader::createNode("MainScene.csb");
+    addChild(_gameMainUI);
 
     Director::getInstance()->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameUI::onMouseMove, this));
 
