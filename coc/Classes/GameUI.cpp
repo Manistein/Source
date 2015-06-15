@@ -183,11 +183,11 @@ void GameUI::updateMinimap()
     auto mapScale = mapManager->getMapScale();
     auto visibileSize = Director::getInstance()->getVisibleSize();
 
-    Size minimapScreenBoxSize(visibileSize.width / mapWidth * minimapWidth * mapScale, 
-        visibileSize.height / mapHeight * minimapHeight * mapScale);
+    Size minimapScreenBoxSize(visibileSize.width / mapWidth * minimapWidth / mapScale, 
+        visibileSize.height / mapHeight * minimapHeight / mapScale);
 
-    Vec2 minimapScreenBoxPosition(-mapPosition.x / mapWidth * minimapWidth, 
-        -mapPosition.y / mapHeight * minimapHeight);
+    Vec2 minimapScreenBoxPosition(-mapPosition.x / (mapWidth * mapScale) * minimapWidth, 
+        -mapPosition.y / (mapHeight * mapScale) * minimapHeight);
 
     _minimapDrawNode->drawRect(minimapScreenBoxPosition, 
         minimapScreenBoxPosition + minimapScreenBoxSize, 
