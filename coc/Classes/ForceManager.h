@@ -17,15 +17,17 @@ class ForceManager
 public:
     static ForceManager* getInstance();
     void update(float delta);
+
+    const ForceData& getForceDataBy(ForceType forceType);
+
+    void onPlayerReinforcePointIncrease();
 private:
     bool init();
     void onEnemyLaunchAttack();
     void onEnemyReinforcementArrive();
-    void onPlayerReinforcePointIncrease();
 
     float _enemyLaunchAttackCoolDownTime = 0.0f;
     float _enemyReinforceCoolDownTime = 0.0f;
-    float _playerReinforceCoolDownTime = 0.0f;
 
     list<int> _readyToMoveEnemyIDList;
     Vec2 _enemyMoveToPosition;

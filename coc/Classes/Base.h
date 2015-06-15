@@ -10,8 +10,11 @@
 using namespace std;
 
 #include "ui/CocosGUI.h"
+#include "ui/UIButton.h"
 #include "cocos2d.h"
+
 using namespace cocos2d;
+using namespace ui;
 
 #include <winuser.h>
 

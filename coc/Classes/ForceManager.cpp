@@ -23,7 +23,6 @@ bool ForceManager::init()
 {
     _enemyLaunchAttackCoolDownTime = ENEMY_LAUNCH_ATTACK_TIME_INTERVAL;
     _enemyReinforceCoolDownTime = ENEMY_REINFORCE_TIME_INTERVAL;
-    _playerReinforceCoolDownTime = PLAYER_REINFORCE_TIME_INTERVAL;
 
     _forceDataMap[ForceType::Player] = ForceData();
     _forceDataMap[ForceType::AI] = ForceData();
@@ -95,13 +94,6 @@ void ForceManager::update(float delta)
         onEnemyReinforcementArrive();
     }
 
-    _playerReinforceCoolDownTime -= delta;
-    if (_playerReinforceCoolDownTime <= 0.0f)
-    {
-        _playerReinforceCoolDownTime = PLAYER_REINFORCE_TIME_INTERVAL;
-        onPlayerReinforcePointIncrease();
-    }
-
     if (!_readyToMoveEnemyIDList.empty())
     {
         auto readyToMoveGameObjectID = _readyToMoveEnemyIDList.back();
@@ -116,4 +108,10 @@ void ForceManager::update(float delta)
             _readyToMoveEnemyIDList.pop_back();
         }
     }
+}
+
+const ForceData& ForceManager::getForceDataBy(ForceType forceType)
+{
+    CCASSERT(forceType != ForceType::Invalid, "");
+    return _forceDataMap[forceType];
 }
