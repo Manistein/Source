@@ -312,6 +312,11 @@ float MapManager::getMapScale()
     return _tileMap->getScale();
 }
 
+const Vec2& MapManager::getMapPosition()
+{
+    return _tileMap->getPosition();
+}
+
 const Vector<TMXObjectGroup*>&  MapManager::getEditedGameObjectGroup()
 {
     return _tileMap->getObjectGroups();

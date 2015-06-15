@@ -14,10 +14,12 @@ public:
 private:
     bool init() override;
     void initReinforcePresent();
+    void initMiniMapPresent();
 
     void update(float deltaTime) override;
     void onUpdateReinforceCount();
     void onReinforceButtonSparkMove();
+    void updateMinimap();
 
     void syncCursorPoint(const Vec2& cursorPoint);
 
@@ -25,6 +27,9 @@ private:
     Node* _gameMainUI = nullptr;
     Button* _askReinforceButton = nullptr;
     Sprite* _reinforceButtonSpark = nullptr;
+
+    DrawNode* _minimapDrawNode = nullptr;
+    ImageView* _minimapImage = nullptr;
 
     Vec2 _cursorPoint;
 };
