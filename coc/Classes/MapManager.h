@@ -60,6 +60,8 @@ public:
 
     void syncCursorPoint(const Vec2& cursorPoint);
 
+    void setTileMapPosition(const Vec2& worldPosition);
+
     Size getTileSize();
     Size getMapSize();
     Point getTileSubscript(const Vec2& inMapPosition);

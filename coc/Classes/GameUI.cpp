@@ -79,6 +79,21 @@ void GameUI::initMiniMapPresent()
 
     _minimapDrawNode = DrawNode::create();
     _minimapImage->addChild(_minimapDrawNode, 1);
+
+    _minimapImage->addTouchEventListener(CC_CALLBACK_2(GameUI::onMinimapTouched, this));
+
+
+    auto gameWorld = GameWorldCallBackFunctionsManager::getInstance();
+    _mapManager = gameWorld->_getMapManager();
+
+    _minimapWidth = _minimapImage->getContentSize().width;
+    _minimapHeight = _minimapImage->getContentSize().height;
+
+    auto mapSize = _mapManager->getMapSize();
+    auto tileSize = _mapManager->getTileSize();
+    _tileMapWidth = mapSize.width * tileSize.width;
+    _tileMapHeight = mapSize.height * tileSize.height;
+
 }
 
 void GameUI::update(float deltaTime)
@@ -135,17 +150,6 @@ bool GameUI::isCursorInGameMainUI()
 
 void GameUI::updateMinimap()
 {
-    auto gameWorld = GameWorldCallBackFunctionsManager::getInstance();
-    auto mapManager = gameWorld->_getMapManager();
-
-    float minimapWidth = _minimapImage->getContentSize().width;
-    float minimapHeight = _minimapImage->getContentSize().height;
-    
-    auto mapSize = mapManager->getMapSize();
-    auto tileSize = mapManager->getTileSize();
-    float mapWidth = mapSize.width * tileSize.width;
-    float mapHeight = mapSize.height * tileSize.height;
-
     _minimapDrawNode->clear();
 
     auto& gameObjectMap = GameObjectManager::getInstance()->getGameObjectMap();
@@ -163,8 +167,8 @@ void GameUI::updateMinimap()
         }
 
         auto gameObjectInTileMapPosition = gameObject->getPosition();
-        auto gameObjectInMinimapPosition = Vec2(gameObjectInTileMapPosition.x / mapWidth * minimapWidth, 
-            gameObjectInTileMapPosition.y / mapHeight * minimapHeight);
+        auto gameObjectInMinimapPosition = Vec2(gameObjectInTileMapPosition.x / _tileMapWidth * _minimapWidth, 
+            gameObjectInTileMapPosition.y / _tileMapHeight * _minimapHeight);
         if (gameObject->getGameObjectType() == GameObjectType::Building)
         {
             _minimapDrawNode->drawSolidRect(Vec2(gameObjectInMinimapPosition.x - 2.0f, gameObjectInMinimapPosition.y - 2.0f),
@@ -179,17 +183,35 @@ void GameUI::updateMinimap()
     }
 
 
-    auto mapPosition = mapManager->getMapPosition();
-    auto mapScale = mapManager->getMapScale();
+    auto mapPosition = _mapManager->getMapPosition();
+    auto mapScale = _mapManager->getMapScale();
     auto visibileSize = Director::getInstance()->getVisibleSize();
 
-    Size minimapScreenBoxSize(visibileSize.width / mapWidth * minimapWidth / mapScale, 
-        visibileSize.height / mapHeight * minimapHeight / mapScale);
+    Size minimapScreenBoxSize(visibileSize.width / _tileMapWidth * _minimapWidth / mapScale, 
+        visibileSize.height / _tileMapHeight * _minimapHeight / mapScale);
 
-    Vec2 minimapScreenBoxPosition(-mapPosition.x / (mapWidth * mapScale) * minimapWidth, 
-        -mapPosition.y / (mapHeight * mapScale) * minimapHeight);
+    Vec2 minimapScreenBoxPosition(-mapPosition.x / (_tileMapWidth * mapScale) * _minimapWidth, 
+        -mapPosition.y / (_tileMapHeight * mapScale) * _minimapHeight);
 
     _minimapDrawNode->drawRect(minimapScreenBoxPosition, 
         minimapScreenBoxPosition + minimapScreenBoxSize, 
         Color4F(1.0f, 1.0f, 1.0f, 1.0f));
+}
+
+void GameUI::onMinimapTouched(Ref* sender, Widget::TouchEventType touchType)
+{
+    if (touchType == Widget::TouchEventType::ENDED)
+    {
+        auto widget = static_cast<Widget*>(sender);
+        auto touchPosition = widget->convertToNodeSpace(widget->getTouchEndPosition());
+        auto widgetSize = widget->getContentSize();
+
+        float mapScale = _mapManager->getMapScale();
+        auto visibleSize = Director::getInstance()->getVisibleSize();
+
+        Vec2 tileMapNewPosition(touchPosition.x / widgetSize.width * _tileMapWidth * mapScale - visibleSize.width / 2.0f,
+            touchPosition.y / widgetSize.height * _tileMapHeight * mapScale - visibleSize.height / 2.0f);
+
+        _mapManager->setTileMapPosition(-tileMapNewPosition);
+    }
 }

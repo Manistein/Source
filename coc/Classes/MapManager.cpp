@@ -261,6 +261,11 @@ void MapManager::resolveMapShakeWhenMove()
     }
 }
 
+void MapManager::setTileMapPosition(const Vec2& worldPosition)
+{
+    _tileMap->setPosition(worldPosition);
+}
+
 Size MapManager::getTileSize()
 {
     return _tileMap->getTileSize();
