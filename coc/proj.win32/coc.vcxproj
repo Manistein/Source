@@ -153,6 +153,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\CustomMoveBy.cpp" />
     <ClCompile Include="..\Classes\DebugInfoLayer.cpp" />
     <ClCompile Include="..\Classes\ForceManager.cpp" />
+    <ClCompile Include="..\Classes\GameConfigManager.cpp" />
     <ClCompile Include="..\Classes\GameObject.cpp" />
     <ClCompile Include="..\Classes\GameObjectManager.cpp" />
     <ClCompile Include="..\Classes\GameObjectSelectBox.cpp" />
@@ -180,6 +181,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\CustomMoveBy.h" />
     <ClInclude Include="..\Classes\DebugInfoLayer.h" />
     <ClInclude Include="..\Classes\ForceManager.h" />
+    <ClInclude Include="..\Classes\GameConfigManager.h" />
     <ClInclude Include="..\Classes\GameObject.h" />
     <ClInclude Include="..\Classes\GameObjectManager.h" />
     <ClInclude Include="..\Classes\GameObjectSelectBox.h" />

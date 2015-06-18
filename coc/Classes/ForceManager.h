@@ -4,6 +4,8 @@ struct ForceData
 {
     int reinforcePoint = 0;
     int technologyPoint = 0; // 用于升级的科技点
+
+    std::map<string, int> reinforcementCountMap;
 };
 
 const float ENEMY_LAUNCH_ATTACK_TIME_INTERVAL = 60;
@@ -21,6 +23,7 @@ public:
     const ForceData& getForceDataBy(ForceType forceType);
 
     void onPlayerReinforcePointIncrease();
+    void onPlayerReinforcePointReduce();
 private:
     bool init();
     void onEnemyLaunchAttack();

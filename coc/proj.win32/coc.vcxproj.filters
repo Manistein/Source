@@ -93,6 +93,9 @@
     <ClCompile Include="..\Classes\CustomMoveBy.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\GameConfigManager.cpp">
+      <Filter>src\GameWorld\GameManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -163,6 +166,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\CustomMoveBy.h">
       <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameConfigManager.h">
+      <Filter>src\GameWorld\GameManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

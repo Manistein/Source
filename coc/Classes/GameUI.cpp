@@ -1,13 +1,14 @@
 #include "Base.h"
 #include "MapManager.h"
+#include "GameObject.h"
 #include "GameUI.h"
 #include "DebugInfoLayer.h"
-#include "GameObject.h"
 #include "GameWorld.h"
 #include "GameWorldCallBackFunctionsManager.h"
 #include "cocostudio/ActionTimeline/CSLoader.h"
 #include "ForceManager.h"
 #include "GameObjectManager.h"
+#include "GameConfigManager.h"
 
 bool GameUI::init()
 {
@@ -22,8 +23,12 @@ bool GameUI::init()
     _gameMainUI = CSLoader::createNode("MainScene.csb");
     addChild(_gameMainUI);
 
+    _gameWorld = GameWorldCallBackFunctionsManager::getInstance();
+    _forceManager = ForceManager::getInstance();
+
     initReinforcePresent();
     initMiniMapPresent();
+    initReinforcementSelectPanel();
 
     Director::getInstance()->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameUI::onMouseMove, this));
 
@@ -45,7 +50,7 @@ void GameUI::initReinforcePresent()
 
     auto sequenceAction = Sequence::create(
         ProgressTo::create(PLAYER_REINFORCE_TIME_INTERVAL, 100),
-        CallFunc::create(CC_CALLBACK_0(ForceManager::onPlayerReinforcePointIncrease, ForceManager::getInstance())),
+        CallFunc::create(CC_CALLBACK_0(ForceManager::onPlayerReinforcePointIncrease, _forceManager)),
         CallFunc::create(CC_CALLBACK_0(ProgressTimer::setPercentage, reinforceProgressBar, 0.0f)),
         CallFunc::create(CC_CALLBACK_0(GameUI::onUpdateReinforceCount, this)),
         CallFunc::create(CC_CALLBACK_0(GameUI::onReinforceButtonSparkMove, this)),
@@ -82,9 +87,7 @@ void GameUI::initMiniMapPresent()
 
     _minimapImage->addTouchEventListener(CC_CALLBACK_2(GameUI::onMinimapTouched, this));
 
-
-    auto gameWorld = GameWorldCallBackFunctionsManager::getInstance();
-    _mapManager = gameWorld->_getMapManager();
+    _mapManager = _gameWorld->_getMapManager();
 
     _minimapWidth = _minimapImage->getContentSize().width;
     _minimapHeight = _minimapImage->getContentSize().height;
@@ -94,6 +97,70 @@ void GameUI::initMiniMapPresent()
     _tileMapWidth = mapSize.width * tileSize.width;
     _tileMapHeight = mapSize.height * tileSize.height;
 
+}
+
+void GameUI::initReinforcementSelectPanel()
+{
+    auto gameMainPanel = _gameMainUI->getChildByName("Panel_GameMain");
+    auto reinforcementSelectPanel = gameMainPanel->getChildByName("Panel_ReinforcementSelectPanel");
+    auto selectEnchanterButton = reinforcementSelectPanel->getChildByName<Button*>("Button_SelectEnchanter");
+    auto selectArcherButton = reinforcementSelectPanel->getChildByName<Button*>("Button_SelectArcher");
+    auto selectBarbarianButton = reinforcementSelectPanel->getChildByName<Button*>("Button_SelectBarbarian");
+    auto selectArcherTowerButton = reinforcementSelectPanel->getChildByName<Button*>("Button_SelectArcherTower");
+    auto selectEnchanterTowerButton = reinforcementSelectPanel->getChildByName<Button*>("Button_SelectEnchanterTower");
+
+    auto reinforceConfig = GameConfigManager::getInstance()->getReinforceConfigBy(ForceType::Player);
+    initSelectReinforcementButton(selectEnchanterButton, reinforceConfig->enchanterTemplateName, GameObjectType::Npc, reinforceConfig->enchanterReinforceCount);
+    initSelectReinforcementButton(selectArcherButton, reinforceConfig->archerTemplateName, GameObjectType::Npc, reinforceConfig->archerReinforceCount);
+    initSelectReinforcementButton(selectBarbarianButton, reinforceConfig->barbarianTemplateName, GameObjectType::Npc, reinforceConfig->barbarianReinforceCount);
+    initSelectReinforcementButton(selectArcherTowerButton, reinforceConfig->archerTowerTemplateName, GameObjectType::Building, 1);
+    initSelectReinforcementButton(selectEnchanterTowerButton, reinforceConfig->enchanterTowerTemplateName, GameObjectType::Building, 1);
+}
+
+void GameUI::initSelectReinforcementButton(Button* button, const string& reinforcementTemplateName, GameObjectType gameObjectType, int reinforcmentCount)
+{
+    auto label = button->getChildByName<Text*>("Text_Number");
+    label->setString(StringUtils::format("X%d", reinforcmentCount));
+
+    button->addTouchEventListener(CC_CALLBACK_2(GameUI::onSelectReinforcementButtonTouched, this));
+    _onSelectReinforcementButtonTouchEventMap[button] = CC_CALLBACK_0(GameUI::onCreateReinforcement, 
+        this, 
+        reinforcementTemplateName, 
+        gameObjectType, 
+        reinforcmentCount);
+}
+
+void GameUI::onSelectReinforcementButtonTouched(Ref* sender, Widget::TouchEventType touchType)
+{
+    auto forceData = _forceManager->getForceDataBy(ForceType::Player);
+    if (forceData.reinforcePoint <= 0)
+    {
+        return;
+    }
+
+    if (touchType == Widget::TouchEventType::ENDED)
+    {
+        auto iter = _onSelectReinforcementButtonTouchEventMap.find(sender);
+        if (iter != _onSelectReinforcementButtonTouchEventMap.end())
+        {
+            iter->second();
+        }
+    }
+}
+
+void GameUI::onCreateReinforcement(const string& reinforcementTempalteName, GameObjectType gameObjectType, int reinforcementCount)
+{
+    if (gameObjectType == GameObjectType::Building)
+    {
+        _gameWorld->_createGameObject(gameObjectType, ForceType::Player, reinforcementTempalteName, _cursorPoint);
+    }
+    else
+    {
+        _gameWorld->_createNpcAroundBaseCamp(ForceType::Player, reinforcementTempalteName, reinforcementCount);
+    }
+    
+    _forceManager->onPlayerReinforcePointReduce();
+    onUpdateReinforceCount();
 }
 
 void GameUI::update(float deltaTime)
@@ -109,8 +176,7 @@ void GameUI::update(float deltaTime)
 
 void GameUI::onUpdateReinforceCount()
 {
-    auto forceManager = ForceManager::getInstance();
-    auto forceData = forceManager->getForceDataBy(ForceType::Player);
+    auto forceData = _forceManager->getForceDataBy(ForceType::Player);
 
     _askReinforceButton->setTitleText(StringUtils::format("%d", forceData.reinforcePoint));
 }

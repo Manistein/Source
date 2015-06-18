@@ -24,7 +24,10 @@ void GameWorldCallBackFunctionsManager::registerCallBackFunctions(GameWorld* gam
     _getMapManager = CC_CALLBACK_0(GameWorld::getMapManager, gameWorld);
     _createSpecialEffect = CC_CALLBACK_3(GameWorld::createSpecialEffect, gameWorld);
     _getDebugInfo = CC_CALLBACK_0(GameWorld::getDebugInfo, gameWorld);
+
     _createNpcAroundBaseCamp = CC_CALLBACK_3(GameWorld::createNpcAroundBaseCamp, gameWorld);
+    _createGameObject = CC_CALLBACK_4(GameWorld::createGameObject, gameWorld);
+
     _getAIBaseCampUniqueID = CC_CALLBACK_0(GameWorld::getEnemyBaseCampUniqueID, gameWorld);
     _getPlayerBaseCampUniqueID = CC_CALLBACK_0(GameWorld::getPlayerBaseCampUniqueID, gameWorld);
 }

@@ -3,6 +3,8 @@
 class DebugInfoLayer;
 class GameWorld;
 class MapManager;
+class GameWorldCallBackFunctionsManager;
+class ForceManager;
 
 class GameUI : public Node
 {
@@ -16,6 +18,11 @@ private:
     bool init() override;
     void initReinforcePresent();
     void initMiniMapPresent();
+    void initReinforcementSelectPanel();
+    void initSelectReinforcementButton(Button* button, const string& reinforcementTemplateName, GameObjectType gameObjectType, int reinforcmentCount);
+    void onSelectReinforcementButtonTouched(Ref* sender, Widget::TouchEventType touchType);
+    void onCreateReinforcement(const string& reinforcementTempalteName, GameObjectType gameObjectType, int reinforcementCount);
+    map<Ref*, std::function<void()>> _onSelectReinforcementButtonTouchEventMap;
 
     void update(float deltaTime) override;
     void onUpdateReinforceCount();
@@ -25,6 +32,8 @@ private:
 
     void syncCursorPoint(const Vec2& cursorPoint);
 
+    GameWorldCallBackFunctionsManager* _gameWorld = nullptr;
+    ForceManager* _forceManager = nullptr;
     DebugInfoLayer* _debugInfoLayer = nullptr;
     Node* _gameMainUI = nullptr;
     Button* _askReinforceButton = nullptr;

@@ -5,6 +5,7 @@
 #include "GameObjectManager.h"
 #include "Building.h"
 #include "Npc.h"
+#include "GameConfigManager.h"
 
 static ForceManager* s_forceManager = nullptr;
 
@@ -25,7 +26,13 @@ bool ForceManager::init()
     _enemyReinforceCoolDownTime = ENEMY_REINFORCE_TIME_INTERVAL;
 
     _forceDataMap[ForceType::Player] = ForceData();
+
+    auto reinforceConfig = GameConfigManager::getInstance()->getReinforceConfigBy(ForceType::AI);
     _forceDataMap[ForceType::AI] = ForceData();
+    auto& reinforcementCountMap = _forceDataMap[ForceType::AI].reinforcementCountMap;
+    reinforcementCountMap[reinforceConfig->enchanterTemplateName] = reinforceConfig->enchanterReinforceCount;
+    reinforcementCountMap[reinforceConfig->archerTemplateName] = reinforceConfig->archerReinforceCount;
+    reinforcementCountMap[reinforceConfig->barbarianTemplateName] = reinforceConfig->barbarianReinforceCount;
 
     _gameWorld = GameWorldCallBackFunctionsManager::getInstance();
 
@@ -67,15 +74,31 @@ void ForceManager::onEnemyLaunchAttack()
 
 void ForceManager::onEnemyReinforcementArrive()
 {
-    static const vector<string> enemyNpcTemplateNameList = { "PinkArcher", "BlueBarbarian", "PurpleEnchanter" };
+    auto& reinforcementCountMap = _forceDataMap[ForceType::AI].reinforcementCountMap;
+    vector<string> enemyNpcTemplateNameList;
+    for (auto& iter : reinforcementCountMap)
+    {
+        enemyNpcTemplateNameList.push_back(iter.first);
+    }
+
     auto listIndex = rand() % (int)enemyNpcTemplateNameList.size();
-    _gameWorld->_createNpcAroundBaseCamp(ForceType::AI, enemyNpcTemplateNameList[listIndex], 16);
+    auto& npcTemplateName = enemyNpcTemplateNameList[listIndex];
+    auto npcCount = reinforcementCountMap[npcTemplateName];
+    _gameWorld->_createNpcAroundBaseCamp(ForceType::AI, npcTemplateName, npcCount);
 }
 
 void ForceManager::onPlayerReinforcePointIncrease()
 {
     auto forceDataIter = _forceDataMap.find(ForceType::Player);
     forceDataIter->second.reinforcePoint++;
+}
+
+void ForceManager::onPlayerReinforcePointReduce()
+{
+    auto forceDataIter = _forceDataMap.find(ForceType::Player);
+    forceDataIter->second.reinforcePoint--;
+
+    forceDataIter->second.reinforcePoint = std::max(forceDataIter->second.reinforcePoint, 0);
 }
 
 void ForceManager::update(float delta)
