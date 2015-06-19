@@ -257,17 +257,8 @@ void GameWorld::onMouseRightButtonDown()
 
     _previousClickedCursorPoint = _cursorPoint;
 
-    auto gameObjectSelectedByPlayerCount = _gameObjectManager->getGameObjectSelectedByPlayerCount();
-    if (gameObjectSelectedByPlayerCount == 1)
-    {
-        bool isAllowEndTileNodeToMoveIn = hasSelectEnemyBuildingToAttack;
-        _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition, isAllowEndTileNodeToMoveIn);
-    }
-    else
-    {
-        auto npcMoveTargetList = _mapManager->getNpcMoveTargetListBy(gameObjectSelectedByPlayerCount);
-        _gameObjectManager->setSelectedNpcMoveTargetList(ForceType::Player, npcMoveTargetList);
-    }
+    bool isAllowEndTileNodeToMoveIn = hasSelectEnemyBuildingToAttack;
+    _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition, isAllowEndTileNodeToMoveIn);
 }
 
 void GameWorld::onClearDebugDraw()

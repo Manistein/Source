@@ -6,8 +6,44 @@
 #include "Npc.h"
 #include "Building.h"
 #include "GameWorldCallBackFunctionsManager.h"
+#include "Utils.h"
 
 static GameObjectManager* s_gameObjectManager = nullptr;
+
+const float MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP = 50.0f;
+const float MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP = 50.0f;
+
+class LessDistanceChecker
+{
+public:
+    LessDistanceChecker(const Vec2& arrivePosition) :
+        _arrivePosition(arrivePosition)
+    {
+
+    }
+
+    bool operator() (int leftNpcID, int rightNpcId)
+    {
+        auto gameObjectManager = GameObjectManager::getInstance();
+        auto& gameObjectMap = gameObjectManager->getGameObjectMap();
+
+        auto leftNpcIter = gameObjectMap.find(leftNpcID);
+        auto rightNpcIter = gameObjectMap.find(rightNpcId);
+
+        if (leftNpcIter == gameObjectMap.end() || rightNpcIter == gameObjectMap.end())
+        {
+            return false;
+        }
+
+        float distanceFromLeftNpcToArrivePosition = GameUtils::computeDistanceBetween(leftNpcIter->second->getPosition(), _arrivePosition);
+        float distanceFromRightNpcToArrivePosition = GameUtils::computeDistanceBetween(rightNpcIter->second->getPosition(), _arrivePosition);
+
+        return distanceFromLeftNpcToArrivePosition < distanceFromRightNpcToArrivePosition;
+    }
+
+private:
+    Vec2 _arrivePosition;
+};
 
 GameObjectManager* GameObjectManager::getInstance()
 {
@@ -116,6 +152,8 @@ bool GameObjectManager::selectGameObjectsBy(const Rect& rect)
 {
     bool result = false;
 
+    _belongPlayerSelectedNpcIDList.clear();
+
     for (auto& gameObjectIter : _gameObjectMap)
     {
         if (gameObjectIter.second->isReadyToRemove())
@@ -132,6 +170,12 @@ bool GameObjectManager::selectGameObjectsBy(const Rect& rect)
         {
             result = true;
             gameObjectIter.second->setSelected(true);
+
+            if (gameObjectIter.second->getGameObjectType() == GameObjectType::Npc &&
+                gameObjectIter.second->getForceType() == ForceType::Player)
+            {
+                _belongPlayerSelectedNpcIDList.push_back(gameObjectIter.second->getUniqueID());
+            }
         }
     }
 
@@ -141,6 +185,8 @@ bool GameObjectManager::selectGameObjectsBy(const Rect& rect)
 GameObject* GameObjectManager::selectGameObjectBy(const Point& cursorPoint)
 {
     GameObject* gameObject = nullptr;
+
+    _belongPlayerSelectedNpcIDList.clear();
 
     for (auto& gameObjectIter : _gameObjectMap)
     {
@@ -164,6 +210,12 @@ GameObject* GameObjectManager::selectGameObjectBy(const Point& cursorPoint)
         {
             gameObject = gameObjectIter.second;
             gameObjectIter.second->setSelected(true);
+
+            if (gameObjectIter.second->getGameObjectType() == GameObjectType::Npc &&
+                gameObjectIter.second->getForceType() == ForceType::Player)
+            {
+                _belongPlayerSelectedNpcIDList.push_back(gameObjectIter.second->getUniqueID());
+            }
 
             break;
         }
@@ -203,6 +255,8 @@ void GameObjectManager::cancelAllGameObjectSelected()
     {
         gameObjectIter.second->setSelected(false);
     }
+
+    _belongPlayerSelectedNpcIDList.clear();
 }
 
 void GameObjectManager::cancelEnemySelected()
@@ -235,57 +289,40 @@ int GameObjectManager::getGameObjectSelectedByPlayerCount()
 
 void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position, bool isAllowEndTileNodeToMoveIn)
 {
-    for (auto& gameObjectIter : _gameObjectMap)
+    if ((int)_belongPlayerSelectedNpcIDList.size() == 1)
     {
-        if (gameObjectIter.second->getGameObjectType() != GameObjectType::Npc)
+        int gameObjectUniqueID = _belongPlayerSelectedNpcIDList.front();
+        auto gameObjectIter = _gameObjectMap.find(gameObjectUniqueID);
+        if (gameObjectIter != _gameObjectMap.end())
         {
-            continue;
-        }
+            auto gameObject = gameObjectIter->second;
+            if (gameObject->isReadyToRemove())
+            {
+                return;
+            }
 
-        if (gameObjectIter.second->isSelected() && gameObjectIter.second->getForceType() == ForceType::Player)
-        {
-            auto npc = static_cast<Npc*>(gameObjectIter.second);
+            auto npc = static_cast<Npc*>(gameObject);
             npc->moveTo(position, isAllowEndTileNodeToMoveIn);
         }
     }
-}
-
-void GameObjectManager::setSelectedNpcMoveTargetList(ForceType forceType, const vector<Vec2>& npcMoveTargetList)
-{
-    if (npcMoveTargetList.empty() || forceType == ForceType::Invalid)
+    else
     {
-        return;
-    }
+        _belongPlayerSelectedNpcIDList.sort(LessDistanceChecker(position));
 
-    _npcReadyMoveToTargetDataMap[forceType]._readyMoveToTargetNpcIDList.clear();
-    _npcReadyMoveToTargetDataMap[forceType]._npcMoveTargetList.clear();
+        _npcReadyMoveToTargetDataMap[ForceType::Player]._npcMoveTargetList = computeBelongPlayerSelectedNpcArrivePositionList(position);
 
-    int index = 0;
-    for (auto& gameObjectIter : _gameObjectMap)
-    {
-        if (gameObjectIter.second->getGameObjectType() != GameObjectType::Npc)
+        _npcReadyMoveToTargetDataMap[ForceType::Player]._readyMoveToTargetNpcIDList = _belongPlayerSelectedNpcIDList;
+        for (auto npcID : _belongPlayerSelectedNpcIDList)
         {
-            continue;
-        }
-
-        if (gameObjectIter.second->isSelected() && gameObjectIter.second->getForceType() == forceType)
-        {
-            if (index >= (int)npcMoveTargetList.size())
+            auto gameObjectIter = _gameObjectMap.find(npcID);
+            if (gameObjectIter != _gameObjectMap.end() && !gameObjectIter->second->isReadyToRemove())
             {
-                break;
+                auto npc = static_cast<Npc*>(gameObjectIter->second);
+                npc->setReadyToMoveStatus(true);
             }
-            
-            auto npc = static_cast<Npc*>(gameObjectIter.second);
-            npc->setReadyToMoveStatus(true);
-            _npcReadyMoveToTargetDataMap[forceType]._readyMoveToTargetNpcIDList.push_back(npc->getUniqueID());
-
-            index++;
         }
     }
-
-    _npcReadyMoveToTargetDataMap[forceType]._npcMoveTargetList.assign(npcMoveTargetList.begin(), npcMoveTargetList.end());
 }
-
 
 void GameObjectManager::npcMoveToTargetOneByOne()
 {
@@ -353,4 +390,150 @@ Rect GameObjectManager::computeGameObjectRect(GameObject* gameObject)
     auto contentSize = gameObject->getContentSize() * mapScale;
 
     return Rect(worldPosition.x - contentSize.width / 2.0f, worldPosition.y - contentSize.height / 2.0f, contentSize.width, contentSize.height);
+}
+
+list<Vec2> GameObjectManager::computeBelongPlayerSelectedNpcArrivePositionList(const Vec2& arrivePosition)
+{
+    list<Vec2> arrivePositionList;
+    if (_belongPlayerSelectedNpcIDList.empty())
+    {
+        return arrivePositionList;
+    }
+
+    GameObject* firstMoveNpc = nullptr;
+    for (auto npcID : _belongPlayerSelectedNpcIDList)
+    {
+        auto npcIter = _gameObjectMap.find(npcID);
+        if (npcIter == _gameObjectMap.end() || npcIter->second->isReadyToRemove())
+        {
+            continue;
+        }
+
+        firstMoveNpc = npcIter->second;
+        break;
+    }
+
+    if (!firstMoveNpc)
+    {
+        return arrivePositionList;
+    }
+
+
+    Vec2 turnToNextLineDelta;       // 到达下一个兵站点要移动的距离
+    Vec2 turnToNextLocationDelta;   // 从当前排第一个位置到达下一排第一个位置要移动的距离
+    Vec2 startLocation;
+    float moveVectorDegree = GameUtils::computeRotatedDegree(firstMoveNpc->getPosition(), arrivePosition);
+    if ((moveVectorDegree >= 0.0f && moveVectorDegree < 22.5f) ||
+        (moveVectorDegree >= 337.5 && moveVectorDegree < 360.0f)) // 向北移动
+    {
+        startLocation.x = arrivePosition.x - (LINEUP_MAX_NPC_COUNT_PER_LINE / 2) * MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        startLocation.y = arrivePosition.y;
+
+        turnToNextLineDelta.x = 0.0f;
+        turnToNextLineDelta.y = -MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+
+        turnToNextLocationDelta.x = MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        turnToNextLocationDelta.y = 0.0f;
+    }
+    else if (moveVectorDegree >= 22.5f && moveVectorDegree < 67.5f) // 东北
+    {
+        startLocation.x = arrivePosition.x - (LINEUP_MAX_NPC_COUNT_PER_LINE / 2) * MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        startLocation.y = arrivePosition.y + (LINEUP_MAX_NPC_COUNT_PER_LINE / 2) * MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+
+        turnToNextLineDelta.x = -MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        turnToNextLineDelta.y = -MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+
+        turnToNextLocationDelta.x = MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        turnToNextLocationDelta.y = -MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+    }
+    else if (moveVectorDegree >= 67.5 && moveVectorDegree < 112.5f) // 东
+    {
+        startLocation.x = arrivePosition.x;
+        startLocation.y = arrivePosition.y + (LINEUP_MAX_NPC_COUNT_PER_LINE / 2) * MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+
+        turnToNextLineDelta.x = -MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        turnToNextLineDelta.y = 0.0f;
+
+        turnToNextLocationDelta.x = 0.0f;
+        turnToNextLocationDelta.y = -MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+    }
+    else if (moveVectorDegree >= 112.5f && moveVectorDegree < 157.5f) // 东南
+    {
+        startLocation.x = arrivePosition.x + (LINEUP_MAX_NPC_COUNT_PER_LINE / 2) * MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        startLocation.y = arrivePosition.y + (LINEUP_MAX_NPC_COUNT_PER_LINE / 2) * MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+
+        turnToNextLineDelta.x = -MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        turnToNextLineDelta.y = MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+
+        turnToNextLocationDelta.x = -MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        turnToNextLocationDelta.y = -MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+    }
+    else if (moveVectorDegree >= 157.5f && moveVectorDegree < 202.5f) // 南
+    {
+        startLocation.x = arrivePosition.x - (LINEUP_MAX_NPC_COUNT_PER_LINE / 2) * MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        startLocation.y = arrivePosition.y;
+
+        turnToNextLineDelta.x = 0.0f;
+        turnToNextLineDelta.y = MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+
+        turnToNextLocationDelta.x = MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        turnToNextLocationDelta.y = 0.0f;
+    }
+    else if (moveVectorDegree >= 202.5f && moveVectorDegree < 247.5f) // 西南
+    {
+        startLocation.x = arrivePosition.x - (LINEUP_MAX_NPC_COUNT_PER_LINE / 2) * MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        startLocation.y = arrivePosition.y + (LINEUP_MAX_NPC_COUNT_PER_LINE / 2) * MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+
+        turnToNextLineDelta.x = MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        turnToNextLineDelta.y = MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+
+        turnToNextLocationDelta.x = MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        turnToNextLocationDelta.y = -MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+    }
+    else if (moveVectorDegree >= 247.5f && moveVectorDegree < 292.5f) // 西
+    {
+        startLocation.x = arrivePosition.x;
+        startLocation.y = arrivePosition.y + (LINEUP_MAX_NPC_COUNT_PER_LINE / 2) * MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+
+        turnToNextLineDelta.x = MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        turnToNextLineDelta.y = 0.0f;
+
+        turnToNextLocationDelta.x = 0.0f;
+        turnToNextLocationDelta.y = -MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+    }
+    else // 西北
+    {
+        startLocation.x = arrivePosition.x + (LINEUP_MAX_NPC_COUNT_PER_LINE / 2) * MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        startLocation.y = arrivePosition.y + (LINEUP_MAX_NPC_COUNT_PER_LINE / 2) * MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+
+        turnToNextLineDelta.x = MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        turnToNextLineDelta.y = -MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+
+        turnToNextLocationDelta.x = -MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP;
+        turnToNextLocationDelta.y = -MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP;
+    }
+
+
+    auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
+    while (arrivePositionList.size() < _belongPlayerSelectedNpcIDList.size())
+    {
+        Vec2 currentLocation = startLocation;
+        int arriveLocationCountInLine = 0;
+        while (arriveLocationCountInLine < LINEUP_MAX_NPC_COUNT_PER_LINE)
+        {
+            if (!mapManager->isInObstacleTile(currentLocation))
+            {
+                arrivePositionList.push_back(currentLocation);
+                arriveLocationCountInLine++;
+            }
+
+            currentLocation.x += turnToNextLocationDelta.x;
+            currentLocation.y += turnToNextLocationDelta.y;
+        }
+
+        startLocation.x += turnToNextLineDelta.x;
+        startLocation.y += turnToNextLineDelta.y;
+    }
+
+    return arrivePositionList;
 }

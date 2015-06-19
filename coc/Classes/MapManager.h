@@ -42,7 +42,7 @@ const float MAP_MOVE_SPEED = 20.0f;
 const float MAP_BORDER_MARGIN = 10.0f;
 const float MAP_MIN_SCALE = 0.3f;
 const float MAP_MAX_SCALE = 1.0f;
-const int LINEUP_MAX_ROW_COUNT = 5;
+const int LINEUP_MAX_NPC_COUNT_PER_LINE = 5;
 
 // TileNodeµÄ±ê¼Ç
 const int OBSTACLE_ID = 2;
@@ -77,12 +77,8 @@ public:
 
     TileNode* getTileNodeAt(int columnIndex, int rowIndex);
 
-    vector<Vec2> getNpcMoveTargetListBy(int npcSelectedByPlayerCount);
-
     bool isInObstacleTile(const Vec2& inMapPosition);
 private:
-    int insertNpcMoveEndPositionInto(vector<Vec2>& npcMoveEndPositionList, int xSubscript, int minRowIndex, int maxRowIndex, int npcSelectedByPlayerCount, Vec2 deltaFromCursorToTile);
-
     void resolveMapShakeWhenMove();
 
     void initTileNodeTable();

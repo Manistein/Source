@@ -39,13 +39,13 @@ public:
     int getGameObjectSelectedByPlayerCount();
 
     void npcSelectedByPlayerMoveTo(const Vec2& position, bool isAllowEndTileNodeToMoveIn = false);
-    void setSelectedNpcMoveTargetList(ForceType forceType, const vector<Vec2>& npcMoveTargetList);
     void npcMoveToTargetOneByOne();
 
     void setSelectedGameObjectEnemyUniqueID(int uniqueID);
     void clearGameObjectDebugDraw();
 private:
     Rect computeGameObjectRect(GameObject* gameObject);
+    list<Vec2> computeBelongPlayerSelectedNpcArrivePositionList(const Vec2& arrivePosition);
 
     GameObjectMap _gameObjectMap;
     unordered_map<ForceType, NPC_READY_MOVE_TO_END_POSITION_DATA> _npcReadyMoveToTargetDataMap;
@@ -57,4 +57,5 @@ private:
     GameWorld* _gameWorld = nullptr;
 
     vector<int> _readyToRemoveGameObjectIDList;
+    list<int> _belongPlayerSelectedNpcIDList;
 };
