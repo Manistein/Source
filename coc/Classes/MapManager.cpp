@@ -137,18 +137,14 @@ bool MapManager::isInObstacleTile(const Vec2& inMapPosition)
 {
     bool result = false;
 
-    auto gameObjectLayer = _tileMap->getLayer(s_tileMapLayerTypeToString[TileMapLayerType::GameObjcetLayer]);
-    if (gameObjectLayer)
-    {
-        auto tileSubscript = getTileSubscript(inMapPosition);
-        int columnIndex = (int)tileSubscript.x;
-        int rowIndex = (int)tileSubscript.y;
+    auto tileSubscript = getTileSubscript(inMapPosition);
+    int columnIndex = (int)tileSubscript.x;
+    int rowIndex = (int)tileSubscript.y;
 
-        auto tileNode = getTileNodeAt(columnIndex, rowIndex);
-        if (tileNode->gid == OBSTACLE_ID)
-        {
-            result = true;
-        }
+    auto tileNode = getTileNodeAt(columnIndex, rowIndex);
+    if (tileNode->gid == OBSTACLE_ID)
+    {
+        result = true;
     }
 
     return result;

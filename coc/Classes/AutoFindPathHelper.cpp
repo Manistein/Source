@@ -146,10 +146,11 @@ TileNode* AutoFindPathHelper::findNextPathNodeBeside(TileNode* node)
     if (!g_openList.empty())
     {
         // 按sumWeight值从小到大排序
-        vector<TileNode*> alternativeNodeVector(g_openList.begin(), g_openList.end());
-        std::sort(alternativeNodeVector.begin(), alternativeNodeVector.end(), isLeftSumWeightLessThanRight);
-        g_openList.clear();
-        g_openList.assign(alternativeNodeVector.begin(), alternativeNodeVector.end());
+        /*vector<TileNode*> alternativeNodeVector(g_openList.begin(), g_openList.end());
+        std::sort(alternativeNodeVector.begin(), alternativeNodeVector.end(), isLeftSumWeightLessThanRight);*/
+        //g_openList.clear();
+        g_openList.sort(isLeftSumWeightLessThanRight);
+        //g_openList.assign(alternativeNodeVector.begin(), alternativeNodeVector.end());
 
         for (auto alternativeNode : g_openList)
         {

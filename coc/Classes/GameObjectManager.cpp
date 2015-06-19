@@ -10,8 +10,8 @@
 
 static GameObjectManager* s_gameObjectManager = nullptr;
 
-const float MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP = 50.0f;
-const float MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP = 50.0f;
+const float MAX_WIDTH_SPACE_BETWEEN_NPC_IN_LINEUP = 60.0f;
+const float MAX_HEIGHT_SPACE_BETWEEN_NPC_IN_LINEUP = 60.0f;
 
 class LessDistanceChecker
 {
@@ -515,6 +515,9 @@ list<Vec2> GameObjectManager::computeBelongPlayerSelectedNpcArrivePositionList(c
 
 
     auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
+    auto mapSize = mapManager->getMapSize();
+    auto tileSize = mapManager->getTileSize();
+
     while (arrivePositionList.size() < _belongPlayerSelectedNpcIDList.size())
     {
         Vec2 currentLocation = startLocation;
@@ -529,6 +532,19 @@ list<Vec2> GameObjectManager::computeBelongPlayerSelectedNpcArrivePositionList(c
 
             currentLocation.x += turnToNextLocationDelta.x;
             currentLocation.y += turnToNextLocationDelta.y;
+
+            if (currentLocation.x < 0.0f || 
+                currentLocation.x >= mapSize.width * tileSize.width ||
+                currentLocation.y < 0.0f ||
+                currentLocation.y > mapSize.height * tileSize.height)
+            {
+                break;
+            }
+        }
+
+        if (arriveLocationCountInLine == 0)
+        {
+            break;
         }
 
         startLocation.x += turnToNextLineDelta.x;
