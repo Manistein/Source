@@ -128,7 +128,14 @@ void ForceManager::update(float delta)
             auto readyToMoveNpc = static_cast<Npc*>(readyToMoveGameObject);
             readyToMoveNpc->moveTo(_enemyMoveToPosition, true);
 
-            _readyToMoveEnemyIDList.pop_back();
+            if (readyToMoveNpc->getNpcStatus() == NpcStatus::Stand)
+            {
+                _readyToMoveEnemyIDList.clear();
+            }
+            else
+            {
+                _readyToMoveEnemyIDList.pop_back();
+            }
         }
     }
 }
