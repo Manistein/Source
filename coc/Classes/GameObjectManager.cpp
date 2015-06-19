@@ -334,11 +334,11 @@ void GameObjectManager::npcMoveToTargetOneByOne()
             continue;
         }
 
-        auto readyMoveToTargetNpcID = dataIter.second._readyMoveToTargetNpcIDList.back();
+        auto readyMoveToTargetNpcID = dataIter.second._readyMoveToTargetNpcIDList.front();
         auto readyMoveToTargetNpcIter = _gameObjectMap.find(readyMoveToTargetNpcID);
         if (readyMoveToTargetNpcIter == _gameObjectMap.end())
         {
-            dataIter.second._readyMoveToTargetNpcIDList.pop_back();
+            dataIter.second._readyMoveToTargetNpcIDList.pop_front();
             continue;
         }
         else
@@ -346,15 +346,15 @@ void GameObjectManager::npcMoveToTargetOneByOne()
             auto readyMoveToTargetNpc = static_cast<Npc*>(readyMoveToTargetNpcIter->second);
             if (readyMoveToTargetNpc->isReadyToRemove())
             {
-                dataIter.second._readyMoveToTargetNpcIDList.pop_back();
+                dataIter.second._readyMoveToTargetNpcIDList.pop_front();
                 continue;
             }
 
-            auto targetPosition = dataIter.second._npcMoveTargetList.back();
+            auto targetPosition = dataIter.second._npcMoveTargetList.front();
             readyMoveToTargetNpc->moveTo(targetPosition);
 
-            dataIter.second._readyMoveToTargetNpcIDList.pop_back();
-            dataIter.second._npcMoveTargetList.pop_back();
+            dataIter.second._readyMoveToTargetNpcIDList.pop_front();
+            dataIter.second._npcMoveTargetList.pop_front();
         }
     }
 }
