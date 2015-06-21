@@ -412,20 +412,11 @@ void GameObjectManager::formSelectedPlayerNpcIntoTeamBy(int teamID)
 
 void GameObjectManager::selectPlayerTeamMemberBy(int teamID)
 {
+    cancelAllGameObjectSelected();
+
     auto& teamIter = _playerTeamMemberIDsMap.find(teamID);
     if (teamIter != _playerTeamMemberIDsMap.end())
     {
-        for (auto gameObjectID : _belongPlayerSelectedNpcIDList)
-        {
-            auto gameObjectIter = _gameObjectMap.find(gameObjectID);
-            if (gameObjectIter == _gameObjectMap.end())
-            {
-                continue;
-            }
-
-            gameObjectIter->second->setSelected(false);
-        }
-
         auto& teamMemberIDList = teamIter->second;
         for (auto& teamMemberID : teamMemberIDList)
         {
@@ -441,10 +432,6 @@ void GameObjectManager::selectPlayerTeamMemberBy(int teamID)
         }
 
         _belongPlayerSelectedNpcIDList = teamMemberIDList;
-    }
-    else
-    {
-        cancelAllGameObjectSelected();
     }
 }
 
