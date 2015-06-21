@@ -225,7 +225,14 @@ void GameUI::updateMinimap()
         auto gameObject = gameObjectIter.second;
         if (gameObject->getForceType() == ForceType::Player)
         {
-            color = Color4F(248.0f / 255.0f, 200.0f / 255.0f, 40.0f / 255.0f, 1.0f);
+            if (gameObject->isSelected())
+            {
+                color = Color4F(1.0f, 1.0f, 1.0f, 1.0f);
+            }
+            else
+            {
+                color = Color4F(248.0f / 255.0f, 200.0f / 255.0f, 40.0f / 255.0f, 1.0f);
+            }
         }
         else
         {
