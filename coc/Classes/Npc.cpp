@@ -55,6 +55,7 @@ bool Npc::init(ForceType forceType, GameObjectType npcType, const string& jobNam
     initBattleData(jobName);
     initDebugDraw();
     initSelectedTips(jobName);
+    initTeamIDLabel();
 
     setPosition(position);
     _uniqueID = uniqueID;
@@ -267,6 +268,15 @@ void Npc::initSelectedTips(const string& jobName)
     _selectedTips->setVisible(false);
 
     _collisionRadius = _selectedTips->getContentSize().width / 4.0f;
+}
+
+void Npc::initTeamIDLabel()
+{
+    auto selectTipsPosition = _selectedTips->getPosition();
+    auto selectTipsSize = _selectedTips->getContentSize();
+
+    _teamIDLabel->setPosition(selectTipsPosition.x - selectTipsSize.width / 2.0f, selectTipsPosition.y);
+    _teamIDLabel->setVisible(false);
 }
 
 void Npc::debugDraw()

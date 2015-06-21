@@ -43,6 +43,9 @@ public:
 
     void setSelectedGameObjectEnemyUniqueID(int uniqueID);
     void clearGameObjectDebugDraw();
+
+    void formSelectedPlayerNpcIntoTeamBy(int teamID);
+    void selectPlayerTeamMemberBy(int teamID);
 private:
     Rect computeGameObjectRect(GameObject* gameObject);
     list<Vec2> computeBelongPlayerSelectedNpcArrivePositionList(const Vec2& arrivePosition);
@@ -57,5 +60,7 @@ private:
     GameWorld* _gameWorld = nullptr;
 
     vector<int> _readyToRemoveGameObjectIDList;
+
     list<int> _belongPlayerSelectedNpcIDList;
+    unordered_map<int, list<int>> _playerTeamMemberIDsMap;
 };

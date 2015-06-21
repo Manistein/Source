@@ -10,6 +10,7 @@ public:
     
     CREATE_FUNC(GameScene);
 
+    void onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event) override;
     void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event) override;
 private:
     bool init() override;
@@ -26,4 +27,6 @@ private:
 
     Vec2 _cursorPoint;
     RECT _clientRect;
+
+    bool _isCtrlKeyPressed = false;
 };

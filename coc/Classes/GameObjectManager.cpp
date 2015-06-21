@@ -380,6 +380,74 @@ void GameObjectManager::clearGameObjectDebugDraw()
     }
 }
 
+void GameObjectManager::formSelectedPlayerNpcIntoTeamBy(int teamID)
+{
+    if (_belongPlayerSelectedNpcIDList.empty())
+    {
+        return;
+    }
+
+    for (auto& gameObjectID : _belongPlayerSelectedNpcIDList)
+    {
+        auto gameObjectIter = _gameObjectMap.find(gameObjectID);
+        if (gameObjectIter != _gameObjectMap.end())
+        {
+            auto gameObject = gameObjectIter->second;
+            if (gameObject->isReadyToRemove())
+            {
+                continue;
+            }
+
+            auto gameObjectTeamID = gameObject->getTeamID();
+            auto& teamIter = _playerTeamMemberIDsMap.find(gameObjectTeamID);
+            if (teamIter != _playerTeamMemberIDsMap.end() && gameObjectTeamID != teamID)
+            {
+                teamIter->second.remove(gameObjectID);
+            }
+        }
+    }
+
+    _playerTeamMemberIDsMap[teamID] = _belongPlayerSelectedNpcIDList;
+}
+
+void GameObjectManager::selectPlayerTeamMemberBy(int teamID)
+{
+    auto& teamIter = _playerTeamMemberIDsMap.find(teamID);
+    if (teamIter != _playerTeamMemberIDsMap.end())
+    {
+        for (auto gameObjectID : _belongPlayerSelectedNpcIDList)
+        {
+            auto gameObjectIter = _gameObjectMap.find(gameObjectID);
+            if (gameObjectIter == _gameObjectMap.end())
+            {
+                continue;
+            }
+
+            gameObjectIter->second->setSelected(false);
+        }
+
+        auto& teamMemberIDList = teamIter->second;
+        for (auto& teamMemberID : teamMemberIDList)
+        {
+            auto gameObjectIter = _gameObjectMap.find(teamMemberID);
+            if (gameObjectIter == _gameObjectMap.end() || gameObjectIter->second->isReadyToRemove())
+            {
+                continue;
+            }
+
+            auto gameObject = gameObjectIter->second;
+            gameObject->setTeamID(teamID);
+            gameObject->setSelected(true);
+        }
+
+        _belongPlayerSelectedNpcIDList = teamMemberIDList;
+    }
+    else
+    {
+        cancelAllGameObjectSelected();
+    }
+}
+
 Rect GameObjectManager::computeGameObjectRect(GameObject* gameObject)
 {
     auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();

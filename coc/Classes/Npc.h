@@ -62,6 +62,7 @@ private:
     void initBattleData(const string& jobName);
     void initDebugDraw();
     void initSelectedTips(const string& jobName);
+    void initTeamIDLabel();
 
     void update(float delta) override;
     void tryUpdateStatus(NpcStatus newStatus);

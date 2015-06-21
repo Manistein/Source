@@ -52,6 +52,10 @@ bool GameObject::init()
     _selectedTips->setVisible(false);
     addChild(_selectedTips, -1);
 
+    TTFConfig config("arial.ttf", 24);
+    _teamIDLabel = Label::createWithTTF(config, "");
+    addChild(_teamIDLabel, -1);
+
     _debugDrawNode = DrawNode::create();
     _debugDrawNode->setCascadeOpacityEnabled(true);
     addChild(_debugDrawNode, 1);
@@ -97,6 +101,7 @@ void GameObject::setSelected(bool isSelect)
     }
 
     _selectedTips->setVisible(isSelect);
+    _teamIDLabel->setVisible(isSelect);
     _isSelected = isSelect;
 }
 
@@ -222,4 +227,15 @@ GameObject* GameObjectFactory::create(GameObjectType gameObjectType, ForceType f
     }
 
     return gameObject;
+}
+
+int GameObject::getTeamID()
+{
+    return _teamID;
+}
+
+void GameObject::setTeamID(int teamID)
+{
+    _teamID = teamID;
+    _teamIDLabel->setString(StringUtils::format("%d", teamID));
 }

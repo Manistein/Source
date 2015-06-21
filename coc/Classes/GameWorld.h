@@ -43,6 +43,7 @@ public:
 
     int getEnemyBaseCampUniqueID();
     int getPlayerBaseCampUniqueID();
+
 private:
     bool init() override;
     void initEditedGameObjects();
