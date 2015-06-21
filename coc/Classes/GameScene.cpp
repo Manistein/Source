@@ -120,6 +120,11 @@ void GameScene::onMouseDown(Event* event)
 
 void GameScene::onMouseUp(Event* event)
 {
+    if (_gameUI->isCursorInGameMainUI())
+    {
+        return;
+    }
+
     auto mouseEvent = static_cast<EventMouse*>(event);
     if (mouseEvent->getMouseButton() == MOUSE_LEFT_BUTTON)
     {
