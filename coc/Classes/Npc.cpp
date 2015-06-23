@@ -226,6 +226,7 @@ void Npc::initBattleData(const string& jobName)
     _damageType = npcTemplate->damageType;
     _aoeDamageRadius = npcTemplate->aoeDamageRadius;
     _reinforceRadius = npcTemplate->reinforceRadius;
+    _maxAttackRangeWhenCollision = _maxAttackRadius + 50.0f;
 }
 
 void Npc::initDebugDraw()
@@ -415,8 +416,7 @@ void Npc::collisionTest()
         if (gameObject->isReadyToRemove() || 
             gameObject->getGameObjectType() == GameObjectType::DefenceInBuildingNpc ||
             gameObject->getGameObjectType() == GameObjectType::Building ||
-            gameObject->getUniqueID() == _uniqueID ||
-            gameObject->getForceType() != _forceType)
+            gameObject->getUniqueID() == _uniqueID)
         {
             continue;
         }
@@ -457,6 +457,13 @@ void Npc::collisionTest()
         {
             setPosition(newPosition);
         }
+
+        // 应策划要求，处于后排，无法跑到前面的npc攻击距离增加，目的是为了多几排npc能够发动攻击。
+        setAttackRange(_maxAttackRangeWhenCollision);
+    }
+    else
+    {
+        setAttackRange(_maxAttackRangeWhenCollision - 50.0f);
     }
 }
 

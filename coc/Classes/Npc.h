@@ -169,4 +169,6 @@ private:
 
     Vec2 _inMapPosition;
     float _reinforceRadius = 0.0f;
+
+    float _maxAttackRangeWhenCollision = 0.0f;
 };
