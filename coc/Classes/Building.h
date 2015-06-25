@@ -78,7 +78,6 @@ private:
     float _passTimeBySecondInBeingBuiltStatus = 0.0f;
     ui::LoadingBar* _beingBuildProgressBar = nullptr;
     string _destroySpecialEffectTemplateName;
-    string _buildingTemplateName;
 
     vector<Vec2> _bottomGridInMapPositionList;
 };

@@ -56,6 +56,8 @@ private:
 
     vector<Vec2> computeNpcCreatePointList(ForceType forceType, int readyToCreateNpcCount);
 
+    bool isLeftButtonMultyClick();
+
     GameObjectManager* _gameObjectManager = nullptr;
     GameObjectSelectBox* _gameObjectSelectBox = nullptr;
     BulletManager* _bulletManager = nullptr;

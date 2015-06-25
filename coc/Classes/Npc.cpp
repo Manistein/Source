@@ -24,10 +24,10 @@ Npc::~Npc()
     clear();
 }
 
-Npc* Npc::create(ForceType forceType, GameObjectType npcType, const string& jobName, const Vec2& position, int uniqueID)
+Npc* Npc::create(ForceType forceType, GameObjectType npcType, const string& templateName, const Vec2& position, int uniqueID)
 {
     auto npc = new Npc();
-    if (npc && npc->init(forceType, npcType, jobName, position, uniqueID))
+    if (npc && npc->init(forceType, npcType, templateName, position, uniqueID))
     {
         npc->autorelease();
     }
@@ -39,7 +39,7 @@ Npc* Npc::create(ForceType forceType, GameObjectType npcType, const string& jobN
     return npc;
 }
 
-bool Npc::init(ForceType forceType, GameObjectType npcType, const string& jobName, const Vec2& position, int uniqueID)
+bool Npc::init(ForceType forceType, GameObjectType npcType, const string& templateName, const Vec2& position, int uniqueID)
 {
     _forceType = forceType;
 
@@ -48,13 +48,13 @@ bool Npc::init(ForceType forceType, GameObjectType npcType, const string& jobNam
         return false;
     }
 
-    initAnimates(jobName);
+    initAnimates(templateName);
     initSwitchStatusFunctions();
-    initShadow(jobName);
-    initHPBar(jobName);
-    initBattleData(jobName);
+    initShadow(templateName);
+    initHPBar(templateName);
+    initBattleData(templateName);
     initDebugDraw();
-    initSelectedTips(jobName);
+    initSelectedTips(templateName);
     initTeamIDLabel();
 
     setPosition(position);
@@ -63,6 +63,8 @@ bool Npc::init(ForceType forceType, GameObjectType npcType, const string& jobNam
     _gameObjectType = npcType;
 
     _gameWorld = GameWorldCallBackFunctionsManager::getInstance();
+
+    _templateName = templateName;
 
     scheduleUpdate();
 
@@ -89,10 +91,10 @@ void Npc::clear()
     _standAnimateMap.clear();
 }
 
-void Npc::initAnimates(const string& jobName)
+void Npc::initAnimates(const string& templateName)
 {
-    auto npcTempalte = TemplateManager::getInstance()->getNpcTemplateBy(jobName);
-    CCASSERT(npcTempalte, StringUtils::format("%s is not a npc type", jobName.c_str()).c_str());
+    auto npcTempalte = TemplateManager::getInstance()->getNpcTemplateBy(templateName);
+    CCASSERT(npcTempalte, StringUtils::format("%s is not a npc type", templateName.c_str()).c_str());
 
     _moveAnimateMap[FaceDirection::FaceToEast] = createAnimateWidthPList(npcTempalte->moveToEastAnimationPList, npcTempalte->moveAnimateDelayPerUnit, NpcStatus::Move);
     _moveAnimateMap[FaceDirection::FaceToNorthEast] = createAnimateWidthPList(npcTempalte->moveToNorthEastAnimationPList, npcTempalte->moveAnimateDelayPerUnit, NpcStatus::Move);
@@ -189,9 +191,9 @@ void Npc::initSwitchStatusFunctions()
         std::bind(&Npc::switchDieToStand, this));
 }
 
-void Npc::initShadow(const string& jobName)
+void Npc::initShadow(const string& templateName)
 {
-    auto npcTemplate = TemplateManager::getInstance()->getNpcTemplateBy(jobName);
+    auto npcTemplate = TemplateManager::getInstance()->getNpcTemplateBy(templateName);
 
     auto contentSize = getContentSize();
     auto position = getPosition();
@@ -202,9 +204,9 @@ void Npc::initShadow(const string& jobName)
     addChild(_shadowSprite, -1);
 }
 
-void Npc::initHPBar(const string& jobName)
+void Npc::initHPBar(const string& templateName)
 {
-    auto npcTemplate = TemplateManager::getInstance()->getNpcTemplateBy(jobName);
+    auto npcTemplate = TemplateManager::getInstance()->getNpcTemplateBy(templateName);
 
     auto contentSize = getContentSize();
     auto position = getPosition();
@@ -213,9 +215,9 @@ void Npc::initHPBar(const string& jobName)
     hpBarBackground->setPosition(Vec2(contentSize.width / 2.0f, npcTemplate->hpBarYPosition));
 }
 
-void Npc::initBattleData(const string& jobName)
+void Npc::initBattleData(const string& templateName)
 {
-    auto npcTemplate = TemplateManager::getInstance()->getNpcTemplateBy(jobName);
+    auto npcTemplate = TemplateManager::getInstance()->getNpcTemplateBy(templateName);
     _maxHp = npcTemplate->maxHp;
     _hp = _maxHp;
     _attackPower = npcTemplate->attackPower;
@@ -248,9 +250,9 @@ void Npc::initDebugDraw()
     _debugDrawNode->addChild(npcStatusLabel, 1);
 }
 
-void Npc::initSelectedTips(const string& jobName)
+void Npc::initSelectedTips(const string& templateName)
 {
-    auto npcTemplate = TemplateManager::getInstance()->getNpcTemplateBy(jobName);
+    auto npcTemplate = TemplateManager::getInstance()->getNpcTemplateBy(templateName);
     auto spriteFrameCache = SpriteFrameCache::getInstance();
     auto blueSelectedTips = spriteFrameCache->getSpriteFrameByName(npcTemplate->blueSelectedTipsTextureName);
     auto redSelectedTips = spriteFrameCache->getSpriteFrameByName(npcTemplate->redSelectedTipsTextureName);

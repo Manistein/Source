@@ -37,7 +37,7 @@ class Npc : public GameObject
 public:
     ~Npc();
 
-    static Npc* create(ForceType forceType, GameObjectType npcType, const string& jobName, const Vec2& position, int uniqueID);
+    static Npc* create(ForceType forceType, GameObjectType npcType, const string& templateName, const Vec2& position, int uniqueID);
 
     void moveTo(const Vec2& targetPosition, bool isAllowEndTileNodeToMoveIn = false); // 如果最后一个参数是true，即便是最后一个节点是障碍物，也是可以去计算寻路路径的
     void setReadyToMoveStatus(bool isReadyToMove);
@@ -52,16 +52,16 @@ public:
     void setAttackRange(float attackRange);
     void setAttackPower(float attackPower);
 private:
-    bool init(ForceType forceType, GameObjectType npcType, const string& jobName, const Vec2& position, int uniqueID);
+    bool init(ForceType forceType, GameObjectType npcType, const string& templateName, const Vec2& position, int uniqueID);
     void clear();
 
-    void initAnimates(const string& jobName);
+    void initAnimates(const string& templateName);
     void initSwitchStatusFunctions();
-    void initShadow(const string& jobName);
-    void initHPBar(const string& jobName);
-    void initBattleData(const string& jobName);
+    void initShadow(const string& templateName);
+    void initHPBar(const string& templateName);
+    void initBattleData(const string& templateName);
     void initDebugDraw();
-    void initSelectedTips(const string& jobName);
+    void initSelectedTips(const string& templateName);
     void initTeamIDLabel();
 
     void update(float delta) override;

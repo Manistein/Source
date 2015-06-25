@@ -548,3 +548,24 @@ int GameWorld::getPlayerBaseCampUniqueID()
 {
     return _playerBaseCampUniqueID;
 }
+
+bool GameWorld::isLeftButtonMultyClick()
+{
+    static int mouseLeftButtonClickCount = 0;
+    static float currentTime = ::timeGetTime() / 1000.0f;
+    static float lastTime = currentTime;
+
+    currentTime = ::timeGetTime() / 1000.0f;
+
+    if (currentTime - lastTime < 0.5f)
+    {
+        mouseLeftButtonClickCount++;
+    }
+    else
+    {
+        lastTime = currentTime;
+        mouseLeftButtonClickCount = 1;
+    }
+
+    return mouseLeftButtonClickCount > 1;
+}

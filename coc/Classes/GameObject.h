@@ -72,6 +72,8 @@ public:
 
     int getTeamID();
     void setTeamID(int teamID);
+
+    const string& getTemplateName();
 protected:
     GameObject();
     bool init() override;
@@ -108,6 +110,8 @@ protected:
     float _showHPBarTotalTimeAfterBeingAttacked = 0.0f;
 
     float _collisionRadius = 0.0f;
+
+    string _templateName;
 };
 
 class GameObjectFactory

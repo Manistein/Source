@@ -40,7 +40,7 @@ bool Building::init(ForceType forceType, const string& buildingTemplateName, con
         return false;
     }
 
-    _buildingTemplateName = buildingTemplateName;
+    _templateName = buildingTemplateName;
 
     _gameObjectType = GameObjectType::Building;
     _buildingStatus = BuildingStatus::PrepareToBuild;
@@ -308,7 +308,7 @@ void Building::updateStatus(BuildingStatus buildingStatus)
             setContentSize(buildingSize);
             buildStatusSpriteIter.second->setPosition(Vec2(buildingSize.width / 2.0f, buildingSize.height / 2.0f));
             
-            auto buildingTemplate = TemplateManager::getInstance()->getBuildingTemplateBy(_buildingTemplateName);
+            auto buildingTemplate = TemplateManager::getInstance()->getBuildingTemplateBy(_templateName);
             float selectedTipsYPosition = _bottomGridsPlaneCenterPositionInLocalSpace.y;
 
             switch (buildingStatus)
@@ -334,7 +334,7 @@ void Building::updateStatus(BuildingStatus buildingStatus)
                 break;
             case BuildingStatus::Working:
             {
-                _defenceNpc = createDefenceNpc(_buildingTemplateName);
+                _defenceNpc = createDefenceNpc(_templateName);
 
                 if (_bottomGridInMapPositionList.empty())
                 {

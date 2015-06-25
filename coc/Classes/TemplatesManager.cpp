@@ -140,7 +140,7 @@ bool TemplateManager::initNpcTemplates()
     {
         for (int i = 0; i < tabFileReader.getRowCount(); i++)
         {
-            auto jobName = tabFileReader.getString(i, "NpcJobName");
+            auto templateName = tabFileReader.getString(i, "TemplateName");
 
             NpcTemplate* npcTemplate = new NpcTemplate();
             npcTemplate->moveToNorthEastAnimationPList = tabFileReader.getString(i, "MoveToNorthEastAnimationPList");
@@ -201,7 +201,7 @@ bool TemplateManager::initNpcTemplates()
             npcTemplate->blueSelectedTipsTextureName = tabFileReader.getString(i, "BlueSelectedTipsTextureName");
             npcTemplate->redSelectedTipsTextureName = tabFileReader.getString(i, "RedSelectedTipsTextureName");
 
-            _npcTemplatesMap[jobName] = npcTemplate;
+            _npcTemplatesMap[templateName] = npcTemplate;
         }
 
         result = true;

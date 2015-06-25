@@ -239,3 +239,8 @@ void GameObject::setTeamID(int teamID)
     _teamID = teamID;
     _teamIDLabel->setString(StringUtils::format("%d", teamID));
 }
+
+const string& GameObject::getTemplateName()
+{
+    return _templateName;
+}

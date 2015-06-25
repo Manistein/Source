@@ -148,7 +148,7 @@ void GameObjectManager::gameObjectsDepthSort(const Size& tileSize)
     }
 }
 
-bool GameObjectManager::selectGameObjectsBy(const Rect& rect)
+bool GameObjectManager::selectGameObjectsBy(const Rect& rect, const string templateName /*= ""*/)
 {
     bool result = false;
 
