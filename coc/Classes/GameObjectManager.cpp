@@ -156,7 +156,8 @@ bool GameObjectManager::selectGameObjectsBy(const Rect& rect, const string templ
 
     for (auto& gameObjectIter : _gameObjectMap)
     {
-        if (gameObjectIter.second->isReadyToRemove())
+        if (gameObjectIter.second->isReadyToRemove() ||
+            (templateName != "" && gameObjectIter.second->getTemplateName() != templateName))
         {
             continue;
         }
