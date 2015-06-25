@@ -138,7 +138,43 @@ TileNode* AutoFindPathHelper::findNextPathNodeBeside(TileNode* node)
 
                 prepareToVisitNode->sumWeight = prepareToVisitNode->gotoStartNodeWeight + prepareToVisitNode->gotoEndNodeWeight;
 
-                g_openList.push_back(prepareToVisitNode);
+                
+                //在插入时就实现排序
+                if (g_openList.empty())
+                {
+                    g_openList.push_back(prepareToVisitNode);
+                }
+                else
+                {
+                    bool shouldPushBack = false;
+                    int elementIndex = 0;
+                    for (auto& tileNode : g_openList)
+                    {
+                        if (tileNode->sumWeight >= prepareToVisitNode->sumWeight)
+                        {
+                            break;
+                        }
+
+                        if (elementIndex < (int)g_openList.size() - 1)
+                        {
+                            elementIndex++;
+                        }
+                        else
+                        {
+                            shouldPushBack = true;
+                        }
+                    }
+
+                    list<TileNode*>::iterator minGreaterIter = std::next(g_openList.begin(), elementIndex);
+                    if (shouldPushBack)
+                    {
+                        g_openList.push_back(prepareToVisitNode);
+                    }
+                    else
+                    {
+                        g_openList.insert(minGreaterIter, prepareToVisitNode);
+                    }
+                }
             }
         }
     }
@@ -146,11 +182,7 @@ TileNode* AutoFindPathHelper::findNextPathNodeBeside(TileNode* node)
     if (!g_openList.empty())
     {
         // 按sumWeight值从小到大排序
-        /*vector<TileNode*> alternativeNodeVector(g_openList.begin(), g_openList.end());
-        std::sort(alternativeNodeVector.begin(), alternativeNodeVector.end(), isLeftSumWeightLessThanRight);*/
-        //g_openList.clear();
-        g_openList.sort(isLeftSumWeightLessThanRight);
-        //g_openList.assign(alternativeNodeVector.begin(), alternativeNodeVector.end());
+        //g_openList.sort(isLeftSumWeightLessThanRight);
 
         for (auto alternativeNode : g_openList)
         {
