@@ -28,11 +28,13 @@ private:
     bool init();
     void onEnemyLaunchAttack();
     void onEnemyReinforcementArrive();
+    Vec2 computeEnemyMoveToPosition();
 
     float _enemyLaunchAttackCoolDownTime = 0.0f;
     float _enemyReinforceCoolDownTime = 0.0f;
 
     list<int> _readyToMoveEnemyIDList;
+    vector<GameObject*> _playerBuildingList;
     Vec2 _enemyMoveToPosition;
 
     map<ForceType, ForceData> _forceDataMap;

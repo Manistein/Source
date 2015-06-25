@@ -42,7 +42,7 @@ bool ForceManager::init()
 void ForceManager::onEnemyLaunchAttack()
 {
     _readyToMoveEnemyIDList.clear();
-    vector<GameObject*> playerBuildingList;
+    _playerBuildingList.clear();
 
     auto gameObjectManager = GameObjectManager::getInstance();
     auto& gameObjectMap = gameObjectManager->getGameObjectMap();
@@ -52,7 +52,7 @@ void ForceManager::onEnemyLaunchAttack()
         if (gameObject->getGameObjectType() == GameObjectType::Building &&
             gameObject->getForceType() == ForceType::Player)
         {
-            playerBuildingList.push_back(gameObject);
+            _playerBuildingList.push_back(gameObject);
         }
         else if (gameObject->getGameObjectType() == GameObjectType::Npc &&
             gameObject->getForceType() == ForceType::AI)
@@ -61,15 +61,12 @@ void ForceManager::onEnemyLaunchAttack()
         }
     }
 
-    if (playerBuildingList.empty())
+    if (_playerBuildingList.empty())
     {
         return;
     }
 
-    int buildingListIndex = rand() % (int)playerBuildingList.size();
-    auto attackTarget = static_cast<Building*>(playerBuildingList.at(buildingListIndex));
-    _enemyMoveToPosition = attackTarget->getBottomGridInMapPositionList().at(0);
-    
+    _enemyMoveToPosition = computeEnemyMoveToPosition();
 }
 
 void ForceManager::onEnemyReinforcementArrive()
@@ -130,7 +127,14 @@ void ForceManager::update(float delta)
 
             if (readyToMoveNpc->getNpcStatus() == NpcStatus::Stand)
             {
-                _readyToMoveEnemyIDList.clear();
+                if (_playerBuildingList.empty())
+                {
+                    _readyToMoveEnemyIDList.clear();
+                }
+                else
+                {
+                    _enemyMoveToPosition = computeEnemyMoveToPosition();
+                }
             }
             else
             {
@@ -144,4 +148,21 @@ const ForceData& ForceManager::getForceDataBy(ForceType forceType)
 {
     CCASSERT(forceType != ForceType::Invalid, "");
     return _forceDataMap[forceType];
+}
+
+cocos2d::Vec2 ForceManager::computeEnemyMoveToPosition()
+{
+    Vec2 moveToPosition;
+
+    if (_playerBuildingList.empty())
+    {
+        return moveToPosition;
+    }
+
+    int buildingListIndex = rand() % (int)_playerBuildingList.size();
+    auto attackTarget = static_cast<Building*>(_playerBuildingList.at(buildingListIndex));
+    moveToPosition = attackTarget->getBottomGridInMapPositionList().at(0);
+    _playerBuildingList.erase(_playerBuildingList.begin() + buildingListIndex);
+
+    return moveToPosition;
 }
