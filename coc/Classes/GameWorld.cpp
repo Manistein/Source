@@ -220,11 +220,32 @@ void GameWorld::onMouseLeftButtonUp()
 
     if (std::abs(_cursorPoint.x - s_mouseDownPoint.x) < SINGLE_CLICK_AREA && std::abs(_cursorPoint.y - s_mouseDownPoint.y) < SINGLE_CLICK_AREA)
     {
-        auto selectedGameObject = _gameObjectManager->selectGameObjectBy(_cursorPoint);
-        if (isLeftButtonMultyClick() && selectedGameObject)
+        auto gameObject = _gameObjectManager->getGameObjectContain(_cursorPoint);
+        if (gameObject)
         {
-            auto visibileSize = Director::getInstance()->getVisibleSize();
-            _gameObjectManager->selectGameObjectsBy(Rect(0.0f, 0.0f, visibileSize.width, visibileSize.height), selectedGameObject->getTemplateName());
+            if (isLeftButtonMultyClick())
+            {
+                auto visibileSize = Director::getInstance()->getVisibleSize();
+                _gameObjectManager->selectGameObjectsBy(Rect(0.0f, 0.0f, visibileSize.width, visibileSize.height), gameObject->getTemplateName());
+            }
+            else
+            {
+                if (_isShiftKeyPressed)
+                {
+                    if (gameObject->isSelected())
+                    {
+                        _gameObjectManager->cancelSelect(gameObject);
+                    }
+                    else
+                    {
+                        _gameObjectManager->select(gameObject);
+                    }
+                }
+                else
+                {
+                    _gameObjectManager->select(gameObject);
+                }
+            }
         }
     }
     else

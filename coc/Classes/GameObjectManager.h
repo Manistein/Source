@@ -30,11 +30,15 @@ public:
 
     void gameObjectsDepthSort(const Size& tileSize);
 
+    GameObject* getGameObjectContain(const Vec2& cursorPoint);
     bool selectGameObjectsBy(const Rect& rect, const string templateName = "");
     GameObject* selectGameObjectBy(const Point& cursorPoint);
     GameObject* selectEnemyBy(const Point& cursorPoint);
     void cancelAllGameObjectSelected();
     void cancelEnemySelected();
+
+    void select(GameObject* gameObject);
+    void cancelSelect(GameObject* gameObject);
 
     int getGameObjectSelectedByPlayerCount();
 

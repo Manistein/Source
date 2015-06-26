@@ -181,7 +181,7 @@ bool GameObjectManager::selectGameObjectsBy(const Rect& rect, const string templ
     return result;
 }
 
-GameObject* GameObjectManager::selectGameObjectBy(const Point& cursorPoint)
+GameObject* GameObjectManager::getGameObjectContain(const Vec2& cursorPoint)
 {
     GameObject* gameObject = nullptr;
 
@@ -206,16 +206,21 @@ GameObject* GameObjectManager::selectGameObjectBy(const Point& cursorPoint)
         if (gameObjectRect.containsPoint(cursorPoint))
         {
             gameObject = gameObjectIter.second;
-            gameObjectIter.second->setSelected(true);
-
-            if (gameObjectIter.second->getGameObjectType() == GameObjectType::Npc &&
-                gameObjectIter.second->getForceType() == ForceType::Player)
-            {
-                _belongPlayerSelectedNpcIDList.push_back(gameObjectIter.second->getUniqueID());
-            }
 
             break;
         }
+    }
+
+    return gameObject;
+}
+
+GameObject* GameObjectManager::selectGameObjectBy(const Point& cursorPoint)
+{
+    GameObject* gameObject = getGameObjectContain(cursorPoint);
+
+    if (gameObject)
+    {
+        select(gameObject);
     }
 
     return gameObject;
@@ -604,4 +609,31 @@ list<Vec2> GameObjectManager::computeBelongPlayerSelectedNpcArrivePositionList(c
     }
 
     return arrivePositionList;
+}
+
+void GameObjectManager::select(GameObject* gameObject)
+{
+    CCASSERT(gameObject != nullptr, "");
+
+    gameObject->setSelected(true);
+
+    if (gameObject->getGameObjectType() == GameObjectType::Npc &&
+        gameObject->getForceType() == ForceType::Player)
+    {
+        _belongPlayerSelectedNpcIDList.push_back(gameObject->getUniqueID());
+    }
+}
+
+void GameObjectManager::cancelSelect(GameObject* gameObject)
+{
+    CCASSERT(gameObject != nullptr, "");
+
+    gameObject->setSelected(false);
+    gameObject->setTeamID(TEAM_INVALID_ID);
+
+    if (gameObject->getGameObjectType() == GameObjectType::Npc &&
+        gameObject->getForceType() == ForceType::Player)
+    {
+        _belongPlayerSelectedNpcIDList.remove(gameObject->getUniqueID());
+    }
 }

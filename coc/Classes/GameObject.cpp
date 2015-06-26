@@ -236,8 +236,15 @@ int GameObject::getTeamID()
 
 void GameObject::setTeamID(int teamID)
 {
-    _teamID = teamID;
-    _teamIDLabel->setString(StringUtils::format("%d", teamID));
+    if (teamID == TEAM_INVALID_ID)
+    {
+        _teamIDLabel->setString("");
+    }
+    else
+    {
+        _teamID = teamID;
+        _teamIDLabel->setString(StringUtils::format("%d", teamID));
+    }
 }
 
 const string& GameObject::getTemplateName()
