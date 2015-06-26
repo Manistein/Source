@@ -44,6 +44,7 @@ public:
     int getEnemyBaseCampUniqueID();
     int getPlayerBaseCampUniqueID();
 
+    void setShiftKeyStatus(bool isPressed);
 private:
     bool init() override;
     void initEditedGameObjects();
@@ -69,6 +70,7 @@ private:
     Vec2 _previousClickedCursorPoint;
 
     bool _isLeftMouseButtonDown = false;
+    bool _isShiftKeyPressed = false;
 
     int _holdingBuildingID = GAME_OBJECT_UNIQUE_ID_INVALID;
 

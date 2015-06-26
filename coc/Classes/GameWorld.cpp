@@ -213,7 +213,10 @@ void GameWorld::onMouseLeftButtonUp()
     _isLeftMouseButtonDown = false;
 
     _gameObjectSelectBox->setMouseDownStatus(false);
-    _gameObjectManager->cancelAllGameObjectSelected();
+    if (!_isShiftKeyPressed)
+    {
+        _gameObjectManager->cancelAllGameObjectSelected();
+    }
 
     if (std::abs(_cursorPoint.x - s_mouseDownPoint.x) < SINGLE_CLICK_AREA && std::abs(_cursorPoint.y - s_mouseDownPoint.y) < SINGLE_CLICK_AREA)
     {
@@ -573,4 +576,9 @@ bool GameWorld::isLeftButtonMultyClick()
     }
 
     return mouseLeftButtonClickCount > 1;
+}
+
+void GameWorld::setShiftKeyStatus(bool isPressed)
+{
+    _isShiftKeyPressed = isPressed;
 }

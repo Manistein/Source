@@ -72,6 +72,10 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
     {
         _isCtrlKeyPressed = true;
     }
+    else if (keyCode == EventKeyboard::KeyCode::KEY_SHIFT)
+    {
+        _gameWorld->setShiftKeyStatus(true);
+    }
 }
 
 void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
@@ -138,6 +142,11 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
     case EventKeyboard::KeyCode::KEY_CTRL:
     {
         _isCtrlKeyPressed = false;
+    }
+        break;
+    case EventKeyboard::KeyCode::KEY_SHIFT:
+    {
+        _gameWorld->setShiftKeyStatus(false);
     }
         break;
     default:    break;

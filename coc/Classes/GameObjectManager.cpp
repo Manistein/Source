@@ -152,8 +152,6 @@ bool GameObjectManager::selectGameObjectsBy(const Rect& rect, const string templ
 {
     bool result = false;
 
-    _belongPlayerSelectedNpcIDList.clear();
-
     for (auto& gameObjectIter : _gameObjectMap)
     {
         if (gameObjectIter.second->isReadyToRemove() ||
@@ -186,8 +184,6 @@ bool GameObjectManager::selectGameObjectsBy(const Rect& rect, const string templ
 GameObject* GameObjectManager::selectGameObjectBy(const Point& cursorPoint)
 {
     GameObject* gameObject = nullptr;
-
-    _belongPlayerSelectedNpcIDList.clear();
 
     for (auto& gameObjectIter : _gameObjectMap)
     {
