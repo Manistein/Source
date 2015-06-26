@@ -96,6 +96,9 @@
     <ClCompile Include="..\Classes\GameConfigManager.cpp">
       <Filter>src\GameWorld\GameManager</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\GameUICallBackFunctionsManager.cpp">
+      <Filter>src\GameWorld\GameManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -168,6 +171,9 @@
       <Filter>src\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameConfigManager.h">
+      <Filter>src\GameWorld\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameUICallBackFunctionsManager.h">
       <Filter>src\GameWorld\GameManager</Filter>
     </ClInclude>
   </ItemGroup>

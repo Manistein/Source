@@ -7,6 +7,7 @@ class GameObjectSelectBox;
 class BulletManager;
 class SpecialEffectManager;
 class ForceManager;
+class GameUICallbackFunctionsManager;
 
 struct DebugInfo
 {
@@ -67,6 +68,7 @@ private:
     SpecialEffectManager* _specialEffectManager = nullptr;
     MapManager* _mapManager = nullptr;
     ForceManager* _forceManager = nullptr;
+    GameUICallbackFunctionsManager* _gameUI = nullptr;
 
     Vec2 _cursorPoint;
     Vec2 _previousClickedCursorPoint;

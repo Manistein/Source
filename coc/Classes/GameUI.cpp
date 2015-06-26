@@ -9,6 +9,7 @@
 #include "ForceManager.h"
 #include "GameObjectManager.h"
 #include "GameConfigManager.h"
+#include "GameUICallBackFunctionsManager.h"
 
 bool GameUI::init()
 {
@@ -31,6 +32,8 @@ bool GameUI::init()
     initReinforcementSelectPanel();
 
     Director::getInstance()->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameUI::onMouseMove, this));
+
+    GameUICallbackFunctionsManager::getInstance()->registerCallBackFunctions(this);
 
     scheduleUpdate();
 
@@ -161,10 +164,10 @@ void GameUI::onCreateReinforcement(const string& reinforcementTempalteName, Game
     else
     {
         _gameWorld->_createNpcAroundBaseCamp(ForceType::Player, reinforcementTempalteName, reinforcementCount);
+
+        _forceManager->onPlayerReinforcePointReduce();
+        onUpdateReinforcePresent();
     }
-    
-    _forceManager->onPlayerReinforcePointReduce();
-    onUpdateReinforcePresent();
 }
 
 void GameUI::update(float deltaTime)

@@ -162,6 +162,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Base.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="..\Classes\GameUI.cpp" />
+    <ClCompile Include="..\Classes\GameUICallBackFunctionsManager.cpp" />
     <ClCompile Include="..\Classes\GameWorld.cpp" />
     <ClCompile Include="..\Classes\GameWorldCallBackFunctionsManager.cpp" />
     <ClCompile Include="..\Classes\MapManager.cpp" />
@@ -188,6 +189,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\GameScene.h" />
     <ClInclude Include="..\Classes\GameSetting.h" />
     <ClInclude Include="..\Classes\GameUI.h" />
+    <ClInclude Include="..\Classes\GameUICallBackFunctionsManager.h" />
     <ClInclude Include="..\Classes\GameWorld.h" />
     <ClInclude Include="..\Classes\GameWorldCallBackFunctionsManager.h" />
     <ClInclude Include="..\Classes\MapManager.h" />

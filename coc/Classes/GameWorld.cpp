@@ -12,6 +12,7 @@
 #include "Building.h"
 #include "SpecialEffectManager.h"
 #include "ForceManager.h"
+#include "GameUICallBackFunctionsManager.h"
 
 static Vec2 s_mouseDownPoint;
 const float MOUSE_CLICK_AREA = 5.0f;
@@ -49,6 +50,7 @@ bool GameWorld::init()
     GameWorldCallBackFunctionsManager::getInstance()->registerCallBackFunctions(this);
 
     _forceManager = ForceManager::getInstance();
+    _gameUI = GameUICallbackFunctionsManager::getInstance();
 
     auto mouseListener = EventListenerMouse::create();
     mouseListener->onMouseScroll = CC_CALLBACK_1(GameWorld::onMouseScroll, this);
@@ -415,6 +417,9 @@ void GameWorld::constructBuilding()
         holdingBuilding->canBuild())
     {
         holdingBuilding->updateStatus(BuildingStatus::BeingBuilt);
+
+        _forceManager->onPlayerReinforcePointReduce();
+        _gameUI->_onUpdateReinforcePresent();
 
         _holdingBuildingID = GAME_OBJECT_UNIQUE_ID_INVALID;
     }
