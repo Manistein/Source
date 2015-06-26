@@ -637,3 +637,44 @@ void GameObjectManager::cancelSelect(GameObject* gameObject)
         _belongPlayerSelectedNpcIDList.remove(gameObject->getUniqueID());
     }
 }
+
+void GameObjectManager::gameObjectJumpIntoScreen(GameObject* gameObject)
+{
+    auto mapManager = GameWorldCallBackFunctionsManager::getInstance()->_getMapManager();
+    auto mapScale = mapManager->getMapScale();
+    auto mapSize = mapManager->getMapSize();
+    auto tileSize = mapManager->getTileSize();
+
+    auto parent = gameObject->getParent();
+    auto gameObjectWorldPosition = parent->convertToWorldSpace(gameObject->getPosition());
+    auto visibileSize = Director::getInstance()->getVisibleSize();
+    Vec2 screenCenterPosition(visibileSize.width / 2.0f, visibileSize.height / 2.0f);
+
+    auto moveVector = screenCenterPosition - gameObjectWorldPosition;
+
+    auto mapPosition = mapManager->getMapPosition();
+    mapPosition.x += std::min(mapPosition.x + moveVector.x, 0.0f);
+    mapPosition.y += std::min(mapPosition.y + moveVector.y, 0.0f);
+    mapPosition.x = std::max(-(mapSize.width * tileSize.width) + visibileSize.width, mapPosition.x);
+    mapPosition.y = std::max(-(mapSize.height * tileSize.height) + visibileSize.height, mapPosition.y);
+
+    mapManager->setTileMapPosition(mapPosition);
+}
+
+void GameObjectManager::teamMemberJumpIntoScreenBy(int teamID)
+{
+    auto teamMemberListIter = _playerTeamMemberIDsMap.find(teamID);
+    if (teamMemberListIter != _playerTeamMemberIDsMap.end())
+    {
+        auto& teamMemberIDList = teamMemberListIter->second;
+        for (auto& teamMemberID : teamMemberIDList)
+        {
+            auto teamMemberIter = _gameObjectMap.find(teamMemberID);
+            if (teamMemberIter != _gameObjectMap.end())
+            {
+                gameObjectJumpIntoScreen(teamMemberIter->second);
+                break;
+            }
+        }
+    }
+}

@@ -48,6 +48,7 @@ public:
     void setShiftKeyStatus(bool isPressed);
 
     bool isMouseClick();
+    bool isTeamContinuousCalledInAFlash(int teamID);
 private:
     bool init() override;
     void initEditedGameObjects();

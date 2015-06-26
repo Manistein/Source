@@ -50,6 +50,9 @@ public:
 
     void formSelectedPlayerNpcIntoTeamBy(int teamID);
     void selectPlayerTeamMemberBy(int teamID);
+
+    void gameObjectJumpIntoScreen(GameObject* gameObject);
+    void teamMemberJumpIntoScreenBy(int teamID);
 private:
     Rect computeGameObjectRect(GameObject* gameObject);
     list<Vec2> computeBelongPlayerSelectedNpcArrivePositionList(const Vec2& arrivePosition);

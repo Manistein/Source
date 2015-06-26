@@ -621,3 +621,51 @@ bool GameWorld::isMouseClick()
 
     return result;
 }
+
+struct TeamContinuousCalledData
+{
+    int calledTimes = 0;
+    float lastTimeBySecond = 0.0f;
+    float currentTimeBySecond = 0.0f;
+};
+
+bool GameWorld::isTeamContinuousCalledInAFlash(int teamID)
+{
+    bool result = false;
+
+    static unordered_map<int, TeamContinuousCalledData> teamContinuousCalledDataMap = {
+            { 0, TeamContinuousCalledData() },
+            { 1, TeamContinuousCalledData() },
+            { 2, TeamContinuousCalledData() },
+            { 3, TeamContinuousCalledData() },
+            { 4, TeamContinuousCalledData() },
+            { 5, TeamContinuousCalledData() },
+            { 6, TeamContinuousCalledData() },
+            { 7, TeamContinuousCalledData() },
+            { 8, TeamContinuousCalledData() },
+            { 9, TeamContinuousCalledData() },
+    };
+
+    auto iter = teamContinuousCalledDataMap.find(teamID);
+    if (iter != teamContinuousCalledDataMap.end())
+    {
+        auto& data = iter->second;
+        data.currentTimeBySecond = ::timeGetTime() / 1000.0f;
+        if (data.currentTimeBySecond - data.lastTimeBySecond < 0.5f)
+        {
+            data.calledTimes++;
+        }
+        else
+        {
+            data.calledTimes = 1;
+            data.lastTimeBySecond = data.currentTimeBySecond;
+        }
+
+        if (data.calledTimes > 1)
+        {
+            result = true;
+        }
+    }
+
+    return result;
+}

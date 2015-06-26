@@ -137,6 +137,11 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
         {
             gameObjectManager->selectPlayerTeamMemberBy(teamID);
         }
+
+        if (_gameWorld->isTeamContinuousCalledInAFlash(teamID))
+        {
+            gameObjectManager->teamMemberJumpIntoScreenBy(teamID);
+        }
     }
         break;
     case EventKeyboard::KeyCode::KEY_CTRL:
