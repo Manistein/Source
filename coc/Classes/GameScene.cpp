@@ -159,7 +159,10 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
         auto gameObjectManager = GameObjectManager::getInstance();
         int playerBaseCampID = _gameWorld->getPlayerBaseCampUniqueID();
         auto baseCamp = gameObjectManager->getGameObjectBy(playerBaseCampID);
-        gameObjectManager->gameObjectJumpIntoScreen(baseCamp);
+        if (baseCamp)
+        {
+            gameObjectManager->gameObjectJumpIntoScreen(baseCamp);
+        }
     }
         break;
     default:    break;
