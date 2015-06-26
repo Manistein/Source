@@ -45,6 +45,8 @@ public:
     int getPlayerBaseCampUniqueID();
 
     void setShiftKeyStatus(bool isPressed);
+
+    bool isMouseClick();
 private:
     bool init() override;
     void initEditedGameObjects();

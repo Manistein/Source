@@ -14,7 +14,7 @@
 #include "ForceManager.h"
 
 static Vec2 s_mouseDownPoint;
-const float SINGLE_CLICK_AREA = 5.0f;
+const float MOUSE_CLICK_AREA = 5.0f;
 
 GameWorld::~GameWorld()
 {
@@ -218,7 +218,7 @@ void GameWorld::onMouseLeftButtonUp()
         _gameObjectManager->cancelAllGameObjectSelected();
     }
 
-    if (std::abs(_cursorPoint.x - s_mouseDownPoint.x) < SINGLE_CLICK_AREA && std::abs(_cursorPoint.y - s_mouseDownPoint.y) < SINGLE_CLICK_AREA)
+    if (isMouseClick())
     {
         auto gameObject = _gameObjectManager->getGameObjectContain(_cursorPoint);
         if (gameObject)
@@ -248,7 +248,7 @@ void GameWorld::onMouseLeftButtonUp()
             }
         }
     }
-    else
+    else // Mouse draging
     {
         auto selectRect = _gameObjectSelectBox->getRect();
         _gameObjectManager->selectGameObjectsBy(selectRect);
@@ -602,4 +602,17 @@ bool GameWorld::isLeftButtonMultyClick()
 void GameWorld::setShiftKeyStatus(bool isPressed)
 {
     _isShiftKeyPressed = isPressed;
+}
+
+bool GameWorld::isMouseClick()
+{
+    bool result = false;
+
+    if (std::abs(_cursorPoint.x - s_mouseDownPoint.x) < MOUSE_CLICK_AREA && 
+        std::abs(_cursorPoint.y - s_mouseDownPoint.y) < MOUSE_CLICK_AREA)
+    {
+        result = true;
+    }
+
+    return result;
 }

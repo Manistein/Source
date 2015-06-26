@@ -185,6 +185,13 @@ void GameScene::onMouseDown(Event* event)
 
 void GameScene::onMouseUp(Event* event)
 {
+    // 如果玩家鼠标是拖动状态的话，仍然可以触发mouseUp事件
+    if (_gameUI->isCursorInGameMainUI() &&
+        _gameWorld->isMouseClick())
+    {
+        return;
+    }
+
     auto mouseEvent = static_cast<EventMouse*>(event);
     if (mouseEvent->getMouseButton() == MOUSE_LEFT_BUTTON)
     {
