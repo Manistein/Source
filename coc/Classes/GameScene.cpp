@@ -154,6 +154,14 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
         _gameWorld->setShiftKeyStatus(false);
     }
         break;
+    case EventKeyboard::KeyCode::KEY_SPACE:
+    {
+        auto gameObjectManager = GameObjectManager::getInstance();
+        int playerBaseCampID = _gameWorld->getPlayerBaseCampUniqueID();
+        auto baseCamp = gameObjectManager->getGameObjectBy(playerBaseCampID);
+        gameObjectManager->gameObjectJumpIntoScreen(baseCamp);
+    }
+        break;
     default:    break;
     }
 }
