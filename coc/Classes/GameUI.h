@@ -14,6 +14,8 @@ public:
     void onMouseMove(EventCustom* eventCustom);
 
     bool isCursorInGameMainUI();
+    void disableAllReinforcementButtons();
+    void enableAllReinforcementButtons();
 private:
     bool init() override;
     void initReinforcePresent();
@@ -25,7 +27,7 @@ private:
     map<Ref*, std::function<void()>> _onSelectReinforcementButtonTouchEventMap;
 
     void update(float deltaTime) override;
-    void onUpdateReinforceCount();
+    void onUpdateReinforcePresent();
     void onReinforceButtonSparkMove();
     void updateMinimap();
     void onMinimapTouched(Ref* sender, Widget::TouchEventType touchType);
@@ -48,4 +50,6 @@ private:
     float _minimapHeight = 0.0f;
 
     Vec2 _cursorPoint;
+
+    vector<Button*> _reinforcementButtonList;
 };

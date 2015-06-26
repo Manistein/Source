@@ -49,10 +49,10 @@ void GameUI::initReinforcePresent()
     reinforceProgressBar->setPosition(reinforceForeground->getPosition());
 
     auto sequenceAction = Sequence::create(
-        ProgressTo::create(PLAYER_REINFORCE_TIME_INTERVAL, 100),
+        ProgressTo::create(PLAYER_REINFORCE_TIME_INTERVAL, 100.0f),
         CallFunc::create(CC_CALLBACK_0(ForceManager::onPlayerReinforcePointIncrease, _forceManager)),
         CallFunc::create(CC_CALLBACK_0(ProgressTimer::setPercentage, reinforceProgressBar, 0.0f)),
-        CallFunc::create(CC_CALLBACK_0(GameUI::onUpdateReinforceCount, this)),
+        CallFunc::create(CC_CALLBACK_0(GameUI::onUpdateReinforcePresent, this)),
         CallFunc::create(CC_CALLBACK_0(GameUI::onReinforceButtonSparkMove, this)),
         nullptr);
     auto repeatforverAction = RepeatForever::create(sequenceAction);
@@ -115,6 +115,8 @@ void GameUI::initReinforcementSelectPanel()
     initSelectReinforcementButton(selectBarbarianButton, reinforceConfig->barbarianTemplateName, GameObjectType::Npc, reinforceConfig->barbarianReinforceCount);
     initSelectReinforcementButton(selectArcherTowerButton, reinforceConfig->archerTowerTemplateName, GameObjectType::Building, 1);
     initSelectReinforcementButton(selectEnchanterTowerButton, reinforceConfig->enchanterTowerTemplateName, GameObjectType::Building, 1);
+
+    disableAllReinforcementButtons();
 }
 
 void GameUI::initSelectReinforcementButton(Button* button, const string& reinforcementTemplateName, GameObjectType gameObjectType, int reinforcmentCount)
@@ -128,6 +130,8 @@ void GameUI::initSelectReinforcementButton(Button* button, const string& reinfor
         reinforcementTemplateName, 
         gameObjectType, 
         reinforcmentCount);
+
+    _reinforcementButtonList.push_back(button);
 }
 
 void GameUI::onSelectReinforcementButtonTouched(Ref* sender, Widget::TouchEventType touchType)
@@ -160,7 +164,7 @@ void GameUI::onCreateReinforcement(const string& reinforcementTempalteName, Game
     }
     
     _forceManager->onPlayerReinforcePointReduce();
-    onUpdateReinforceCount();
+    onUpdateReinforcePresent();
 }
 
 void GameUI::update(float deltaTime)
@@ -174,11 +178,21 @@ void GameUI::update(float deltaTime)
     updateMinimap();
 }
 
-void GameUI::onUpdateReinforceCount()
+void GameUI::onUpdateReinforcePresent()
 {
     auto forceData = _forceManager->getForceDataBy(ForceType::Player);
+    int reinforcePoint = forceData.reinforcePoint;
 
-    _askReinforceButton->setTitleText(StringUtils::format("%d", forceData.reinforcePoint));
+    _askReinforceButton->setTitleText(StringUtils::format("%d", reinforcePoint));
+
+    if (reinforcePoint <= 0)
+    {
+        disableAllReinforcementButtons();
+    }
+    else
+    {
+        enableAllReinforcementButtons();
+    }
 }
 
 void GameUI::onReinforceButtonSparkMove()
@@ -212,6 +226,24 @@ bool GameUI::isCursorInGameMainUI()
     }
 
     return result;
+}
+
+void GameUI::disableAllReinforcementButtons()
+{
+    for (auto& button : _reinforcementButtonList)
+    {
+        button->setBright(false);
+        button->setEnabled(false);
+    }
+}
+
+void GameUI::enableAllReinforcementButtons()
+{
+    for (auto& button : _reinforcementButtonList)
+    {
+        button->setBright(true);
+        button->setEnabled(true);
+    }
 }
 
 void GameUI::updateMinimap()
