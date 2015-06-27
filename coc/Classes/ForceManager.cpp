@@ -125,6 +125,11 @@ void ForceManager::update(float delta)
             auto readyToMoveNpc = static_cast<Npc*>(readyToMoveGameObject);
             readyToMoveNpc->moveTo(_enemyMoveToPosition, true);
 
+            MopUpCommand mopUpCommand;
+            mopUpCommand.isExecuting = true;
+            mopUpCommand.finalPosition = _enemyMoveToPosition;
+            readyToMoveNpc->setMopUpCommand(mopUpCommand);
+
             if (readyToMoveNpc->getNpcStatus() == NpcStatus::Stand)
             {
                 if (_playerBuildingList.empty())

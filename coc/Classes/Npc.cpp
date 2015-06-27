@@ -527,12 +527,16 @@ void Npc::runFightWithEnemyAI(float delta)
                 {
                     reinforceOwnSide(needReinforceGameObject);
                 }
+                else if (_mopUpCommand.isExecuting)
+                {
+                    moveTo(_mopUpCommand.finalPosition, true);
+                }
             }
             else
             {
                 if (_oldStatus == NpcStatus::Stand && _mopUpCommand.isExecuting)
                 {
-                    moveTo(_mopUpCommand.finalPosition, false);
+                    moveTo(_mopUpCommand.finalPosition, true);
                 }
             }
         }
