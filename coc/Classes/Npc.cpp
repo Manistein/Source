@@ -528,6 +528,13 @@ void Npc::runFightWithEnemyAI(float delta)
                     reinforceOwnSide(needReinforceGameObject);
                 }
             }
+            else
+            {
+                if (_oldStatus == NpcStatus::Stand && _mopUpCommand.isExecuting)
+                {
+                    moveTo(_mopUpCommand.finalPosition, false);
+                }
+            }
         }
     }
 }
@@ -568,7 +575,7 @@ bool Npc::canSearchEnemy()
 {
     bool result = false;
 
-    if (_forceType == ForceType::Player && _oldStatus == NpcStatus::Move ||
+    if (_forceType == ForceType::Player && _oldStatus == NpcStatus::Move && !_mopUpCommand.isExecuting ||
         _isReadyToMove ||
         _searchEnemyCoolDownTime > 0.0f)
     {
@@ -1203,6 +1210,11 @@ void Npc::onMoveTo()
     auto currentFaceDirection = getFaceToDirection(moveToPosition);
     float moveToDuration = getMoveToDuration(moveToPosition);
 
+    if (_mopUpCommand.isExecuting && GameUtils::isVec2Equal(_mopUpCommand.finalPosition, moveToPosition))
+    {
+        _mopUpCommand.isExecuting = false;
+    }
+
     auto animateIter = _moveAnimateMap.find(currentFaceDirection);
     if (animateIter != _moveAnimateMap.end())
     {
@@ -1351,4 +1363,14 @@ void Npc::setAttackRange(float attackRange)
 void Npc::setAttackPower(float attackPower)
 {
     _attackPower = attackPower;
+}
+
+void Npc::setMopUpCommand(const MopUpCommand& mopUpCommand)
+{
+    _mopUpCommand = mopUpCommand;
+}
+
+bool Npc::isExecutingMopUpCommand()
+{
+    return _mopUpCommand.isExecuting;
 }

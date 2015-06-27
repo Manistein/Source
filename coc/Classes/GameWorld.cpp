@@ -289,7 +289,9 @@ void GameWorld::onMouseRightButtonDown()
     _previousClickedCursorPoint = _cursorPoint;
 
     bool isAllowEndTileNodeToMoveIn = hasSelectEnemyBuildingToAttack;
-    _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition, isAllowEndTileNodeToMoveIn);
+    _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition, _isAKeyPressed, isAllowEndTileNodeToMoveIn);
+
+    _isAKeyPressed = false;
 }
 
 void GameWorld::onClearDebugDraw()
@@ -607,6 +609,11 @@ bool GameWorld::isLeftButtonMultyClick()
 void GameWorld::setShiftKeyStatus(bool isPressed)
 {
     _isShiftKeyPressed = isPressed;
+}
+
+void GameWorld::setAKeyStatus(bool isPressed)
+{
+    _isAKeyPressed = isPressed;
 }
 
 bool GameWorld::isMouseClick()

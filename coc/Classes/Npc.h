@@ -26,6 +26,12 @@ enum class FaceDirection
     Total
 };
 
+struct MopUpCommand
+{
+    bool isExecuting = false;
+    Vec2 finalPosition;
+};
+
 const float HANDLE_ENEMY_IN_ALERT_RANGE_SITUATION_TIME_INTERVAL = 1.0f;
 const float SEARCH_ENEMY_COOL_DOWN_TIME_INTERVAL = 0.17f;    //每秒搜索10次
 
@@ -51,6 +57,9 @@ public:
     void setAlertRange(float alertRange);
     void setAttackRange(float attackRange);
     void setAttackPower(float attackPower);
+
+    void setMopUpCommand(const MopUpCommand& mopUpCommand);
+    bool isExecutingMopUpCommand();
 private:
     bool init(ForceType forceType, GameObjectType npcType, const string& templateName, const Vec2& position, int uniqueID);
     void clear();
@@ -171,4 +180,6 @@ private:
     float _reinforceRadius = 0.0f;
 
     float _maxAttackRangeWhenCollision = 0.0f;
+
+    MopUpCommand _mopUpCommand; // 扫荡指令，即A过去的功能
 };

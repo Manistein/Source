@@ -46,6 +46,7 @@ public:
     int getPlayerBaseCampUniqueID();
 
     void setShiftKeyStatus(bool isPressed);
+    void setAKeyStatus(bool isPressed);
 
     bool isMouseClick();
     bool isTeamContinuousCalledInAFlash(int teamID);
@@ -76,6 +77,7 @@ private:
 
     bool _isLeftMouseButtonDown = false;
     bool _isShiftKeyPressed = false;
+    bool _isAKeyPressed = false;
 
     int _holdingBuildingID = GAME_OBJECT_UNIQUE_ID_INVALID;
 

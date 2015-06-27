@@ -76,6 +76,10 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
     {
         _gameWorld->setShiftKeyStatus(true);
     }
+    else if (keyCode == EventKeyboard::KeyCode::KEY_A)
+    {
+        _gameWorld->setAKeyStatus(true);
+    }
 }
 
 void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)

@@ -289,7 +289,7 @@ int GameObjectManager::getGameObjectSelectedByPlayerCount()
     return count;
 }
 
-void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position, bool isAllowEndTileNodeToMoveIn)
+void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position, bool hasRetrieveMopUpCommand, bool isAllowEndTileNodeToMoveIn)
 {
     if ((int)_belongPlayerSelectedNpcIDList.size() == 1)
     {
@@ -305,6 +305,11 @@ void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position, bool isA
 
             auto npc = static_cast<Npc*>(gameObject);
             npc->moveTo(position, isAllowEndTileNodeToMoveIn);
+
+            MopUpCommand mopUpCommand;
+            mopUpCommand.isExecuting = hasRetrieveMopUpCommand;
+            mopUpCommand.finalPosition = position;
+            npc->setMopUpCommand(mopUpCommand);
         }
     }
     else
@@ -321,6 +326,10 @@ void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position, bool isA
             {
                 auto npc = static_cast<Npc*>(gameObjectIter->second);
                 npc->setReadyToMoveStatus(true);
+
+                MopUpCommand mopUpCommand;
+                mopUpCommand.isExecuting = hasRetrieveMopUpCommand;
+                npc->setMopUpCommand(mopUpCommand);
             }
         }
     }
@@ -354,6 +363,13 @@ void GameObjectManager::npcMoveToTargetOneByOne()
 
             auto targetPosition = dataIter.second._npcMoveTargetList.front();
             readyMoveToTargetNpc->moveTo(targetPosition);
+            if (readyMoveToTargetNpc->isExecutingMopUpCommand())
+            {
+                MopUpCommand mopUpCommand;
+                mopUpCommand.isExecuting = true;
+                mopUpCommand.finalPosition = targetPosition;
+                readyMoveToTargetNpc->setMopUpCommand(mopUpCommand);
+            }
 
             dataIter.second._readyMoveToTargetNpcIDList.pop_front();
             dataIter.second._npcMoveTargetList.pop_front();
