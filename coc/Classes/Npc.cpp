@@ -12,6 +12,7 @@
 #include "math/CCGeometry.h"
 #include "MapManager.h"
 #include "CustomMoveBy.h"
+#include "SoundManager.h"
 
 const string SHADOW_TEXTURE_NAME = "Shadow.png";
 const string SHOW_WORLD_POSITION_CHILD_NAME = "ShowWorldPositionChildName";
@@ -1280,6 +1281,8 @@ void Npc::onAttack()
 
 void Npc::onDie()
 {
+    SoundManager::getInstance()->playNpcEffect(_templateName, NpcSoundEffectType::Death);
+
     _selectedTips->setVisible(false);
 
     _gotoTargetPositionPathList.clear();
@@ -1313,6 +1316,8 @@ void Npc::onAttackAnimationEnd()
             enemy->costHP(getAttackPower());
         }
     }
+
+    SoundManager::getInstance()->playNpcEffect(_templateName, NpcSoundEffectType::Attack);
 }
 
 void Npc::onPrepareToRemove()

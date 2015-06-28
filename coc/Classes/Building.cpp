@@ -7,6 +7,7 @@
 #include <functional>
 #include "GameObjectManager.h"
 #include "Npc.h"
+#include "SoundManager.h"
 
 const int MAX_BOTTOM_GRID_COUNT = 9;
 const int MIN_BOTTOM_GRID_COUNT = 1;
@@ -315,6 +316,11 @@ void Building::updateStatus(BuildingStatus buildingStatus)
             {
             case BuildingStatus::BeingBuilt:
             {
+                if (_forceType == ForceType::Player)
+                {
+                    SoundManager::getInstance()->playBuildingEffect(BuildingSoundEffectType::Construct);
+                }
+
                 if (_bottomGridInMapPositionList.empty())
                 {
                     initBottomGridInMapPositionList();
@@ -349,6 +355,8 @@ void Building::updateStatus(BuildingStatus buildingStatus)
                 break;
             case BuildingStatus::Destory:
             {
+                SoundManager::getInstance()->playBuildingEffect(BuildingSoundEffectType::Destroyed);
+
                 if (_defenceNpc)
                 {
                     removeDefenceNpc();

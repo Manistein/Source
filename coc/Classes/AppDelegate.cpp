@@ -55,6 +55,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     searchPaths.push_back("Resources/publish/building");
     searchPaths.push_back("Resources/publish/ui");
     searchPaths.push_back("Resources/publish/ui/CocosProject/res");
+    searchPaths.push_back("Resources/publish/sound/effect");
+    searchPaths.push_back("Resources/publish/sound/music");
     FileUtils::getInstance()->setSearchPaths(searchPaths);
 
     director->setDisplayStats(true);

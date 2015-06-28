@@ -13,6 +13,7 @@
 #include "SpecialEffectManager.h"
 #include "ForceManager.h"
 #include "GameUICallBackFunctionsManager.h"
+#include "SoundManager.h"
 
 static Vec2 s_mouseDownPoint;
 const float MOUSE_CLICK_AREA = 5.0f;
@@ -33,6 +34,7 @@ bool GameWorld::init()
     }
 
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("BuildingCommon.plist");
+    _soundManager = SoundManager::getInstance();
 
     _mapManager = new MapManager();
     _mapManager->init(this, "isoMap.tmx");
@@ -65,13 +67,10 @@ bool GameWorld::init()
     director->getEventDispatcher()->addCustomEventListener("ClearDebugDraw", CC_CALLBACK_0(GameWorld::onClearDebugDraw, this));
     director->getEventDispatcher()->addCustomEventListener("CreateNpcAroundPlayerBaseCamp", CC_CALLBACK_0(GameWorld::createNpcAroundBaseCamp, this, ForceType::Player, "BlueEnchanter", 16));
 
-    //_director->setAlphaBlending(true);
-
-    srand(::timeGetTime());
-
     initEditedGameObjects();
     initMapGIDTable();
 
+    _soundManager->playRandomBackgroundMusicOneByOne();
     scheduleUpdate();
 
     return true;

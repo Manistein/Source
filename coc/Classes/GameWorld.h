@@ -8,6 +8,7 @@ class BulletManager;
 class SpecialEffectManager;
 class ForceManager;
 class GameUICallbackFunctionsManager;
+class SoundManager;
 
 struct DebugInfo
 {
@@ -71,6 +72,7 @@ private:
     MapManager* _mapManager = nullptr;
     ForceManager* _forceManager = nullptr;
     GameUICallbackFunctionsManager* _gameUI = nullptr;
+    SoundManager* _soundManager = nullptr;
 
     Vec2 _cursorPoint;
     Vec2 _previousClickedCursorPoint;

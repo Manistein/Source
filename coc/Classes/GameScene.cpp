@@ -8,6 +8,7 @@
 #include "GameScene.h"
 #include "GameSetting.h"
 #include "GameObjectManager.h"
+#include "SoundManager.h"
 
 const int MOUSE_LEFT_BUTTON = 0;
 const int MOUSE_RIGHT_BUTTON = 1;
@@ -32,7 +33,10 @@ bool GameScene::init()
         return false;
     }
 
+    srand(::timeGetTime());
+
     TemplateManager::getInstance();
+    SoundManager::getInstance();
     _director = Director::getInstance();
 
     _gameWorld = GameWorld::create();
