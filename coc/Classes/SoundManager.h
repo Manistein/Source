@@ -4,6 +4,8 @@ struct NpcSoundEffectData
 {
     string attackName;
     string deathName;
+    string selectName;
+    string moveName;
 };
 
 struct BuildingSoundEffectData
@@ -15,7 +17,9 @@ struct BuildingSoundEffectData
 enum class NpcSoundEffectType
 {
     Attack,
-    Death
+    Death,
+    Select,
+    Move
 };
 
 enum class BuildingSoundEffectType

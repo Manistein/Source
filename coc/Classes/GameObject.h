@@ -45,7 +45,7 @@ public:
     int getUniqueID();
     void depthSort(const Size& tileSize);
 
-    void setSelected(bool isSelect);
+    virtual void setSelected(bool isSelect);
     bool isSelected();
     virtual bool isReadyToRemove() = 0;
 

@@ -63,6 +63,8 @@ bool SoundManager::initNpcSoundEffectData()
             auto npcSoundEffectData = new NpcSoundEffectData();
             npcSoundEffectData->attackName = tabFileReader.getString(i, "AttackEffectName");
             npcSoundEffectData->deathName = tabFileReader.getString(i, "DeathEffectName");
+            npcSoundEffectData->selectName = tabFileReader.getString(i, "Select");
+            npcSoundEffectData->moveName = tabFileReader.getString(i, "Move");
 
             auto templateName = tabFileReader.getString(i, "TemplateName");
             _npcSoundEffectDataMap[templateName] = npcSoundEffectData;
@@ -116,13 +118,22 @@ void SoundManager::playNpcEffect(const string& templateName, NpcSoundEffectType 
     {
         auto npcSoundEffectData = npcSoundEffectIter->second;
         string soundEffectName;
-        if (type == NpcSoundEffectType::Attack)
+
+        switch (type)
         {
+        case NpcSoundEffectType::Attack:
             soundEffectName = npcSoundEffectData->attackName;
-        }
-        else
-        {
+            break;
+        case NpcSoundEffectType::Death:
             soundEffectName = npcSoundEffectData->deathName;
+            break;
+        case NpcSoundEffectType::Select:
+            soundEffectName = npcSoundEffectData->selectName;
+            break;
+        case NpcSoundEffectType::Move:
+            soundEffectName = npcSoundEffectData->moveName;
+            break;
+        default:    break;
         }
 
         AudioEngine::play2d(soundEffectName, false, _volume);

@@ -1383,3 +1383,13 @@ bool Npc::isExecutingMopUpCommand()
 {
     return _mopUpCommand.isExecuting;
 }
+
+void Npc::setSelected(bool isSelect)
+{
+    GameObject::setSelected(isSelect);
+
+    if (_forceType == ForceType::Player && isSelect)
+    {
+        SoundManager::getInstance()->playNpcEffect(_templateName, NpcSoundEffectType::Select);
+    }
+}

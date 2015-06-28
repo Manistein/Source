@@ -7,6 +7,7 @@
 #include "Building.h"
 #include "GameWorldCallBackFunctionsManager.h"
 #include "Utils.h"
+#include "SoundManager.h"
 
 static GameObjectManager* s_gameObjectManager = nullptr;
 
@@ -310,6 +311,8 @@ void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position, bool has
             mopUpCommand.isExecuting = hasRetrieveMopUpCommand;
             mopUpCommand.finalPosition = position;
             npc->setMopUpCommand(mopUpCommand);
+
+            SoundManager::getInstance()->playNpcEffect(npc->getTemplateName(), NpcSoundEffectType::Move);
         }
     }
     else
@@ -330,6 +333,8 @@ void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position, bool has
                 MopUpCommand mopUpCommand;
                 mopUpCommand.isExecuting = hasRetrieveMopUpCommand;
                 npc->setMopUpCommand(mopUpCommand);
+
+                SoundManager::getInstance()->playNpcEffect(npc->getTemplateName(), NpcSoundEffectType::Move);
             }
         }
     }
