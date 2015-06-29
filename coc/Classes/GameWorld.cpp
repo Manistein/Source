@@ -610,6 +610,11 @@ void GameWorld::setShiftKeyStatus(bool isPressed)
     _isShiftKeyPressed = isPressed;
 }
 
+void GameWorld::setCtrlKeyStatus(bool isPressed)
+{
+    _isCtrlKeyPressed = isPressed;
+}
+
 void GameWorld::setHasUndispatchMopUpCommand(bool hasUndispatchMopUpCommand)
 {
     _hasUndispatchMopUpCommand = hasUndispatchMopUpCommand;
@@ -674,4 +679,31 @@ bool GameWorld::isTeamContinuousCalledInAFlash(int teamID)
     }
 
     return result;
+}
+
+void GameWorld::onPlayerManipulateTeamBy(int teamID)
+{
+    if (_isCtrlKeyPressed)
+    {
+        _gameObjectManager->formSelectedPlayerNpcIntoTeamBy(teamID);
+        _gameObjectManager->selectPlayerTeamMemberBy(teamID);
+    }
+    else
+    {
+        _gameObjectManager->selectPlayerTeamMemberBy(teamID);
+    }
+
+    if (isTeamContinuousCalledInAFlash(teamID))
+    {
+        _gameObjectManager->teamMemberJumpIntoScreenBy(teamID);
+    }
+}
+
+void GameWorld::onJumpToPlayerBaseCamp()
+{
+    auto baseCamp = _gameObjectManager->getGameObjectBy(_playerBaseCampUniqueID);
+    if (baseCamp)
+    {
+        _gameObjectManager->gameObjectJumpIntoScreen(baseCamp);
+    }
 }

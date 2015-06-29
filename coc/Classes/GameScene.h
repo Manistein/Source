@@ -27,6 +27,4 @@ private:
 
     Vec2 _cursorPoint;
     RECT _clientRect;
-
-    bool _isCtrlKeyPressed = false;
 };

@@ -47,10 +47,13 @@ public:
     int getPlayerBaseCampUniqueID();
 
     void setShiftKeyStatus(bool isPressed);
+    void setCtrlKeyStatus(bool isPressed);
     void setHasUndispatchMopUpCommand(bool hasUndispatchMopUpCommand);
 
     bool isMouseClick();
-    bool isTeamContinuousCalledInAFlash(int teamID);
+
+    void onPlayerManipulateTeamBy(int teamID);
+    void onJumpToPlayerBaseCamp();
 private:
     bool init() override;
     void initEditedGameObjects();
@@ -64,6 +67,7 @@ private:
     vector<Vec2> computeNpcCreatePointList(ForceType forceType, int readyToCreateNpcCount);
 
     bool isLeftButtonMultyClick();
+    bool isTeamContinuousCalledInAFlash(int teamID);
 
     GameObjectManager* _gameObjectManager = nullptr;
     GameObjectSelectBox* _gameObjectSelectBox = nullptr;
@@ -79,6 +83,7 @@ private:
 
     bool _isLeftMouseButtonDown = false;
     bool _isShiftKeyPressed = false;
+    bool _isCtrlKeyPressed = false;
     bool _hasUndispatchMopUpCommand = false;
 
     int _holdingBuildingID = GAME_OBJECT_UNIQUE_ID_INVALID;

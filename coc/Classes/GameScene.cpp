@@ -7,13 +7,25 @@
 #include "GameWorld.h"
 #include "GameScene.h"
 #include "GameSetting.h"
-#include "GameObjectManager.h"
 #include "SoundManager.h"
 
 const int MOUSE_LEFT_BUTTON = 0;
 const int MOUSE_RIGHT_BUTTON = 1;
 
 GameSetting g_setting;
+
+const static unordered_map<EventKeyboard::KeyCode, int> s_keyCodeToNumberMap = {
+        { EventKeyboard::KeyCode::KEY_0, 0 },
+        { EventKeyboard::KeyCode::KEY_1, 1 },
+        { EventKeyboard::KeyCode::KEY_2, 2 },
+        { EventKeyboard::KeyCode::KEY_3, 3 },
+        { EventKeyboard::KeyCode::KEY_4, 4 },
+        { EventKeyboard::KeyCode::KEY_5, 5 },
+        { EventKeyboard::KeyCode::KEY_6, 6 },
+        { EventKeyboard::KeyCode::KEY_7, 7 },
+        { EventKeyboard::KeyCode::KEY_8, 8 },
+        { EventKeyboard::KeyCode::KEY_9, 9 },
+};
 
 Scene* GameScene::createScene()
 {
@@ -74,7 +86,7 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 {
     if (keyCode == EventKeyboard::KeyCode::KEY_CTRL)
     {
-        _isCtrlKeyPressed = true;
+        _gameWorld->setCtrlKeyStatus(true);
     }
     else if (keyCode == EventKeyboard::KeyCode::KEY_SHIFT)
     {
@@ -119,42 +131,15 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
     case EventKeyboard::KeyCode::KEY_8:
     case EventKeyboard::KeyCode::KEY_9:
     {
-        const static unordered_map<EventKeyboard::KeyCode, int> keyCodeToNumberMap = {
-                { EventKeyboard::KeyCode::KEY_0, 0 },
-                { EventKeyboard::KeyCode::KEY_1, 1 },
-                { EventKeyboard::KeyCode::KEY_2, 2 },
-                { EventKeyboard::KeyCode::KEY_3, 3 },
-                { EventKeyboard::KeyCode::KEY_4, 4 },
-                { EventKeyboard::KeyCode::KEY_5, 5 },
-                { EventKeyboard::KeyCode::KEY_6, 6 },
-                { EventKeyboard::KeyCode::KEY_7, 7 },
-                { EventKeyboard::KeyCode::KEY_8, 8 },
-                { EventKeyboard::KeyCode::KEY_9, 9 },
-        };
-
-        auto iter = keyCodeToNumberMap.find(keyCode);
+        auto iter = s_keyCodeToNumberMap.find(keyCode);
         int teamID = iter->second;
 
-        auto gameObjectManager = GameObjectManager::getInstance();
-        if (_isCtrlKeyPressed)
-        {
-            gameObjectManager->formSelectedPlayerNpcIntoTeamBy(teamID);
-            gameObjectManager->selectPlayerTeamMemberBy(teamID);
-        }
-        else
-        {
-            gameObjectManager->selectPlayerTeamMemberBy(teamID);
-        }
-
-        if (_gameWorld->isTeamContinuousCalledInAFlash(teamID))
-        {
-            gameObjectManager->teamMemberJumpIntoScreenBy(teamID);
-        }
+        _gameWorld->onPlayerManipulateTeamBy(teamID);
     }
         break;
     case EventKeyboard::KeyCode::KEY_CTRL:
     {
-        _isCtrlKeyPressed = false;
+        _gameWorld->setCtrlKeyStatus(false);
     }
         break;
     case EventKeyboard::KeyCode::KEY_SHIFT:
@@ -164,13 +149,7 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
         break;
     case EventKeyboard::KeyCode::KEY_SPACE:
     {
-        auto gameObjectManager = GameObjectManager::getInstance();
-        int playerBaseCampID = _gameWorld->getPlayerBaseCampUniqueID();
-        auto baseCamp = gameObjectManager->getGameObjectBy(playerBaseCampID);
-        if (baseCamp)
-        {
-            gameObjectManager->gameObjectJumpIntoScreen(baseCamp);
-        }
+        _gameWorld->onJumpToPlayerBaseCamp();
     }
         break;
     default:    break;
