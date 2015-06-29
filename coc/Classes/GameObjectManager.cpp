@@ -260,6 +260,7 @@ void GameObjectManager::cancelAllGameObjectSelected()
     }
 
     _belongPlayerSelectedNpcIDList.clear();
+    _selectedTeamIDSet.clear();
 }
 
 void GameObjectManager::cancelEnemySelected()
@@ -433,29 +434,40 @@ void GameObjectManager::formSelectedPlayerNpcIntoTeamBy(int teamID)
     _playerTeamMemberIDsMap[teamID] = _belongPlayerSelectedNpcIDList;
 }
 
-void GameObjectManager::selectPlayerTeamMemberBy(int teamID)
+void GameObjectManager::selectPlayerTeamMemberBy(int teamID, bool enableSelectMulityTeam /*= false*/)
 {
-    cancelAllGameObjectSelected();
-
-    auto& teamIter = _playerTeamMemberIDsMap.find(teamID);
-    if (teamIter != _playerTeamMemberIDsMap.end())
+    if (!enableSelectMulityTeam)
     {
-        auto& teamMemberIDList = teamIter->second;
-        for (auto& teamMemberID : teamMemberIDList)
+        cancelAllGameObjectSelected();
+    }
+    _selectedTeamIDSet.insert(teamID);
+
+    list<int> teamMemberIDLists;
+    for (auto& selectTeamID : _selectedTeamIDSet)
+    {
+        auto& teamIter = _playerTeamMemberIDsMap.find(selectTeamID);
+        if (teamIter != _playerTeamMemberIDsMap.end())
         {
-            auto gameObjectIter = _gameObjectMap.find(teamMemberID);
-            if (gameObjectIter == _gameObjectMap.end() || gameObjectIter->second->isReadyToRemove())
+            auto teamMemberIDList = teamIter->second;
+            for (auto& teamMemberID : teamMemberIDList)
             {
-                continue;
+                auto gameObjectIter = _gameObjectMap.find(teamMemberID);
+                if (gameObjectIter == _gameObjectMap.end() || gameObjectIter->second->isReadyToRemove())
+                {
+                    continue;
+                }
+
+                auto gameObject = gameObjectIter->second;
+                gameObject->setTeamID(selectTeamID);
+                gameObject->setSelected(true);
             }
 
-            auto gameObject = gameObjectIter->second;
-            gameObject->setTeamID(teamID);
-            gameObject->setSelected(true);
+            teamMemberIDList.sort();
+            teamMemberIDLists.merge(teamMemberIDList);
         }
-
-        _belongPlayerSelectedNpcIDList = teamMemberIDList;
     }
+
+    _belongPlayerSelectedNpcIDList = teamMemberIDLists;
 }
 
 Rect GameObjectManager::computeGameObjectRect(GameObject* gameObject)

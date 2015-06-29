@@ -690,7 +690,7 @@ void GameWorld::onPlayerManipulateTeamBy(int teamID)
     }
     else
     {
-        _gameObjectManager->selectPlayerTeamMemberBy(teamID);
+        _gameObjectManager->selectPlayerTeamMemberBy(teamID, _isShiftKeyPressed);
     }
 
     if (isTeamContinuousCalledInAFlash(teamID))

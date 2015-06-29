@@ -49,7 +49,7 @@ public:
     void clearGameObjectDebugDraw();
 
     void formSelectedPlayerNpcIntoTeamBy(int teamID);
-    void selectPlayerTeamMemberBy(int teamID);
+    void selectPlayerTeamMemberBy(int teamID, bool enableSelectMulityTeam = false);
 
     void gameObjectJumpIntoScreen(GameObject* gameObject);
     void teamMemberJumpIntoScreenBy(int teamID);
@@ -67,6 +67,7 @@ private:
     GameWorld* _gameWorld = nullptr;
 
     vector<int> _readyToRemoveGameObjectIDList;
+    set<int> _selectedTeamIDSet;
 
     list<int> _belongPlayerSelectedNpcIDList;
     unordered_map<int, list<int>> _playerTeamMemberIDsMap;
