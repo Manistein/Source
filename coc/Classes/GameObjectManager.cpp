@@ -431,7 +431,26 @@ void GameObjectManager::formSelectedPlayerNpcIntoTeamBy(int teamID)
         }
     }
 
-    _playerTeamMemberIDsMap[teamID] = _belongPlayerSelectedNpcIDList;
+    auto& teamMemberIDList = _playerTeamMemberIDsMap[teamID];
+    for (auto teamMemberID : teamMemberIDList)
+    {
+        auto gameObjectIter = _gameObjectMap.find(teamMemberID);
+        if (gameObjectIter != _gameObjectMap.end())
+        {
+            auto gameObject = gameObjectIter->second;
+            if (gameObject->isReadyToRemove())
+            {
+                continue;
+            }
+
+            if (!gameObject->isSelected())
+            {
+                gameObject->setTeamID(TEAM_INVALID_ID);
+            }
+        }
+    }
+
+    teamMemberIDList = _belongPlayerSelectedNpcIDList;
 }
 
 void GameObjectManager::selectPlayerTeamMemberBy(int teamID, bool enableSelectMulityTeam /*= false*/)
