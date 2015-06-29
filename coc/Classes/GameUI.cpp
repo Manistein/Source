@@ -10,6 +10,7 @@
 #include "GameObjectManager.h"
 #include "GameConfigManager.h"
 #include "GameUICallBackFunctionsManager.h"
+#include "SoundManager.h"
 
 bool GameUI::init()
 {
@@ -55,6 +56,7 @@ void GameUI::initReinforcePresent()
         ProgressTo::create(PLAYER_REINFORCE_TIME_INTERVAL, 100.0f),
         CallFunc::create(CC_CALLBACK_0(ForceManager::onPlayerReinforcePointIncrease, _forceManager)),
         CallFunc::create(CC_CALLBACK_0(ProgressTimer::setPercentage, reinforceProgressBar, 0.0f)),
+        CallFunc::create(CC_CALLBACK_0(SoundManager::playUIEffect, SoundManager::getInstance(), UIEffectType::ReinforcePointIncrease)),
         CallFunc::create(CC_CALLBACK_0(GameUI::onUpdateReinforcePresent, this)),
         CallFunc::create(CC_CALLBACK_0(GameUI::onReinforceButtonSparkMove, this)),
         nullptr);
@@ -145,6 +147,8 @@ void GameUI::onSelectReinforcementButtonTouched(Ref* sender, Widget::TouchEventT
         return;
     }
 
+    SoundManager::getInstance()->playUIEffect(UIEffectType::ButtonClick);
+
     if (touchType == Widget::TouchEventType::ENDED)
     {
         auto iter = _onSelectReinforcementButtonTouchEventMap.find(sender);
@@ -167,6 +171,8 @@ void GameUI::onCreateReinforcement(const string& reinforcementTempalteName, Game
 
         _forceManager->onPlayerReinforcePointReduce();
         onUpdateReinforcePresent();
+
+        SoundManager::getInstance()->playUIEffect(UIEffectType::TrainFinished);
     }
 }
 

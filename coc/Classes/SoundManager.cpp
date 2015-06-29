@@ -34,6 +34,7 @@ bool SoundManager::init()
     initBackgroundMusicData();
     initNpcSoundEffectData();
     initBuildingSoundEffectData();
+    initUISoundEffectData();
 
     return true;
 }
@@ -150,4 +151,42 @@ void SoundManager::playBuildingEffect(BuildingSoundEffectType type)
     {
         AudioEngine::play2d(_buildingSoundEffectData.destroyedName, false, _volume);
     }
+}
+
+void SoundManager::playUIEffect(UIEffectType type)
+{
+    string effectName;
+    switch (type)
+    {
+    case UIEffectType::ReinforcePointIncrease:
+        effectName = _uiSoundEffectNameMap["ReinforcePointIncrease"];
+        break;
+    case UIEffectType::TrainFinished:
+        effectName = _uiSoundEffectNameMap["TrainFinished"];
+        break;
+    case UIEffectType::ButtonClick:
+        effectName = _uiSoundEffectNameMap["ButtonClick"];
+        break;
+    default:
+        break;
+    }
+
+    AudioEngine::play2d(effectName, false, _volume);
+}
+
+bool SoundManager::initUISoundEffectData()
+{
+    TabFileReader tabFileReader;
+    if (tabFileReader.open("UISoundEffect.tab"))
+    {
+        for (int i = 0; i < tabFileReader.getRowCount(); i ++)
+        {
+            auto effectName = tabFileReader.getString(i, "EffectName");
+            auto typeName = tabFileReader.getString(i, "TypeName");
+
+            _uiSoundEffectNameMap[typeName] = effectName;
+        }
+    }
+
+    return true;
 }
