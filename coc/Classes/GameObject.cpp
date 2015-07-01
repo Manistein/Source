@@ -174,6 +174,8 @@ void GameObject::update(float delta)
 
     updateHP();
 
+    _forbidEnemyApproachTime -= delta;
+
     _showHPBarTotalTimeAfterBeingAttacked += delta;
     if (!isSelected() &&
         _showHPBarTotalTimeAfterBeingAttacked >= MAX_SHOW_HP_BAR_TIME_LIMIT_AFTER_BEING_ATTACKED)
@@ -250,4 +252,14 @@ void GameObject::setTeamID(int teamID)
 const string& GameObject::getTemplateName()
 {
     return _templateName;
+}
+
+bool GameObject::canEnemyApproach()
+{
+    return _forbidEnemyApproachTime <= 0.0f;
+}
+
+void GameObject::launchForbidEnemyApproachTimer()
+{
+    _forbidEnemyApproachTime = FORBID_ENEMY_APPROACH_TIME_INTERVAL;
 }

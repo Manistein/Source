@@ -94,6 +94,7 @@ private:
     void updateStatusWhenEnemyInAlertRange(GameObject* enemy);
     void updateStatusWhenEnemyLeaveAlertRange();
     void reinforceOwnSide(GameObject* gameObject);
+    void tryChase(GameObject* enemy);
 
     Vec2 computeArrivePositionBy(GameObject* enemy);
     float getDistanceFrom(GameObject* enemy);

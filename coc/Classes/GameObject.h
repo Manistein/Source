@@ -37,6 +37,7 @@ const int ENEMY_UNIQUE_ID_INVALID = 0;
 const int GAME_OBJECT_UNIQUE_ID_INVALID = 0; 
 const string HP_BAR_BACKGROUND_TEXTURE_NAME = "HPBarBackground.png";
 const int TEAM_INVALID_ID = -1;
+const float FORBID_ENEMY_APPROACH_TIME_INTERVAL = 15.0f;
 
 class GameObject : public Sprite
 {
@@ -74,6 +75,9 @@ public:
     void setTeamID(int teamID);
 
     const string& getTemplateName();
+
+    bool canEnemyApproach();
+    void launchForbidEnemyApproachTimer();
 protected:
     GameObject();
     bool init() override;
@@ -112,6 +116,8 @@ protected:
     float _collisionRadius = 0.0f;
 
     string _templateName;
+
+    float _forbidEnemyApproachTime = 0.0f;
 };
 
 class GameObjectFactory

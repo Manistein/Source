@@ -608,6 +608,7 @@ void Npc::searchNearbyEnemy()
 
         if (_forceType == gameObjectIter.second->getForceType() ||
             gameObjectIter.second->isReadyToRemove() ||
+            !gameObjectIter.second->canEnemyApproach() ||
             (buildingObject && buildingObject->getBuildingStatus() == BuildingStatus::PrepareToBuild))
         {
             continue;
@@ -693,58 +694,19 @@ void Npc::updateStatusWhenEnemyInAlertRange(GameObject* enemy)
     {
     case NpcStatus::Move:
     {
-        auto npcPosition = getPosition();
         auto enemyPosition = computeArrivePositionBy(enemy);
 
         if (_gotoTargetPositionPathList.empty() ||
             !_gotoTargetPositionPathList.empty() && _gotoTargetPositionPathList.back() != enemyPosition)
         {
-            _gotoTargetPositionPathList.clear();
-
-            if (enemy->getGameObjectType() == GameObjectType::Npc)
-            {
-                _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, false);
-            }
-            else
-            {
-                _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, true);
-            }
-
-            if (_gotoTargetPositionPathList.empty())
-            {
-                tryUpdateStatus(NpcStatus::Stand);
-            }
-            else
-            {
-                tryUpdateStatus(NpcStatus::Move);
-            }
+            tryChase(enemy);
         }
     }
         break;
     case NpcStatus::Stand:
     case NpcStatus::Attack:
     {
-        auto npcPosition = getPosition();
-        auto enemyPosition = computeArrivePositionBy(enemy);
-
-        _gotoTargetPositionPathList.clear();
-        if (enemy->getGameObjectType() == GameObjectType::Npc)
-        {
-            _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, false);
-        }
-        else
-        {
-            _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, true);
-        }
-
-        if (_gotoTargetPositionPathList.empty())
-        {
-            tryUpdateStatus(NpcStatus::Stand);
-        }
-        else
-        {
-            tryUpdateStatus(NpcStatus::Move);
-        }
+        tryChase(enemy);
     }
         break;
     case NpcStatus::Die:
@@ -792,6 +754,44 @@ void Npc::reinforceOwnSide(GameObject* gameObject)
     }
 
     moveTo(arrivePosition, true);
+}
+
+void Npc::tryChase(GameObject* enemy)
+{
+    if (!enemy->canEnemyApproach())
+    {
+        tryUpdateStatus(NpcStatus::Stand);
+
+        setEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
+        enemy->launchForbidEnemyApproachTimer();
+
+        return;
+    }
+
+    auto npcPosition = getPosition();
+    auto enemyPosition = computeArrivePositionBy(enemy);
+
+    _gotoTargetPositionPathList.clear();
+    if (enemy->getGameObjectType() == GameObjectType::Npc)
+    {
+        _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, false);
+    }
+    else
+    {
+        _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, true);
+    }
+
+    if (_gotoTargetPositionPathList.empty())
+    {
+        tryUpdateStatus(NpcStatus::Stand);
+
+        setEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
+        enemy->launchForbidEnemyApproachTimer();
+    }
+    else
+    {
+        tryUpdateStatus(NpcStatus::Move);
+    }
 }
 
 bool Npc::isReadyToRemove()
