@@ -141,16 +141,16 @@ void GameUI::initSelectReinforcementButton(Button* button, const string& reinfor
 
 void GameUI::onSelectReinforcementButtonTouched(Ref* sender, Widget::TouchEventType touchType)
 {
-    auto forceData = _forceManager->getForceDataBy(ForceType::Player);
-    if (forceData.reinforcePoint <= 0)
-    {
-        return;
-    }
-
-    SoundManager::getInstance()->playUIEffect(UIEffectType::ButtonClick);
-
     if (touchType == Widget::TouchEventType::ENDED)
     {
+        auto forceData = _forceManager->getForceDataBy(ForceType::Player);
+        if (forceData.reinforcePoint <= 0)
+        {
+            return;
+        }
+
+        SoundManager::getInstance()->playUIEffect(UIEffectType::ButtonClick);
+
         auto iter = _onSelectReinforcementButtonTouchEventMap.find(sender);
         if (iter != _onSelectReinforcementButtonTouchEventMap.end())
         {
