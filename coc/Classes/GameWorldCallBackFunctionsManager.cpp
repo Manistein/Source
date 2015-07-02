@@ -30,4 +30,6 @@ void GameWorldCallBackFunctionsManager::registerCallBackFunctions(GameWorld* gam
 
     _getAIBaseCampUniqueID = CC_CALLBACK_0(GameWorld::getEnemyBaseCampUniqueID, gameWorld);
     _getPlayerBaseCampUniqueID = CC_CALLBACK_0(GameWorld::getPlayerBaseCampUniqueID, gameWorld);
+
+    _isPlayerHoldingBuilding = CC_CALLBACK_0(GameWorld::isPlayerHoldingBuilding, gameWorld);
 }

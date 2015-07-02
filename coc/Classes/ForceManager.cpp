@@ -52,7 +52,11 @@ void ForceManager::onEnemyLaunchAttack()
         if (gameObject->getGameObjectType() == GameObjectType::Building &&
             gameObject->getForceType() == ForceType::Player)
         {
-            _playerBuildingList.push_back(gameObject);
+            auto building = static_cast<Building*>(gameObject);
+            if (building->getBuildingStatus() != BuildingStatus::PrepareToBuild)
+            {
+                _playerBuildingList.push_back(gameObject);
+            }  
         }
         else if (gameObject->getGameObjectType() == GameObjectType::Npc &&
             gameObject->getForceType() == ForceType::AI)
@@ -166,6 +170,7 @@ cocos2d::Vec2 ForceManager::computeEnemyMoveToPosition()
 
     int buildingListIndex = rand() % (int)_playerBuildingList.size();
     auto attackTarget = static_cast<Building*>(_playerBuildingList.at(buildingListIndex));
+
     moveToPosition = attackTarget->getBottomGridInMapPositionList().at(0);
     _playerBuildingList.erase(_playerBuildingList.begin() + buildingListIndex);
 

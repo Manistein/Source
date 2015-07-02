@@ -163,7 +163,10 @@ void GameUI::onCreateReinforcement(const string& reinforcementTempalteName, Game
 {
     if (gameObjectType == GameObjectType::Building)
     {
-        _gameWorld->_createGameObject(gameObjectType, ForceType::Player, reinforcementTempalteName, _cursorPoint);
+        if (!_gameWorld->_isPlayerHoldingBuilding())
+        {
+            _gameWorld->_createGameObject(gameObjectType, ForceType::Player, reinforcementTempalteName, _cursorPoint);
+        }
     }
     else
     {

@@ -54,6 +54,8 @@ public:
 
     void onPlayerManipulateTeamBy(int teamID);
     void onJumpToPlayerBaseCamp();
+
+    bool isPlayerHoldingBuilding();
 private:
     bool init() override;
     void initEditedGameObjects();

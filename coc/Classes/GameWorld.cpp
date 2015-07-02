@@ -161,8 +161,9 @@ void GameWorld::initEditedGameObjects()
                 }
             }
         }
-
     }
+
+    _holdingBuildingID = GAME_OBJECT_UNIQUE_ID_INVALID;
 }
 
 void GameWorld::initMapGIDTable()
@@ -706,4 +707,9 @@ void GameWorld::onJumpToPlayerBaseCamp()
     {
         _gameObjectManager->gameObjectJumpIntoScreen(baseCamp);
     }
+}
+
+bool GameWorld::isPlayerHoldingBuilding()
+{
+    return _holdingBuildingID != GAME_OBJECT_UNIQUE_ID_INVALID;
 }

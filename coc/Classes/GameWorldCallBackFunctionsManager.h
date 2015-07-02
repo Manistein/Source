@@ -21,6 +21,7 @@ public:
     std::function<GameObject*(GameObjectType, ForceType, const string&, const Vec2&)> _createGameObject;
     std::function<int()> _getPlayerBaseCampUniqueID;
     std::function<int()> _getAIBaseCampUniqueID;
+    std::function<bool()> _isPlayerHoldingBuilding;
 private:
     GameWorldCallBackFunctionsManager(){};
     GameWorldCallBackFunctionsManager(const GameWorldCallBackFunctionsManager&);
