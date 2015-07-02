@@ -303,3 +303,8 @@ bool TemplateManager::initSpecialEffectTemplates()
 
     return result;
 }
+
+const NpcTemplatesMap& TemplateManager::getNpcTemplatesMap()
+{
+    return _npcTemplatesMap;
+}

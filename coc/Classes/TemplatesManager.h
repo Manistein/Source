@@ -84,6 +84,8 @@ struct SpecialEffectTemplate
     float perUnitIntervalBySecond = 0.0f;
 };
 
+typedef map<string, NpcTemplate*> NpcTemplatesMap;
+
 class TemplateManager
 {
 public:
@@ -94,6 +96,8 @@ public:
     const BulletTemplate* getBulletTemplateBy(BulletType bulletType);
     const BuildingTemplate* getBuildingTemplateBy(const string& buildingTemplateName);
     const SpecialEffectTemplate* getSpecialEffectTemplateBy(const string& templateName);
+
+    const NpcTemplatesMap& getNpcTemplatesMap();
 private:
     bool init();
     bool initNpcTemplates();
@@ -101,7 +105,7 @@ private:
     bool initBuildingTemplates();
     bool initSpecialEffectTemplates();
 
-    map<string, NpcTemplate*> _npcTemplatesMap;
+    NpcTemplatesMap _npcTemplatesMap;
     map<BulletType, BulletTemplate*> _bulletTemplatesMap;
     map<string, BuildingTemplate*> _buildingTemplatesMap;
     map<string, SpecialEffectTemplate*> _specialEffectTemplatesMap;
