@@ -42,10 +42,10 @@ public:
 
     int getGameObjectSelectedByPlayerCount();
 
-    void npcSelectedByPlayerMoveTo(const Vec2& position, bool hasRetrieveMopUpCommand, bool isAllowEndTileNodeToMoveIn = false);
+    void npcSelectedByPlayerMoveTo(const Vec2& position, bool& shouldExcuteMopUpCommand, bool isAllowEndTileNodeToMoveIn = false);
     void npcMoveToTargetOneByOne();
 
-    void setSelectedGameObjectEnemyUniqueID(int uniqueID);
+    void setSelectedEnemyUniqueID(int uniqueID);
     void clearGameObjectDebugDraw();
 
     void formSelectedPlayerNpcIntoTeamBy(int teamID);

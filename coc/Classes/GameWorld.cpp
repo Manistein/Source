@@ -14,6 +14,7 @@
 #include "ForceManager.h"
 #include "GameUICallBackFunctionsManager.h"
 #include "SoundManager.h"
+#include "WindowsHelper.h"
 
 static Vec2 s_mouseDownPoint;
 const float MOUSE_CLICK_AREA = 5.0f;
@@ -188,6 +189,8 @@ void GameWorld::update(float deltaTime)
     _gameObjectManager->removeAllReadyToRemoveGameObjects();
 
     _forceManager->update(deltaTime);
+
+    updateCursor();
 }
 
 void GameWorld::onMouseScroll(Event* event)
@@ -266,7 +269,7 @@ void GameWorld::onMouseRightButtonDown()
     bool hasSelectEnemyBuildingToAttack = false;
     if (enemy)
     {
-        _gameObjectManager->setSelectedGameObjectEnemyUniqueID(enemy->getUniqueID());
+        _gameObjectManager->setSelectedEnemyUniqueID(enemy->getUniqueID());
         if (enemy->getGameObjectType() == GameObjectType::Building)
         {
             hasSelectEnemyBuildingToAttack = true;
@@ -274,7 +277,7 @@ void GameWorld::onMouseRightButtonDown()
     }
     else
     {
-        _gameObjectManager->setSelectedGameObjectEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
+        _gameObjectManager->setSelectedEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
         _gameObjectManager->cancelEnemySelected();
     }
 
@@ -289,9 +292,7 @@ void GameWorld::onMouseRightButtonDown()
     _previousClickedCursorPoint = _cursorPoint;
 
     bool isAllowEndTileNodeToMoveIn = hasSelectEnemyBuildingToAttack;
-    _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition, _hasUndispatchMopUpCommand, isAllowEndTileNodeToMoveIn);
-
-    _hasUndispatchMopUpCommand = false;
+    _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition, _hasSendMopUpCommandForPlayerForce, isAllowEndTileNodeToMoveIn);
 }
 
 void GameWorld::onClearDebugDraw()
@@ -616,9 +617,9 @@ void GameWorld::setCtrlKeyStatus(bool isPressed)
     _isCtrlKeyPressed = isPressed;
 }
 
-void GameWorld::setHasUndispatchMopUpCommand(bool hasUndispatchMopUpCommand)
+void GameWorld::sendMopUpCommandForPlayerForce()
 {
-    _hasUndispatchMopUpCommand = hasUndispatchMopUpCommand;
+    _hasSendMopUpCommandForPlayerForce = true;
 }
 
 bool GameWorld::isMouseClick()
@@ -712,4 +713,25 @@ void GameWorld::onJumpToPlayerBaseCamp()
 bool GameWorld::isPlayerHoldingBuilding()
 {
     return _holdingBuildingID != GAME_OBJECT_UNIQUE_ID_INVALID;
+}
+
+void GameWorld::updateCursor()
+{
+    auto windowsHelper = WindowsHelper::getInstance();
+    if (_hasSendMopUpCommandForPlayerForce)
+    {
+        windowsHelper->switchToAttackCursor();
+    }
+    else
+    {
+        auto gameObject = _gameObjectManager->getGameObjectContain(_cursorPoint);
+        if (gameObject && gameObject->getForceType() == ForceType::AI)
+        {
+            windowsHelper->switchToAttackCursor();
+        }
+        else
+        {
+            windowsHelper->switchToNormalCursor();
+        }
+    }
 }

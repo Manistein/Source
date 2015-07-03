@@ -291,7 +291,7 @@ int GameObjectManager::getGameObjectSelectedByPlayerCount()
     return count;
 }
 
-void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position, bool hasRetrieveMopUpCommand, bool isAllowEndTileNodeToMoveIn)
+void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position, bool& shouldExcuteMopUpCommand, bool isAllowEndTileNodeToMoveIn)
 {
     if ((int)_belongPlayerSelectedNpcIDList.size() == 1)
     {
@@ -309,7 +309,7 @@ void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position, bool has
             npc->moveTo(position, isAllowEndTileNodeToMoveIn);
 
             MopUpCommand mopUpCommand;
-            mopUpCommand.isExecuting = hasRetrieveMopUpCommand;
+            mopUpCommand.isExecuting = shouldExcuteMopUpCommand;
             mopUpCommand.finalPosition = position;
             npc->setMopUpCommand(mopUpCommand);
 
@@ -332,13 +332,15 @@ void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position, bool has
                 npc->setReadyToMoveStatus(true);
 
                 MopUpCommand mopUpCommand;
-                mopUpCommand.isExecuting = hasRetrieveMopUpCommand;
+                mopUpCommand.isExecuting = shouldExcuteMopUpCommand;
                 npc->setMopUpCommand(mopUpCommand);
 
                 SoundManager::getInstance()->playNpcEffect(npc->getTemplateName(), NpcSoundEffectType::Move);
             }
         }
     }
+
+    shouldExcuteMopUpCommand = false;
 }
 
 void GameObjectManager::npcMoveToTargetOneByOne()
@@ -383,7 +385,7 @@ void GameObjectManager::npcMoveToTargetOneByOne()
     }
 }
 
-void GameObjectManager::setSelectedGameObjectEnemyUniqueID(int uniqueID)
+void GameObjectManager::setSelectedEnemyUniqueID(int uniqueID)
 {
     for (auto& gameObject : _gameObjectMap)
     {

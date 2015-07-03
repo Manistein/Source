@@ -129,7 +129,7 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
     }
     else if (keyCode == EventKeyboard::KeyCode::KEY_A)
     {
-        _gameWorld->setHasUndispatchMopUpCommand(true);
+        _gameWorld->sendMopUpCommandForPlayerForce();
     }
 }
 

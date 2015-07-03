@@ -48,7 +48,7 @@ public:
 
     void setShiftKeyStatus(bool isPressed);
     void setCtrlKeyStatus(bool isPressed);
-    void setHasUndispatchMopUpCommand(bool hasUndispatchMopUpCommand);
+    void sendMopUpCommandForPlayerForce();
 
     bool isMouseClick();
 
@@ -71,6 +71,8 @@ private:
     bool isLeftButtonMultyClick();
     bool isTeamContinuousCalledInAFlash(int teamID);
 
+    void updateCursor();
+
     GameObjectManager* _gameObjectManager = nullptr;
     GameObjectSelectBox* _gameObjectSelectBox = nullptr;
     BulletManager* _bulletManager = nullptr;
@@ -86,7 +88,7 @@ private:
     bool _isLeftMouseButtonDown = false;
     bool _isShiftKeyPressed = false;
     bool _isCtrlKeyPressed = false;
-    bool _hasUndispatchMopUpCommand = false;
+    bool _hasSendMopUpCommandForPlayerForce = false;
 
     int _holdingBuildingID = GAME_OBJECT_UNIQUE_ID_INVALID;
 
