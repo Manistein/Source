@@ -8,6 +8,7 @@
 #include "GameScene.h"
 #include "GameSetting.h"
 #include "SoundManager.h"
+#include "WindowsHelper.h"
 
 const int MOUSE_LEFT_BUTTON = 0;
 const int MOUSE_RIGHT_BUTTON = 1;
@@ -50,6 +51,7 @@ bool GameScene::init()
     initNpcResources();
 
     SoundManager::getInstance();
+    WindowsHelper::getInstance()->switchToNormalCursor();
     _director = Director::getInstance();
 
     _gameWorld = GameWorld::create();
@@ -137,7 +139,7 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
     {
     case EventKeyboard::KeyCode::KEY_ESCAPE:
     {
-        Director::getInstance()->end();
+        onExitGame();
     }
         break;
     case EventKeyboard::KeyCode::KEY_F5:
@@ -237,4 +239,10 @@ void GameScene::onMouseUp(Event* event)
     {
         _director->getEventDispatcher()->dispatchCustomEvent("GameWorldMouseRightButtonUpEvent");
     }
+}
+
+void GameScene::onExitGame()
+{
+    WindowsHelper::getInstance()->uninitInstane();
+    Director::getInstance()->end();
 }

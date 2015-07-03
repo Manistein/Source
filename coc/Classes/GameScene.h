@@ -21,6 +21,8 @@ private:
     void onMouseDown(Event* event);
     void onMouseUp(Event* event);
 
+    void onExitGame();
+
     GameWorld* _gameWorld = nullptr;
     GameUI* _gameUI = nullptr;
 

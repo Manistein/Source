@@ -17,5 +17,6 @@ using namespace cocos2d;
 using namespace ui;
 
 #include <winuser.h>
+#include <windef.h>
 
 const int MAX_GAME_OBJECT_COUNT = 1000;
