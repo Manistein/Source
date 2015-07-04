@@ -273,11 +273,14 @@ void GameWorld::onMouseRightButtonDown()
 
     _previousClickedCursorPoint = _cursorPoint;
 
-    bool isAllowEndTileNodeToMoveIn = hasSelectEnemyBuildingToAttack;
-    _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition, false, isAllowEndTileNodeToMoveIn);
+    if (_gameObjectManager->hasSelectPlayerGameObject())
+    {
+        bool isAllowEndTileNodeToMoveIn = hasSelectEnemyBuildingToAttack;
+        _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition, false, isAllowEndTileNodeToMoveIn);
 
-    _mapManager->hideMopUpCommandTips();
-    _mapManager->showMoveCommandTips();
+        _mapManager->hideMopUpCommandTips();
+        _mapManager->showMoveCommandTips();
+    }
 }
 
 void GameWorld::onClearDebugDraw()
