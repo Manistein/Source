@@ -704,7 +704,9 @@ void GameWorld::updateCursor()
     else
     {
         auto gameObject = _gameObjectManager->getGameObjectContain(_cursorPoint);
-        if (gameObject && gameObject->getForceType() == ForceType::AI)
+        if (gameObject && 
+            gameObject->getForceType() == ForceType::AI && 
+            _gameObjectManager->hasSelectPlayerGameObject())
         {
             windowsHelper->switchToAttackCursor();
         }
