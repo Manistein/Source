@@ -86,6 +86,8 @@ protected:
     virtual void debugDraw() = 0;
     virtual void onPrepareToRemove() = 0;
 
+    void onTechnologyPointLabelRemove(Node* label);
+
     int _hp = 0;
     int _maxHp = 0;
     ui::LoadingBar* _hpBar = nullptr;

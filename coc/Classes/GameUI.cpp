@@ -11,6 +11,7 @@
 #include "GameConfigManager.h"
 #include "GameUICallBackFunctionsManager.h"
 #include "SoundManager.h"
+#include "GameSetting.h"
 
 bool GameUI::init()
 {
@@ -276,12 +277,12 @@ void GameUI::updateMinimap()
             }
             else
             {
-                color = Color4F(248.0f / 255.0f, 200.0f / 255.0f, 40.0f / 255.0f, 1.0f);
+                color = g_setting.playerForceColor;
             }
         }
         else
         {
-            color = Color4F(164.0f / 255.0f, 72.0f / 255.0f, 192.0f / 255.0f, 1.0f);
+            color = g_setting.aiForceColor;
         }
 
         auto gameObjectInTileMapPosition = gameObject->getPosition();

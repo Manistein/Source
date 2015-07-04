@@ -267,13 +267,26 @@ void GameObject::launchForbidEnemyApproachTimer()
 
 void GameObject::onAddEnemyTechnologyPoint()
 {
+    Color4F textColor;
+
     auto forceManager = ForceManager::getInstance();
     if (_forceType == ForceType::Player)
     {
         forceManager->addTechnologyPoint(ForceType::AI, _technologyPointForEnemy);
+        textColor = g_setting.aiForceColor;
     }
     else
     {
         forceManager->addTechnologyPoint(ForceType::Player, _technologyPointForEnemy);
+        textColor = g_setting.playerForceColor;
     }
+
+    TTFConfig config(g_setting.fontName.c_str(), 48);
+    auto technologyPointForEnemyLabel = Label::createWithTTF(config, StringUtils::format("+%d", _technologyPointForEnemy));
+    technologyPointForEnemyLabel->setColor(Color3B(textColor));
+    technologyPointForEnemyLabel->setPosition(Vec2(0.0f, _contentSize.width / 2.0f));
+    addChild(technologyPointForEnemyLabel, 1000);
+
+    auto spawnAction = Spawn::create(MoveBy::create(1.0f, Vec2(0.0f, 150.0f)), FadeTo::create(1.0f, 0), nullptr);
+    technologyPointForEnemyLabel->runAction(spawnAction);
 }
