@@ -78,10 +78,18 @@ public:
     TileNode* getTileNodeAt(int columnIndex, int rowIndex);
 
     bool isInObstacleTile(const Vec2& inMapPosition);
+
+    void showMopUpCommandTips();
+    void hideMopUpCommandTips();
+
+    void showMoveCommandTips();
+    void hideMoveCommandTips();
 private:
     void resolveMapShakeWhenMove();
 
     void initTileNodeTable();
+    void initMopUpCommandTips();
+    void initMoveCommandTips();
 
     cocos2d::experimental::TMXTiledMap* _tileMap = nullptr;
     float _mapScale = 0.5f;
@@ -90,4 +98,7 @@ private:
     Vec2 _cursorPoint;
 
     vector<vector<TileNode*>> _tileNodeTable;
+
+    Sprite* _mopUpCommandTips = nullptr;
+    Sprite* _moveCommandTips = nullptr;
 };

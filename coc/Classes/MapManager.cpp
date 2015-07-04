@@ -2,6 +2,7 @@
 #include "MapManager.h"
 #include "AutoFindPathHelper.h"
 
+const int COMMAND_TIPS_RUN_ACTION_TIMES = 5;
 
 static std::map<TileMapLayerType, std::string> s_tileMapLayerTypeToString = {
     { TileMapLayerType::BackgroundLayer, "backgroundLayer" },
@@ -52,6 +53,9 @@ bool MapManager::init(Node* parentNode, const std::string& titleMapFileName)
     AutoFindPathHelper::initTileNodeTable(_tileNodeTable);
 
     //resolveMapShakeWhenMove();
+
+    initMopUpCommandTips();
+    initMoveCommandTips();
 
     return true;
 }
@@ -282,4 +286,86 @@ void MapManager::initTileNodeTable()
 TileNode* MapManager::getTileNodeAt(int columnIndex, int rowIndex)
 {
     return _tileNodeTable[columnIndex][rowIndex];
+}
+
+void MapManager::initMopUpCommandTips()
+{
+    _mopUpCommandTips = Sprite::create("mopUpCommandTips.png");
+    _mopUpCommandTips->setVisible(false);
+
+    auto gameObjectLayer = _tileMap->getLayer(s_tileMapLayerTypeToString[TileMapLayerType::GameObjcetLayer]);
+    gameObjectLayer->addChild(_mopUpCommandTips, 1);
+}
+
+void MapManager::initMoveCommandTips()
+{
+    _moveCommandTips = Sprite::create("moveCommandTips.png");
+    _moveCommandTips->setVisible(false);
+
+    auto gameObjectLayer = _tileMap->getLayer(s_tileMapLayerTypeToString[TileMapLayerType::GameObjcetLayer]);
+    gameObjectLayer->addChild(_moveCommandTips, 1);
+}
+
+void MapManager::showMopUpCommandTips()
+{
+    _mopUpCommandTips->stopAllActions();
+    auto inMapPosition = convertCursorPositionToTileMapSpace();
+    _mopUpCommandTips->setPosition(inMapPosition);
+
+    _mopUpCommandTips->setVisible(true);
+
+    auto repeatAction = Repeat::create(
+            Sequence::create(
+            ScaleTo::create(0.2f, 0.7f),
+            ScaleTo::create(0.2f, 1.0f),
+            nullptr),
+         COMMAND_TIPS_RUN_ACTION_TIMES);
+
+    auto callBackFunction = CallFunc::create(CC_CALLBACK_0(Sprite::setVisible, _mopUpCommandTips, false));
+
+    auto sequenceAction = Sequence::create(
+        repeatAction,
+        callBackFunction,
+        nullptr
+        );
+
+    _mopUpCommandTips->runAction(sequenceAction);
+}
+
+void MapManager::hideMopUpCommandTips()
+{
+    _mopUpCommandTips->stopAllActions();
+    _mopUpCommandTips->setVisible(false);
+}
+
+void MapManager::showMoveCommandTips()
+{
+    _moveCommandTips->stopAllActions();
+    auto inMapPosition = convertCursorPositionToTileMapSpace();
+    _moveCommandTips->setPosition(inMapPosition);
+
+    _moveCommandTips->setVisible(true);
+
+    auto repeatAction = Repeat::create(
+        Sequence::create(
+        MoveBy::create(0.2f, Vec2(0.0f, 10.0f)),
+        MoveBy::create(0.2f, Vec2(0.0f, -10.0f)),
+        nullptr),
+        COMMAND_TIPS_RUN_ACTION_TIMES);
+
+    auto callBackFunction = CallFunc::create(CC_CALLBACK_0(Sprite::setVisible, _moveCommandTips, false));
+
+    auto sequenceAction = Sequence::create(
+        repeatAction,
+        callBackFunction,
+        nullptr
+        );
+
+    _moveCommandTips->runAction(sequenceAction);
+}
+
+void MapManager::hideMoveCommandTips()
+{
+    _moveCommandTips->stopAllActions();
+    _moveCommandTips->setVisible(false);
 }
