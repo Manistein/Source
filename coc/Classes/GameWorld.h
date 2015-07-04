@@ -56,6 +56,8 @@ public:
     void onJumpToPlayerBaseCamp();
 
     bool isPlayerHoldingBuilding();
+
+    void onSelectGameObjectEvent();
 private:
     bool init() override;
     void initEditedGameObjects();

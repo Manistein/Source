@@ -218,46 +218,23 @@ void GameWorld::onMouseLeftButtonUp()
     _isLeftMouseButtonDown = false;
 
     _gameObjectSelectBox->setMouseDownStatus(false);
-    if (!_isShiftKeyPressed)
+
+    if (_hasSendMopUpCommandForPlayerForce && _gameObjectManager->hasSelectPlayerGameObject())
     {
-        _gameObjectManager->cancelAllGameObjectSelected();
+        auto inMapCursorPosition = _mapManager->convertCursorPositionToTileMapSpace();
+        _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition, _hasSendMopUpCommandForPlayerForce, false);
+    }
+    else
+    {
+        if (!_isShiftKeyPressed)
+        {
+            _gameObjectManager->cancelAllGameObjectSelected();
+        }
+
+        onSelectGameObjectEvent();
     }
 
-    if (isMouseClick())
-    {
-        auto gameObject = _gameObjectManager->getGameObjectContain(_cursorPoint);
-        if (gameObject)
-        {
-            if (isLeftButtonMultyClick())
-            {
-                auto visibileSize = Director::getInstance()->getVisibleSize();
-                _gameObjectManager->selectGameObjectsBy(Rect(0.0f, 0.0f, visibileSize.width, visibileSize.height), gameObject->getTemplateName());
-            }
-            else
-            {
-                if (_isShiftKeyPressed)
-                {
-                    if (gameObject->isSelected())
-                    {
-                        _gameObjectManager->cancelSelect(gameObject);
-                    }
-                    else
-                    {
-                        _gameObjectManager->select(gameObject);
-                    }
-                }
-                else
-                {
-                    _gameObjectManager->select(gameObject);
-                }
-            }
-        }
-    }
-    else // Mouse draging
-    {
-        auto selectRect = _gameObjectSelectBox->getRect();
-        _gameObjectManager->selectGameObjectsBy(selectRect);
-    }
+    _hasSendMopUpCommandForPlayerForce = false;
 }
 
 void GameWorld::onMouseRightButtonDown()
@@ -284,15 +261,17 @@ void GameWorld::onMouseRightButtonDown()
 
     auto inMapCursorPosition = _mapManager->convertCursorPositionToTileMapSpace();
     if ((_mapManager->isInObstacleTile(inMapCursorPosition) && !hasSelectEnemyBuildingToAttack) ||
-        GameUtils::isVec2Equal(_cursorPoint, _previousClickedCursorPoint))
+        GameUtils::isVec2Equal(_cursorPoint, _previousClickedCursorPoint) ||
+        _hasSendMopUpCommandForPlayerForce)
     {
+        _hasSendMopUpCommandForPlayerForce = false;
         return;
     }
 
     _previousClickedCursorPoint = _cursorPoint;
 
     bool isAllowEndTileNodeToMoveIn = hasSelectEnemyBuildingToAttack;
-    _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition, _hasSendMopUpCommandForPlayerForce, isAllowEndTileNodeToMoveIn);
+    _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition, false, isAllowEndTileNodeToMoveIn);
 }
 
 void GameWorld::onClearDebugDraw()
@@ -718,7 +697,7 @@ bool GameWorld::isPlayerHoldingBuilding()
 void GameWorld::updateCursor()
 {
     auto windowsHelper = WindowsHelper::getInstance();
-    if (_hasSendMopUpCommandForPlayerForce)
+    if (_hasSendMopUpCommandForPlayerForce && _gameObjectManager->hasSelectPlayerGameObject())
     {
         windowsHelper->switchToAttackCursor();
     }
@@ -733,5 +712,44 @@ void GameWorld::updateCursor()
         {
             windowsHelper->switchToNormalCursor();
         }
+    }
+}
+
+void GameWorld::onSelectGameObjectEvent()
+{
+    if (isMouseClick())
+    {
+        auto gameObject = _gameObjectManager->getGameObjectContain(_cursorPoint);
+        if (gameObject)
+        {
+            if (isLeftButtonMultyClick())
+            {
+                auto visibileSize = Director::getInstance()->getVisibleSize();
+                _gameObjectManager->selectGameObjectsBy(Rect(0.0f, 0.0f, visibileSize.width, visibileSize.height), gameObject->getTemplateName());
+            }
+            else
+            {
+                if (_isShiftKeyPressed)
+                {
+                    if (gameObject->isSelected())
+                    {
+                        _gameObjectManager->cancelSelect(gameObject);
+                    }
+                    else
+                    {
+                        _gameObjectManager->select(gameObject);
+                    }
+                }
+                else
+                {
+                    _gameObjectManager->select(gameObject);
+                }
+            }
+        }
+    }
+    else // Mouse draging
+    {
+        auto selectRect = _gameObjectSelectBox->getRect();
+        _gameObjectManager->selectGameObjectsBy(selectRect);
     }
 }

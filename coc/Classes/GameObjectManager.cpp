@@ -291,7 +291,7 @@ int GameObjectManager::getGameObjectSelectedByPlayerCount()
     return count;
 }
 
-void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position, bool& shouldExcuteMopUpCommand, bool isAllowEndTileNodeToMoveIn)
+void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position, bool shouldExcuteMopUpCommand, bool isAllowEndTileNodeToMoveIn)
 {
     if ((int)_belongPlayerSelectedNpcIDList.size() == 1)
     {
@@ -339,8 +339,6 @@ void GameObjectManager::npcSelectedByPlayerMoveTo(const Vec2& position, bool& sh
             }
         }
     }
-
-    shouldExcuteMopUpCommand = false;
 }
 
 void GameObjectManager::npcMoveToTargetOneByOne()
@@ -724,4 +722,9 @@ void GameObjectManager::teamMemberJumpIntoScreenBy(int teamID)
             }
         }
     }
+}
+
+bool GameObjectManager::hasSelectPlayerGameObject()
+{
+    return !_belongPlayerSelectedNpcIDList.empty();
 }

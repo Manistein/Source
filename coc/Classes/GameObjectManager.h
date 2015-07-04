@@ -42,7 +42,7 @@ public:
 
     int getGameObjectSelectedByPlayerCount();
 
-    void npcSelectedByPlayerMoveTo(const Vec2& position, bool& shouldExcuteMopUpCommand, bool isAllowEndTileNodeToMoveIn = false);
+    void npcSelectedByPlayerMoveTo(const Vec2& position, bool shouldExcuteMopUpCommand, bool isAllowEndTileNodeToMoveIn = false);
     void npcMoveToTargetOneByOne();
 
     void setSelectedEnemyUniqueID(int uniqueID);
@@ -53,6 +53,8 @@ public:
 
     void gameObjectJumpIntoScreen(GameObject* gameObject);
     void teamMemberJumpIntoScreenBy(int teamID);
+
+    bool hasSelectPlayerGameObject();
 private:
     Rect computeGameObjectRect(GameObject* gameObject);
     list<Vec2> computeBelongPlayerSelectedNpcArrivePositionList(const Vec2& arrivePosition);
