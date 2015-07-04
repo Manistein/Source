@@ -176,3 +176,24 @@ cocos2d::Vec2 ForceManager::computeEnemyMoveToPosition()
 
     return moveToPosition;
 }
+
+void ForceManager::addTechnologyPoint(ForceType type, int technologyPoint)
+{
+    auto iter = _forceDataMap.find(type);
+    if (iter != _forceDataMap.end())
+    {
+        auto& forceData = iter->second;
+        forceData.technologyPoint += technologyPoint;
+    }
+}
+
+void ForceManager::costTechnologyPoint(ForceType type, int technologyPoint)
+{
+    auto iter = _forceDataMap.find(type);
+    if (iter != _forceDataMap.end())
+    {
+        auto& forceData = iter->second;
+        forceData.technologyPoint -= technologyPoint;
+        forceData.technologyPoint = std::max(forceData.technologyPoint, 0);
+    }
+}

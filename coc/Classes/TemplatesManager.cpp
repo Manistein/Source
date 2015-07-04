@@ -201,6 +201,8 @@ bool TemplateManager::initNpcTemplates()
             npcTemplate->blueSelectedTipsTextureName = tabFileReader.getString(i, "BlueSelectedTipsTextureName");
             npcTemplate->redSelectedTipsTextureName = tabFileReader.getString(i, "RedSelectedTipsTextureName");
 
+            npcTemplate->technologyPointForEnemy = tabFileReader.getInteger(i, "TechnologyPointForEnemy");
+
             _npcTemplatesMap[templateName] = npcTemplate;
         }
 
@@ -269,6 +271,7 @@ bool TemplateManager::initBuildingTemplates()
             buildingTemplate->attackPower = tabFileReader.getFloat(i, "AttackPower");
             buildingTemplate->blueSelectedTipsTextureName = tabFileReader.getString(i, "BlueSelectedTipsTextureName");
             buildingTemplate->redSelectedTipsTextureName = tabFileReader.getString(i, "RedSelectedTipsTextureName");
+            buildingTemplate->technologyPointForEnemy = tabFileReader.getInteger(i, "TechnologyPointForEnemy");
 
             auto buildingTemplateName = tabFileReader.getString(i, "BuildingTemplateName");
             _buildingTemplatesMap[buildingTemplateName] = buildingTemplate;

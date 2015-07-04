@@ -33,6 +33,8 @@ private:
     void updateMinimap();
     void onMinimapTouched(Ref* sender, Widget::TouchEventType touchType);
 
+    void updateTechnologyPoint();
+
     void syncCursorPoint(const Vec2& cursorPoint);
 
     GameWorldCallBackFunctionsManager* _gameWorld = nullptr;

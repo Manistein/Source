@@ -78,6 +78,8 @@ public:
 
     bool canEnemyApproach();
     void launchForbidEnemyApproachTimer();
+
+    void onAddEnemyTechnologyPoint();
 protected:
     GameObject();
     bool init() override;
@@ -118,6 +120,8 @@ protected:
     string _templateName;
 
     float _forbidEnemyApproachTime = 0.0f;
+
+    int _technologyPointForEnemy = 0;
 };
 
 class GameObjectFactory

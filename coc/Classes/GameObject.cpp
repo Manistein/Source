@@ -3,6 +3,7 @@
 #include "Npc.h"
 #include "Building.h"
 #include "GameSetting.h"
+#include "ForceManager.h"
 
 static int g_uniqueID = 0;
 
@@ -262,4 +263,17 @@ bool GameObject::canEnemyApproach()
 void GameObject::launchForbidEnemyApproachTimer()
 {
     _forbidEnemyApproachTime = FORBID_ENEMY_APPROACH_TIME_INTERVAL;
+}
+
+void GameObject::onAddEnemyTechnologyPoint()
+{
+    auto forceManager = ForceManager::getInstance();
+    if (_forceType == ForceType::Player)
+    {
+        forceManager->addTechnologyPoint(ForceType::AI, _technologyPointForEnemy);
+    }
+    else
+    {
+        forceManager->addTechnologyPoint(ForceType::Player, _technologyPointForEnemy);
+    }
 }

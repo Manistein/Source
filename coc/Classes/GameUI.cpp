@@ -188,6 +188,7 @@ void GameUI::update(float deltaTime)
     }
 
     updateMinimap();
+    updateTechnologyPoint();
 }
 
 void GameUI::onUpdateReinforcePresent()
@@ -331,4 +332,13 @@ void GameUI::onMinimapTouched(Ref* sender, Widget::TouchEventType touchType)
 
         _mapManager->setTileMapPosition(-tileMapNewPosition);
     }
+}
+
+void GameUI::updateTechnologyPoint()
+{
+    auto gameMainPanel = _gameMainUI->getChildByName("Panel_GameMain");
+    auto technologyPointLabel = gameMainPanel->getChildByName<Text*>("Text_TechnologyPoint");
+
+    auto& playerForceData = _forceManager->getForceDataBy(ForceType::Player);
+    technologyPointLabel->setString(StringUtils::format("%d", playerForceData.technologyPoint));
 }

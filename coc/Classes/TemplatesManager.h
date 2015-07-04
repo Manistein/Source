@@ -45,6 +45,8 @@ struct NpcTemplate
 
     string blueSelectedTipsTextureName;
     string redSelectedTipsTextureName;
+
+    int technologyPointForEnemy = 0;
 };
 
 struct BulletTemplate
@@ -76,6 +78,8 @@ struct BuildingTemplate
 
     string blueSelectedTipsTextureName;
     string redSelectedTipsTextureName;
+
+    int technologyPointForEnemy = 0;
 };
 
 struct SpecialEffectTemplate

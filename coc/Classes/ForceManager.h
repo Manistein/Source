@@ -24,6 +24,9 @@ public:
 
     void onPlayerReinforcePointIncrease();
     void onPlayerReinforcePointReduce();
+
+    void addTechnologyPoint(ForceType type, int technologyPoint);
+    void costTechnologyPoint(ForceType type, int technologyPoint);
 private:
     bool init();
     void onEnemyLaunchAttack();

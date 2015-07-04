@@ -201,6 +201,7 @@ void Building::initBattleData(const string& buildingTemplateName)
     _buildingTimeBySecond = buildingTemplate->buildingTimeBySecond;
     _extraEnemyAttackRadius = buildingTemplate->extraEnemyAttackRadius;
     _destroySpecialEffectTemplateName = buildingTemplate->destroySpecialEffectTemplateName;
+    _technologyPointForEnemy = buildingTemplate->technologyPointForEnemy;
 }
 
 void Building::initSelectedTips(const string& buildingTemplateName)
@@ -371,6 +372,8 @@ void Building::updateStatus(BuildingStatus buildingStatus)
                 runAction(sequenceAction);
 
                 selectedTipsYPosition = buildingTemplate->shadowYPositionInDestroyStatus;
+
+                onAddEnemyTechnologyPoint();
             }
                 break;
             default:    break;

@@ -13,6 +13,7 @@
 #include "MapManager.h"
 #include "CustomMoveBy.h"
 #include "SoundManager.h"
+#include "ForceManager.h"
 
 const string SHADOW_TEXTURE_NAME = "Shadow.png";
 const string SHOW_WORLD_POSITION_CHILD_NAME = "ShowWorldPositionChildName";
@@ -230,6 +231,7 @@ void Npc::initBattleData(const string& templateName)
     _aoeDamageRadius = npcTemplate->aoeDamageRadius;
     _reinforceRadius = npcTemplate->reinforceRadius;
     _maxAttackRangeWhenCollision = _maxAttackRadius + 50.0f;
+    _technologyPointForEnemy = npcTemplate->technologyPointForEnemy;
 }
 
 void Npc::initDebugDraw()
@@ -1295,6 +1297,8 @@ void Npc::onDie()
     stopAllActions();
 
     runAction(_dieAnimate);
+
+    onAddEnemyTechnologyPoint();
 }
 
 void Npc::onDieAnimationEnd()
