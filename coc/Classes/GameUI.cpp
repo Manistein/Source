@@ -190,6 +190,7 @@ void GameUI::update(float deltaTime)
 
     updateMinimap();
     updateTechnologyPoint();
+    updateGamePassTime();
 }
 
 void GameUI::onUpdateReinforcePresent()
@@ -342,4 +343,17 @@ void GameUI::updateTechnologyPoint()
 
     auto& playerForceData = _forceManager->getForceDataBy(ForceType::Player);
     technologyPointLabel->setString(StringUtils::format("%d", playerForceData.technologyPoint));
+}
+
+void GameUI::updateGamePassTime()
+{
+    static float gameStartTime = ::timeGetTime() / 1000.0f;
+    float timeDelta = ::timeGetTime() / 1000.0f - gameStartTime;
+    time_t passSecond(timeDelta);
+
+    tm* passTime = gmtime(&passSecond);
+
+    auto gameMainPanel = _gameMainUI->getChildByName("Panel_GameMain");
+    auto passTimeLabel = gameMainPanel->getChildByName<Text*>("Text_GameTime");
+    passTimeLabel->setString(StringUtils::format("%02d:%02d:%02d", passTime->tm_hour, passTime->tm_min, passTime->tm_sec));
 }

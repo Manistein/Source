@@ -34,6 +34,7 @@ private:
     void onMinimapTouched(Ref* sender, Widget::TouchEventType touchType);
 
     void updateTechnologyPoint();
+    void updateGamePassTime();
 
     void syncCursorPoint(const Vec2& cursorPoint);
 
