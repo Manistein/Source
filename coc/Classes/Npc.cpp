@@ -14,6 +14,7 @@
 #include "CustomMoveBy.h"
 #include "SoundManager.h"
 #include "ForceManager.h"
+#include "GameConfigManager.h"
 
 const string SHADOW_TEXTURE_NAME = "Shadow.png";
 const string SHOW_WORLD_POSITION_CHILD_NAME = "ShowWorldPositionChildName";
@@ -1395,5 +1396,16 @@ void Npc::setSelected(bool isSelect)
     if (_forceType == ForceType::Player && isSelect)
     {
         SoundManager::getInstance()->playNpcEffect(_templateName, NpcSoundEffectType::Select);
+    }
+}
+
+void Npc::updatePropertyBy(int level)
+{
+    auto gameObjectLevelConfig = GameConfigManager::getInstance()->getGameObjectLevelConfig(_templateName, _level);
+    if (gameObjectLevelConfig)
+    {
+        _attackPower = gameObjectLevelConfig->attackPower;
+        _hp = gameObjectLevelConfig->hp;
+        // setSpriteFrame(gameObjectLevelConfig->levelRepresentTextureName);
     }
 }

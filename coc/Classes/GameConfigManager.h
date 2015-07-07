@@ -15,6 +15,18 @@ struct ReinforceConfig
     string archerTowerTemplateName;
 };
 
+struct GameObjectLevelConfig
+{
+    int attackPower = 0;
+    int hp = 0;
+    string levelRepresentTextureName;
+    int costTechnologyPoint = 0;
+};
+
+typedef int Level;
+typedef unordered_map<Level, GameObjectLevelConfig*> LevelConfigMap;
+typedef unordered_map<string, LevelConfigMap> GameObjectLevelConfigMap;
+
 class GameConfigManager
 {
 public:
@@ -22,11 +34,14 @@ public:
 
     static GameConfigManager* getInstance();
     const ReinforceConfig* getReinforceConfigBy(ForceType forceType);
+    const GameObjectLevelConfig* getGameObjectLevelConfig(const string& templateName, int level);
 private:
     bool init();
     bool initReinforcementConfig();
+    bool initGameObjectLevelConfig();
 
     map<ForceType, ReinforceConfig*> _reinforceConfigMap;
+    GameObjectLevelConfigMap _gameObjectLevelConfigMap;
 
     GameConfigManager(){};
     GameConfigManager(const GameConfigManager&);

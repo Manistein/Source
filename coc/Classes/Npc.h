@@ -62,6 +62,8 @@ public:
     bool isExecutingMopUpCommand();
 
     void setSelected(bool isSelect) override;
+
+    void updatePropertyBy(int level) override;
 private:
     bool init(ForceType forceType, GameObjectType npcType, const string& templateName, const Vec2& position, int uniqueID);
     void clear();

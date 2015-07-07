@@ -30,6 +30,8 @@ public:
 
     void setEnemyUniqueID(int uniqueID) override;
     int getEnemyUniqueID() override;
+
+    void updatePropertyBy(int level) override;
 private:
     bool init(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID);
 

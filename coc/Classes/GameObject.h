@@ -38,6 +38,7 @@ const int GAME_OBJECT_UNIQUE_ID_INVALID = 0;
 const string HP_BAR_BACKGROUND_TEXTURE_NAME = "HPBarBackground.png";
 const int TEAM_INVALID_ID = -1;
 const float FORBID_ENEMY_APPROACH_TIME_INTERVAL = 15.0f;
+const int MAX_LEVEL = 5;
 
 class GameObject : public Sprite
 {
@@ -80,6 +81,9 @@ public:
     void launchForbidEnemyApproachTimer();
 
     void onAddEnemyTechnologyPoint();
+
+    void upgrade();
+    virtual void updatePropertyBy(int level) = 0;
 protected:
     GameObject();
     bool init() override;

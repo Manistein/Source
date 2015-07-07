@@ -290,3 +290,12 @@ void GameObject::onAddEnemyTechnologyPoint()
     auto spawnAction = Spawn::create(MoveBy::create(1.0f, Vec2(0.0f, 150.0f)), FadeTo::create(1.0f, 0), nullptr);
     technologyPointForEnemyLabel->runAction(spawnAction);
 }
+
+void GameObject::upgrade()
+{
+    _level++;
+    _level = std::max(_level, 0);
+    _level = std::min(_level, MAX_LEVEL);
+
+    updatePropertyBy(_level);
+}

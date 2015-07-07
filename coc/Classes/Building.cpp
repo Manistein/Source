@@ -651,3 +651,8 @@ int Building::getEnemyUniqueID()
 
     return enemyUniqueID;
 }
+
+void Building::updatePropertyBy(int level)
+{
+
+}
