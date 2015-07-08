@@ -43,7 +43,7 @@ class Npc : public GameObject
 public:
     ~Npc();
 
-    static Npc* create(ForceType forceType, GameObjectType npcType, const string& templateName, const Vec2& position, int uniqueID);
+    static Npc* create(ForceType forceType, GameObjectType npcType, const string& templateName, const Vec2& position, int uniqueID, int level);
 
     void moveTo(const Vec2& targetPosition, bool isAllowEndTileNodeToMoveIn = false); // 如果最后一个参数是true，即便是最后一个节点是障碍物，也是可以去计算寻路路径的
     void setReadyToMoveStatus(bool isReadyToMove);
@@ -62,10 +62,8 @@ public:
     bool isExecutingMopUpCommand();
 
     void setSelected(bool isSelect) override;
-
-    void updatePropertyBy(int level) override;
 private:
-    bool init(ForceType forceType, GameObjectType npcType, const string& templateName, const Vec2& position, int uniqueID);
+    bool init(ForceType forceType, GameObjectType npcType, const string& templateName, const Vec2& position, int uniqueID, int level);
     void clear();
 
     void initAnimates(const string& templateName);
@@ -76,6 +74,7 @@ private:
     void initDebugDraw();
     void initSelectedTips(const string& templateName);
     void initTeamIDLabel();
+    void initLevelRepresentTexture();
 
     void update(float delta) override;
     void tryUpdateStatus(NpcStatus newStatus);
@@ -166,6 +165,9 @@ private:
 
     list<Vec2> getPathListTo(const Vec2& inMapEndPosition);
     list<Vec2> _gotoTargetPositionPathList;
+
+    void updateLevelRepresentTexture(const string& spriteFrameName) override;
+    Sprite* _levelRepresentTexture = nullptr;
 
     unordered_map<FaceDirection, RepeatForever*> _moveAnimateMap;
     unordered_map<FaceDirection, RepeatForever*> _standAnimateMap;

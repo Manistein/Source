@@ -8,6 +8,7 @@
 #include "GameObjectManager.h"
 #include "Npc.h"
 #include "SoundManager.h"
+#include "GameConfigManager.h"
 
 const int MAX_BOTTOM_GRID_COUNT = 9;
 const int MIN_BOTTOM_GRID_COUNT = 1;
@@ -17,10 +18,10 @@ const string ENABLE_BUILD_GRID_FILE_NAME = "EnableBuildGBrid.png";
 const string DISABLE_BUILD_GRID_FILE_NAME = "DisableBuildGrid.png";
 const string BEING_BUILT_PROGRESS_BAR = "PlayerHPBar.png";
 
-Building* Building::create(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID)
+Building* Building::create(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID, int level)
 {
     auto building = new Building();
-    if (building && building->init(forceType, buildingTemplateName, position, uniqueID))
+    if (building && building->init(forceType, buildingTemplateName, position, uniqueID, level))
     {
         building->autorelease();
     }
@@ -32,7 +33,7 @@ Building* Building::create(ForceType forceType, const string& buildingTemplateNa
     return building;
 }
 
-bool Building::init(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID)
+bool Building::init(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID, int level)
 {
     _forceType = forceType;
 
@@ -65,6 +66,11 @@ bool Building::init(ForceType forceType, const string& buildingTemplateName, con
     initBattleData(buildingTemplateName);
     initSelectedTips(buildingTemplateName);
 
+    if (_level < level)
+    {
+        updatePropertyBy(level);
+    }
+
     scheduleUpdate();
 
     return true;
@@ -90,7 +96,7 @@ Sprite* Building::createBuildingStatusSprite(const string& buildingTemplateName,
     switch (buildingStatus)
     {
     case BuildingStatus::PrepareToBuild:
-        spriteTextureName = buildingTemplate->prepareToBuildStatusTextureName;
+        spriteTextureName = StringUtils::format(buildingTemplate->prepareToBuildStatusTextureName.c_str(), _level);
         break;
     case BuildingStatus::BeingBuilt:
         shadowYPosition = buildingTemplate->shadowYPositionInBeingBuiltStatus;
@@ -99,7 +105,7 @@ Sprite* Building::createBuildingStatusSprite(const string& buildingTemplateName,
         break;
     case BuildingStatus::Working:
         shadowYPosition = buildingTemplate->shadowYPositionInWorkingStatus;
-        spriteTextureName = buildingTemplate->workingStatusTextureName;
+        spriteTextureName = StringUtils::format(buildingTemplate->workingStatusTextureName.c_str(), _level);
         hasShadow = true;
         break;
     case BuildingStatus::Destory:
@@ -252,7 +258,8 @@ Npc* Building::createDefenceNpc(const string& buildingTemplateName)
             _forceType, 
             buildingTemplate->defenceNpcName, 
             Vec2(workingStatusBuildingSpriteSize.width / 2.0f, 
-            buildingTemplate->defenceNpcYPosition));
+            buildingTemplate->defenceNpcYPosition),
+            _level);
 
         defenceNpc = static_cast<Npc*>(gameObject);
         workingStatusBuildingSprite->addChild(defenceNpc, 1);
@@ -652,7 +659,18 @@ int Building::getEnemyUniqueID()
     return enemyUniqueID;
 }
 
-void Building::updatePropertyBy(int level)
+void Building::updateLevelRepresentTexture(const string& spriteFrameName)
 {
+    auto inPrepareToBuildStatus = _buildingStatusSpriteMap[BuildingStatus::PrepareToBuild];
+    auto inWorkingStatus = _buildingStatusSpriteMap[BuildingStatus::Working];
 
+    auto newLevelPrepareToBuildStatusName = spriteFrameName;
+    auto newLevelWorkingStatusName = spriteFrameName;
+
+    auto spriteFrameCache = SpriteFrameCache::getInstance();
+    auto newPrepareToBuildSpriteFrame = spriteFrameCache->getSpriteFrameByName(newLevelPrepareToBuildStatusName);
+    auto newWorkingSpriteFrame = spriteFrameCache->getSpriteFrameByName(newLevelWorkingStatusName);
+
+    inPrepareToBuildStatus->setSpriteFrame(newPrepareToBuildSpriteFrame);
+    inWorkingStatus->setSpriteFrame(newWorkingSpriteFrame);
 }

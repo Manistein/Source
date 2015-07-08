@@ -17,7 +17,7 @@ class Npc;
 class Building : public GameObject
 {
 public:
-    static Building* create(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID);
+    static Building* create(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID, int level);
 
     bool isReadyToRemove() override;
 
@@ -30,10 +30,8 @@ public:
 
     void setEnemyUniqueID(int uniqueID) override;
     int getEnemyUniqueID() override;
-
-    void updatePropertyBy(int level) override;
 private:
-    bool init(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID);
+    bool init(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID, int level);
 
     void initBuildingStatusSprites(const string& buildingTemplateName);
     Sprite* createBuildingStatusSprite(const string& buildingTemplateName, BuildingStatus buildingStatus, int opacity = 255);
@@ -69,6 +67,8 @@ private:
     void updateBeingBuiltProgressBar(float delta);
 
     void addToRemoveQueue();
+
+    void updateLevelRepresentTexture(const string& spriteFrameName) override;
 
     map<BuildingStatus, Sprite*> _buildingStatusSpriteMap;
     vector<Sprite*> _bottomGridSpritesList;

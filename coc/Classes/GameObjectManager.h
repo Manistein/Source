@@ -18,7 +18,7 @@ public:
     static GameObjectManager* getInstance();
     void init(GameWorld* gameWorld);
 
-    GameObject* createGameObject(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position);
+    GameObject* createGameObject(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position, int level);
     void removeGameObjectBy(int uniqueID);
     void removeAllGameObjects();
 

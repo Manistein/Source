@@ -4,6 +4,7 @@
 #include "Building.h"
 #include "GameSetting.h"
 #include "ForceManager.h"
+#include "GameConfigManager.h"
 
 static int g_uniqueID = 0;
 
@@ -206,9 +207,12 @@ float GameObject::getAoeDamageRadius()
     return _aoeDamageRadius;
 }
 
-GameObject* GameObjectFactory::create(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
+GameObject* GameObjectFactory::create(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position, int level)
 {
     GameObject* gameObject = nullptr;
+
+    level = std::max(level, 0);
+    level = std::min(level, MAX_LEVEL);
 
     switch (gameObjectType)
     {
@@ -216,13 +220,13 @@ GameObject* GameObjectFactory::create(GameObjectType gameObjectType, ForceType f
         case GameObjectType::Npc:
         {
             g_uniqueID++;
-            gameObject = Npc::create(forceType, gameObjectType, jobName, position, g_uniqueID);
+            gameObject = Npc::create(forceType, gameObjectType, jobName, position, g_uniqueID, level);
         }
         break;
         case GameObjectType::Building:
         {
             g_uniqueID++;
-            gameObject = Building::create(forceType, jobName, position, g_uniqueID);
+            gameObject = Building::create(forceType, jobName, position, g_uniqueID, level);
         }
         break;
     default:
@@ -298,4 +302,16 @@ void GameObject::upgrade()
     _level = std::min(_level, MAX_LEVEL);
 
     updatePropertyBy(_level);
+}
+
+void GameObject::updatePropertyBy(int level)
+{
+    auto gameObjectLevelConfig = GameConfigManager::getInstance()->getGameObjectLevelConfig(_templateName, level);
+    if (gameObjectLevelConfig)
+    {
+        _level = level;
+        _attackPower = gameObjectLevelConfig->attackPower;
+        _maxHp = _hp = gameObjectLevelConfig->hp;
+        updateLevelRepresentTexture(gameObjectLevelConfig->levelRepresentTextureName);
+    }
 }

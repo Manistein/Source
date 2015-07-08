@@ -64,9 +64,9 @@ void GameObjectManager::init(GameWorld* gameWorld)
     _npcReadyMoveToTargetDataMap[ForceType::AI] = NPC_READY_MOVE_TO_END_POSITION_DATA();
 }
 
-GameObject* GameObjectManager::createGameObject(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
+GameObject* GameObjectManager::createGameObject(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position, int level)
 {
-    GameObject* gameObject = GameObjectFactory::create(gameObjectType, forceType, jobName, position);
+    GameObject* gameObject = GameObjectFactory::create(gameObjectType, forceType, jobName, position, level);
     if (gameObject)
     {
         _gameObjectMap[gameObject->getUniqueID()] = gameObject;

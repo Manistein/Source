@@ -27,10 +27,10 @@ Npc::~Npc()
     clear();
 }
 
-Npc* Npc::create(ForceType forceType, GameObjectType npcType, const string& templateName, const Vec2& position, int uniqueID)
+Npc* Npc::create(ForceType forceType, GameObjectType npcType, const string& templateName, const Vec2& position, int uniqueID, int level)
 {
     auto npc = new Npc();
-    if (npc && npc->init(forceType, npcType, templateName, position, uniqueID))
+    if (npc && npc->init(forceType, npcType, templateName, position, uniqueID, level))
     {
         npc->autorelease();
     }
@@ -42,7 +42,7 @@ Npc* Npc::create(ForceType forceType, GameObjectType npcType, const string& temp
     return npc;
 }
 
-bool Npc::init(ForceType forceType, GameObjectType npcType, const string& templateName, const Vec2& position, int uniqueID)
+bool Npc::init(ForceType forceType, GameObjectType npcType, const string& templateName, const Vec2& position, int uniqueID, int level)
 {
     _forceType = forceType;
 
@@ -59,6 +59,7 @@ bool Npc::init(ForceType forceType, GameObjectType npcType, const string& templa
     initDebugDraw();
     initSelectedTips(templateName);
     initTeamIDLabel();
+    initLevelRepresentTexture();
 
     setPosition(position);
     _uniqueID = uniqueID;
@@ -70,6 +71,11 @@ bool Npc::init(ForceType forceType, GameObjectType npcType, const string& templa
     _templateName = templateName;
 
     scheduleUpdate();
+
+    if (_level < level)
+    {
+        updatePropertyBy(level);
+    }
 
     return true;
 }
@@ -284,6 +290,20 @@ void Npc::initTeamIDLabel()
 
     _teamIDLabel->setPosition(selectTipsPosition.x - selectTipsSize.width / 2.0f, selectTipsPosition.y);
     _teamIDLabel->setVisible(false);
+}
+
+void Npc::initLevelRepresentTexture()
+{
+    _levelRepresentTexture = Sprite::create();
+    
+    auto hpBackground = _hpBar->getParent();
+    auto hpBackgroundScale = hpBackground->getScale();
+    auto hpBackgroundPosition = hpBackground->getPosition();
+    auto hpBarSize = _hpBar->getContentSize();
+
+    _levelRepresentTexture->setPosition(hpBackgroundPosition.x, hpBackgroundPosition.y + hpBarSize.height / 2.0f);
+    _levelRepresentTexture->setScale(hpBackgroundScale);
+    addChild(_levelRepresentTexture, 1);
 }
 
 void Npc::debugDraw()
@@ -1399,13 +1419,8 @@ void Npc::setSelected(bool isSelect)
     }
 }
 
-void Npc::updatePropertyBy(int level)
+void Npc::updateLevelRepresentTexture(const string& spriteFrameName)
 {
-    auto gameObjectLevelConfig = GameConfigManager::getInstance()->getGameObjectLevelConfig(_templateName, _level);
-    if (gameObjectLevelConfig)
-    {
-        _attackPower = gameObjectLevelConfig->attackPower;
-        _hp = gameObjectLevelConfig->hp;
-        // setSpriteFrame(gameObjectLevelConfig->levelRepresentTextureName);
-    }
+    auto levelRepresentSpriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(spriteFrameName);
+    _levelRepresentTexture->setSpriteFrame(levelRepresentSpriteFrame);
 }

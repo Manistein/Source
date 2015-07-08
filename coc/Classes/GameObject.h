@@ -83,7 +83,7 @@ public:
     void onAddEnemyTechnologyPoint();
 
     void upgrade();
-    virtual void updatePropertyBy(int level) = 0;
+    void updatePropertyBy(int level);
 protected:
     GameObject();
     bool init() override;
@@ -91,6 +91,8 @@ protected:
     virtual void onPrepareToRemove() = 0;
 
     void onTechnologyPointLabelRemove(Node* label);
+
+    virtual void updateLevelRepresentTexture(const string& spriteFrameName) = 0;
 
     int _hp = 0;
     int _maxHp = 0;
@@ -133,5 +135,5 @@ protected:
 class GameObjectFactory
 {
 public:
-    static GameObject* create(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position);
+    static GameObject* create(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position, int level);
 };

@@ -35,6 +35,7 @@ bool GameWorld::init()
     }
 
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("BuildingCommon.plist");
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("LevelRanks.plist");
     _soundManager = SoundManager::getInstance();
 
     _mapManager = new MapManager();
@@ -301,7 +302,7 @@ void GameWorld::onMouseMove(EventCustom* eventCustom)
 
 GameObject* GameWorld::createGameObject(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
 {
-    auto gameObject = _gameObjectManager->createGameObject(gameObjectType, forceType, jobName, position);
+    auto gameObject = _gameObjectManager->createGameObject(gameObjectType, forceType, jobName, position, 0);
     _mapManager->addChildInGameObjectLayer(gameObject);
 
     if (gameObjectType == GameObjectType::Building && forceType == ForceType::Player)
