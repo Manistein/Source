@@ -187,6 +187,20 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
         _gameWorld->onJumpToPlayerBaseCamp();
     }
         break;
+    case EventKeyboard::KeyCode::KEY_F10:
+    {
+        if (_gameUI->isShowDebugLayer())
+        {
+            _gameUI->setDebugLayerShowStatus(false);
+            Director::getInstance()->setDisplayStats(false);
+        }
+        else
+        {
+            _gameUI->setDebugLayerShowStatus(true);
+            Director::getInstance()->setDisplayStats(true);
+        }
+    }
+        break;
     default:    break;
     }
 }

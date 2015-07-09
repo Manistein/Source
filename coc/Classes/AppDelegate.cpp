@@ -28,7 +28,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLViewImpl::create("Conqueror Of Clan");
+        glview = GLViewImpl::createWithFullScreen("Conqueror Of Clan");
 		glview->setFrameSize(1280, 720);
 		auto windowHandle = glview->getWin32Window();
 		MoveWindow(windowHandle, 0, 0, 1280, 720, false);
@@ -59,7 +59,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     searchPaths.push_back("Resources/publish/sound/music");
     FileUtils::getInstance()->setSearchPaths(searchPaths);
 
-    director->setDisplayStats(true);
+    director->setDisplayStats(false);
     director->setAnimationInterval(1.0 / 60.0);
 
     auto scene = GameScene::createScene();

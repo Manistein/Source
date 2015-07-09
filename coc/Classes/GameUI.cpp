@@ -26,6 +26,7 @@ bool GameUI::init()
     }
 
     _debugInfoLayer = DebugInfoLayer::create();
+    _debugInfoLayer->setVisible(false);
     addChild(_debugInfoLayer);
 
     _gameMainUI = CSLoader::createNode("MainScene.csb");
@@ -216,6 +217,8 @@ void GameUI::update(float deltaTime)
     updateMinimap();
     updateTechnologyPoint();
     updateGamePassTime();
+    updateUpgradePanelTips();
+    updateUpgradeButtonStatus();
 }
 
 void GameUI::onUpdateReinforcePresent()
@@ -483,7 +486,7 @@ void GameUI::onUpgradeButtonTouched(Ref* sender, Widget::TouchEventType touchTyp
         upgradeProgressBar->setPercentage(0.0f);
         upgradeProgressBar->setMidpoint(Vec2(0.0f, 0.5f));
         upgradeProgressBar->setBarChangeRate(Vec2(1.0f, 0.0f));
-        auto progressToAction = ProgressTo::create(UPGRADE_TIME, 100.0f);
+        auto progressToAction = ProgressTo::create(UPGRADE_TIME * gameObjectNextLevel, 100.0f);
         auto callBackFunction = CallFunc::create(CC_CALLBACK_0(GameUI::onUpgradeSuccess, this, button, gameObjectNextLevel));
         auto sequenceAction = Sequence::create(progressToAction, callBackFunction, nullptr);
         upgradeProgressBar->runAction(sequenceAction);
@@ -521,6 +524,96 @@ void GameUI::onUpgradeSuccess(Button* sender, int newLevel)
     reinforcementRank->setSpriteFrame(StringUtils::format("Level%dRank.png", newLevel));
 }
 
+void GameUI::updateUpgradePanelTips()
+{
+    Button* cursorOverButton = nullptr;
+    for (auto button : _upgradeButtonList)
+    {
+        auto parentNode = button->getParent();
+        auto buttonSize = button->getContentSize();
+        auto buttonWorldPosition = parentNode->convertToWorldSpace(button->getPosition());
+
+        auto buttonRect = Rect(buttonWorldPosition.x - buttonSize.width / 2.0f, 
+            buttonWorldPosition.y - buttonSize.height / 2.0f, 
+            buttonSize.width, 
+            buttonSize.height);
+
+        if (buttonRect.containsPoint(_cursorPoint))
+        {
+            cursorOverButton = button;
+            break;
+        }
+    }
+
+    if (!cursorOverButton)
+    {
+        _upgradeTipsPanel->setVisible(false);
+        return;
+    }
+
+    auto gameObjectTemplateName = _upgradeButtonToTemplateNameMap[cursorOverButton];
+    auto gameObjectLevel = ForceManager::getInstance()->getGameObjectLevel(gameObjectTemplateName);
+    if (gameObjectLevel < MAX_LEVEL)
+    {
+        auto playerTechnologyPoint = ForceManager::getInstance()->getForceDataBy(ForceType::Player).technologyPoint;
+        auto gameObjectLevelConfig = GameConfigManager::getInstance()->getGameObjectLevelConfig(gameObjectTemplateName, gameObjectLevel + 1);
+
+        if (playerTechnologyPoint >= gameObjectLevelConfig->costTechnologyPoint)
+        {
+            showNeedTechnologyPoint(gameObjectLevelConfig->costTechnologyPoint, Color3B::BLUE);
+        }
+        else
+        {
+            showNeedTechnologyPoint(gameObjectLevelConfig->costTechnologyPoint, Color3B::RED);
+        }
+    }
+    else
+    {
+        _upgradeTipsPanel->setVisible(false);
+    }
+}
+
+void GameUI::showNeedTechnologyPoint(int needTechnologyPoint, const Color3B& color)
+{
+    _upgradeTipsPanel->setVisible(true);
+    auto technologyPointLabel = _upgradeTipsPanel->getChildByName<Text*>("Text_NeedTechnologyPoint");
+    technologyPointLabel->setString(StringUtils::format("%d", needTechnologyPoint));
+    technologyPointLabel->setColor(color);
+}
+
+void GameUI::updateUpgradeButtonStatus()
+{
+    auto forceManager = ForceManager::getInstance();
+    auto playerForceData = forceManager->getForceDataBy(ForceType::Player);
+
+    auto playerTechnologyPoint = playerForceData.technologyPoint;
+    for (auto button : _upgradeButtonList)
+    {
+        auto gameObjectTemplateName = _upgradeButtonToTemplateNameMap[button];
+        auto gameObjectLevel = forceManager->getGameObjectLevel(gameObjectTemplateName);
+        if (gameObjectLevel < MAX_LEVEL)
+        {
+            auto gameObjectLevelConfig = GameConfigManager::getInstance()->getGameObjectLevelConfig(gameObjectTemplateName, gameObjectLevel + 1);
+            if (playerTechnologyPoint >= gameObjectLevelConfig->costTechnologyPoint &&
+                !isUpgrading(button))
+            {
+                button->setBright(true);
+                button->setEnabled(true);
+            }
+            else
+            {
+                button->setBright(false);
+                button->setEnabled(false);
+            }
+        }
+        else
+        {
+            button->setBright(false);
+            button->setEnabled(false);
+        }
+    }
+}
+
 Sprite* GameUI::createNextRankAt(Button* button, const string& childName)
 {
     auto buttonSize = button->getContentSize();
@@ -532,4 +625,24 @@ Sprite* GameUI::createNextRankAt(Button* button, const string& childName)
     button->addChild(nextRankSprite, 1, childName);
 
     return nextRankSprite;
+}
+
+bool GameUI::isUpgrading(Button* button)
+{
+    bool result = false;
+
+    auto upgradeProgressBarBG = button->getChildByName(UPGRADE_PROGRESS_BAR_BG);
+    result = upgradeProgressBarBG->isVisible();
+
+    return result;
+}
+
+bool GameUI::isShowDebugLayer()
+{
+    return _debugInfoLayer->isVisible();
+}
+
+void GameUI::setDebugLayerShowStatus(bool isShow)
+{
+    _debugInfoLayer->setVisible(isShow);
 }

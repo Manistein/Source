@@ -6,7 +6,7 @@ class MapManager;
 class GameWorldCallBackFunctionsManager;
 class ForceManager;
 
-const float UPGRADE_TIME = 10.0f;
+const float UPGRADE_TIME = 30.0f;
 
 class GameUI : public Node
 {
@@ -20,6 +20,9 @@ public:
     void enableAllReinforcementButtons();
 
     void onUpdateReinforcePresent();
+
+    bool isShowDebugLayer();
+    void setDebugLayerShowStatus(bool isShow);
 private:
     bool init() override;
     void initReinforcePresent();
@@ -37,6 +40,10 @@ private:
     void onTurnToSelectReinforcePanel(Ref* sender, Widget::TouchEventType touchType);
     void onUpgradeButtonTouched(Ref* sender, Widget::TouchEventType touchType);
     void onUpgradeSuccess(Button* sender, int newLevel);
+    void updateUpgradePanelTips();
+    void showNeedTechnologyPoint(int needTechnologyPoint, const Color3B& color);
+    void updateUpgradeButtonStatus();
+    bool isUpgrading(Button* button);
     Layout* _upgradeTipsPanel = nullptr;
     map<Ref*, string> _upgradeButtonToTemplateNameMap;
 
