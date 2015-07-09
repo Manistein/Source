@@ -13,6 +13,11 @@
 #include "SoundManager.h"
 #include "GameSetting.h"
 
+const string UPGRADE_PROGRESS_BAR_BG = "upgradeProgressBarBG";
+const string UPGRADE_PROGRESS_BAR = "upgradeProgressBar";
+const string UPGRADE_NEXT_RANK = "nextRank";
+const string REINFORCEMENT_RANK = "reinforcementRank";
+
 bool GameUI::init()
 {
     if (!Node::init())
@@ -32,6 +37,7 @@ bool GameUI::init()
     initReinforcePresent();
     initMiniMapPresent();
     initReinforcementSelectPanel();
+    initUpgradePanel();
 
     Director::getInstance()->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameUI::onMouseMove, this));
 
@@ -123,6 +129,9 @@ void GameUI::initReinforcementSelectPanel()
     initSelectReinforcementButton(selectEnchanterTowerButton, reinforceConfig->enchanterTowerTemplateName, GameObjectType::Building, 1);
 
     disableAllReinforcementButtons();
+
+    auto turnToUpgradeButton = reinforcementSelectPanel->getChildByName<Button*>("Button_TurnToUpgradePanel");
+    turnToUpgradeButton->addTouchEventListener(CC_CALLBACK_2(GameUI::onTurnToUpgradePanel, this));
 }
 
 void GameUI::initSelectReinforcementButton(Button* button, const string& reinforcementTemplateName, GameObjectType gameObjectType, int reinforcmentCount)
@@ -138,6 +147,9 @@ void GameUI::initSelectReinforcementButton(Button* button, const string& reinfor
         reinforcmentCount);
 
     _reinforcementButtonList.push_back(button);
+    _reinforceTemplateNameToButtonMap[reinforcementTemplateName] = button;
+
+    createNextRankAt(button, REINFORCEMENT_RANK);
 }
 
 void GameUI::onSelectReinforcementButtonTouched(Ref* sender, Widget::TouchEventType touchType)
@@ -177,6 +189,19 @@ void GameUI::onCreateReinforcement(const string& reinforcementTempalteName, Game
         onUpdateReinforcePresent();
 
         SoundManager::getInstance()->playUIEffect(UIEffectType::TrainFinished);
+    }
+}
+
+void GameUI::onTurnToUpgradePanel(Ref* sender, Widget::TouchEventType touchType)
+{
+    if (touchType == Widget::TouchEventType::ENDED)
+    {
+        auto gameMainPanel = _gameMainUI->getChildByName("Panel_GameMain");
+        auto upgradePanel = gameMainPanel->getChildByName("Panel_UpgradePanel");
+        auto reinforcementSelectPanel = gameMainPanel->getChildByName("Panel_ReinforcementSelectPanel");
+
+        upgradePanel->setVisible(true);
+        reinforcementSelectPanel->setVisible(false);
     }
 }
 
@@ -356,4 +381,155 @@ void GameUI::updateGamePassTime()
     auto gameMainPanel = _gameMainUI->getChildByName("Panel_GameMain");
     auto passTimeLabel = gameMainPanel->getChildByName<Text*>("Text_GameTime");
     passTimeLabel->setString(StringUtils::format("%02d:%02d:%02d", passTime->tm_hour, passTime->tm_min, passTime->tm_sec));
+}
+
+void GameUI::initUpgradePanel()
+{
+    auto gameMainPanel = _gameMainUI->getChildByName("Panel_GameMain");
+    auto upgradePanel = gameMainPanel->getChildByName("Panel_UpgradePanel");
+    upgradePanel->setVisible(false);
+
+    _upgradeTipsPanel = upgradePanel->getChildByName<Layout*>("Panel_Tips");
+    _upgradeTipsPanel->setVisible(false);
+
+    auto turnToSelectReinforceButton = upgradePanel->getChildByName<Button*>("Button_TurnToSelectReinforcePanel");
+    turnToSelectReinforceButton->addTouchEventListener(CC_CALLBACK_2(GameUI::onTurnToSelectReinforcePanel, this));
+
+    auto reinforcementConfig = GameConfigManager::getInstance()->getReinforceConfigBy(ForceType::Player);
+
+    auto upgradeEnchanterButton = upgradePanel->getChildByName<Button*>("Button_UpgradeEnchanter");
+    auto upgradeArcherButton = upgradePanel->getChildByName<Button*>("Button_UpgradeArcher");
+    auto upgradeBarbarianButton = upgradePanel->getChildByName<Button*>("Button_UpgradeBarbarian");
+    auto upgradeArcherTowerButton = upgradePanel->getChildByName<Button*>("Button_UpgradeArcherTower");
+    auto upgradeEnchanterTowerButton = upgradePanel->getChildByName<Button*>("Button_UpgradeEnchanterTower");
+
+    initUpgradeButton(upgradeEnchanterButton, reinforcementConfig->enchanterTemplateName);
+    initUpgradeButton(upgradeArcherButton, reinforcementConfig->archerTemplateName);
+    initUpgradeButton(upgradeBarbarianButton, reinforcementConfig->barbarianTemplateName);
+    initUpgradeButton(upgradeArcherTowerButton, reinforcementConfig->archerTowerTemplateName);
+    initUpgradeButton(upgradeEnchanterTowerButton, reinforcementConfig->enchanterTowerTemplateName);
+}
+
+void GameUI::initUpgradeButton(Button* button, const string& gameObjectTemplateName)
+{
+    auto buttonSize = button->getContentSize();
+
+    auto nextRankSprite = createNextRankAt(button, UPGRADE_NEXT_RANK);
+    nextRankSprite->setSpriteFrame("Level1Rank.png");
+
+    auto upgradeProgressBarBG = Sprite::create("HPBarBackground.png");
+    auto progressBarBGSize = upgradeProgressBarBG->getContentSize();
+    upgradeProgressBarBG->setPosition(buttonSize.width / 2.0f, -8.0f);
+    upgradeProgressBarBG->setScale(0.3f);
+    upgradeProgressBarBG->setCascadeOpacityEnabled(true);
+    upgradeProgressBarBG->setVisible(false);
+    button->addChild(upgradeProgressBarBG, 1, UPGRADE_PROGRESS_BAR_BG);
+
+    auto upgradeProgressSprite = Sprite::create("PlayerHPBar.png");
+    auto upgradeProgressBar = ProgressTimer::create(upgradeProgressSprite);
+    upgradeProgressBar->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    upgradeProgressBar->setPercentage(0.0f);
+    upgradeProgressBar->setType(ProgressTimer::Type::BAR);
+    upgradeProgressBarBG->addChild(upgradeProgressBar, 1, UPGRADE_PROGRESS_BAR);
+
+    button->addTouchEventListener(CC_CALLBACK_2(GameUI::onUpgradeButtonTouched, this));
+
+    _upgradeButtonList.push_back(button);
+    _upgradeButtonToTemplateNameMap[button] = gameObjectTemplateName;
+}
+
+void GameUI::onTurnToSelectReinforcePanel(Ref* sender, Widget::TouchEventType touchType)
+{
+    if (touchType == Widget::TouchEventType::ENDED)
+    {
+        auto gameMainPanel = _gameMainUI->getChildByName("Panel_GameMain");
+        auto upgradePanel = gameMainPanel->getChildByName("Panel_UpgradePanel");
+        auto reinforcementSelectPanel = gameMainPanel->getChildByName("Panel_ReinforcementSelectPanel");
+
+        upgradePanel->setVisible(false);
+        reinforcementSelectPanel->setVisible(true);
+    }
+}
+
+void GameUI::onUpgradeButtonTouched(Ref* sender, Widget::TouchEventType touchType)
+{
+    if (touchType == Widget::TouchEventType::ENDED)
+    {
+        auto forceManager = ForceManager::getInstance();
+        auto gameConfigManager = GameConfigManager::getInstance();
+        auto templateName = _upgradeButtonToTemplateNameMap[sender];
+
+        int gameObjectLevel = forceManager->getGameObjectLevel(templateName);
+        int gameObjectNextLevel = gameObjectLevel + 1;
+        if (gameObjectNextLevel > MAX_LEVEL)
+        {
+            return;
+        }
+
+        int playerTechnologyPoint = forceManager->getForceDataBy(ForceType::Player).technologyPoint;
+        int costTechnologyPoint = gameConfigManager->getGameObjectLevelConfig(templateName, gameObjectNextLevel)->costTechnologyPoint;
+        if (playerTechnologyPoint < costTechnologyPoint)
+        {
+            return;
+        }
+
+        forceManager->costTechnologyPoint(ForceType::Player, costTechnologyPoint);
+
+        auto button = static_cast<Button*>(sender);
+        auto upgradeProgressBarBG = button->getChildByName(UPGRADE_PROGRESS_BAR_BG);
+        upgradeProgressBarBG->setVisible(true);
+        
+        auto upgradeProgressBar = upgradeProgressBarBG->getChildByName<ProgressTimer*>(UPGRADE_PROGRESS_BAR);
+        upgradeProgressBar->setPercentage(0.0f);
+        upgradeProgressBar->setMidpoint(Vec2(0.0f, 0.5f));
+        upgradeProgressBar->setBarChangeRate(Vec2(1.0f, 0.0f));
+        auto progressToAction = ProgressTo::create(UPGRADE_TIME, 100.0f);
+        auto callBackFunction = CallFunc::create(CC_CALLBACK_0(GameUI::onUpgradeSuccess, this, button, gameObjectNextLevel));
+        auto sequenceAction = Sequence::create(progressToAction, callBackFunction, nullptr);
+        upgradeProgressBar->runAction(sequenceAction);
+
+        button->setBright(false);
+        button->setEnabled(false);
+    }
+}
+
+void GameUI::onUpgradeSuccess(Button* sender, int newLevel)
+{
+    sender->setBright(true);
+    sender->setEnabled(true);
+
+    auto upgradeProgressBarBG = sender->getChildByName(UPGRADE_PROGRESS_BAR_BG);
+    upgradeProgressBarBG->setVisible(false);
+
+    int nextUpgradeLevel = newLevel + 1;
+    if (nextUpgradeLevel <= MAX_LEVEL)
+    {
+        auto upgradeNextRank = sender->getChildByName<Sprite*>(UPGRADE_NEXT_RANK);
+        upgradeNextRank->setSpriteFrame(StringUtils::format("Level%dRank.png", nextUpgradeLevel));
+    }
+    else
+    {
+        sender->setBright(false);
+        sender->setEnabled(false);
+    }
+
+    auto templateName = _upgradeButtonToTemplateNameMap[sender];
+    ForceManager::getInstance()->setGameObjectLevel(templateName, newLevel);
+
+    auto reinforcementButton = _reinforceTemplateNameToButtonMap[templateName];
+    auto reinforcementRank = reinforcementButton->getChildByName<Sprite*>(REINFORCEMENT_RANK);
+    reinforcementRank->setSpriteFrame(StringUtils::format("Level%dRank.png", newLevel));
+}
+
+Sprite* GameUI::createNextRankAt(Button* button, const string& childName)
+{
+    auto buttonSize = button->getContentSize();
+
+    auto nextRankSprite = Sprite::create();
+    nextRankSprite->setPosition(buttonSize.width / 2.0f, 0.0f);
+    nextRankSprite->setScale(0.4f);
+
+    button->addChild(nextRankSprite, 1, childName);
+
+    return nextRankSprite;
 }

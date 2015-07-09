@@ -302,7 +302,8 @@ void GameWorld::onMouseMove(EventCustom* eventCustom)
 
 GameObject* GameWorld::createGameObject(GameObjectType gameObjectType, ForceType forceType, const string& jobName, const Vec2& position)
 {
-    auto gameObject = _gameObjectManager->createGameObject(gameObjectType, forceType, jobName, position, 0);
+    auto gameObjectLevel = ForceManager::getInstance()->getGameObjectLevel(jobName);
+    auto gameObject = _gameObjectManager->createGameObject(gameObjectType, forceType, jobName, position, gameObjectLevel);
     _mapManager->addChildInGameObjectLayer(gameObject);
 
     if (gameObjectType == GameObjectType::Building && forceType == ForceType::Player)

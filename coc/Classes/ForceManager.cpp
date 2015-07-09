@@ -26,15 +26,32 @@ bool ForceManager::init()
     _enemyReinforceCoolDownTime = ENEMY_REINFORCE_TIME_INTERVAL;
 
     _forceDataMap[ForceType::Player] = ForceData();
-
-    auto reinforceConfig = GameConfigManager::getInstance()->getReinforceConfigBy(ForceType::AI);
     _forceDataMap[ForceType::AI] = ForceData();
-    auto& reinforcementCountMap = _forceDataMap[ForceType::AI].reinforcementCountMap;
-    reinforcementCountMap[reinforceConfig->enchanterTemplateName] = reinforceConfig->enchanterReinforceCount;
-    reinforcementCountMap[reinforceConfig->archerTemplateName] = reinforceConfig->archerReinforceCount;
-    reinforcementCountMap[reinforceConfig->barbarianTemplateName] = reinforceConfig->barbarianReinforceCount;
 
     _gameWorld = GameWorldCallBackFunctionsManager::getInstance();
+
+    initGameObjectLevelMap();
+
+    return true;
+}
+
+bool ForceManager::initGameObjectLevelMap()
+{
+    auto gameConfigManager = GameConfigManager::getInstance();
+    auto playerReinforceConfig = gameConfigManager->getReinforceConfigBy(ForceType::Player);
+    auto aiReinforceConfig = gameConfigManager->getReinforceConfigBy(ForceType::AI);
+
+    _gameObjectLevelMap[playerReinforceConfig->archerTemplateName] = 0;
+    _gameObjectLevelMap[playerReinforceConfig->enchanterTemplateName] = 0;
+    _gameObjectLevelMap[playerReinforceConfig->barbarianTemplateName] = 0;
+    _gameObjectLevelMap[playerReinforceConfig->archerTowerTemplateName] = 0;
+    _gameObjectLevelMap[playerReinforceConfig->enchanterTowerTemplateName] = 0;
+
+    _gameObjectLevelMap[aiReinforceConfig->archerTemplateName] = 0;
+    _gameObjectLevelMap[aiReinforceConfig->enchanterTemplateName] = 0;
+    _gameObjectLevelMap[aiReinforceConfig->barbarianTemplateName] = 0;
+    _gameObjectLevelMap[aiReinforceConfig->archerTowerTemplateName] = 0;
+    _gameObjectLevelMap[aiReinforceConfig->enchanterTowerTemplateName] = 0;
 
     return true;
 }
@@ -75,17 +92,29 @@ void ForceManager::onEnemyLaunchAttack()
 
 void ForceManager::onEnemyReinforcementArrive()
 {
-    auto& reinforcementCountMap = _forceDataMap[ForceType::AI].reinforcementCountMap;
-    vector<string> enemyNpcTemplateNameList;
-    for (auto& iter : reinforcementCountMap)
-    {
-        enemyNpcTemplateNameList.push_back(iter.first);
-    }
+    auto reinforceConfig = GameConfigManager::getInstance()->getReinforceConfigBy(ForceType::AI);
 
-    auto listIndex = rand() % (int)enemyNpcTemplateNameList.size();
-    auto& npcTemplateName = enemyNpcTemplateNameList[listIndex];
-    auto npcCount = reinforcementCountMap[npcTemplateName];
-    _gameWorld->_createNpcAroundBaseCamp(ForceType::AI, npcTemplateName, npcCount);
+    struct ReinforceData
+    {
+        string templateName;
+        int reinforceCount;
+
+        ReinforceData(const string& argTemplateName, int argReinforceCount) :
+            templateName(argTemplateName), reinforceCount(argReinforceCount)
+        {
+
+        }
+    };
+
+    vector<ReinforceData> enemyNpcReinforceDataList = {
+        ReinforceData(reinforceConfig->archerTemplateName, reinforceConfig->archerReinforceCount),
+        ReinforceData(reinforceConfig->barbarianTemplateName, reinforceConfig->barbarianReinforceCount),
+        ReinforceData(reinforceConfig->enchanterTemplateName, reinforceConfig->enchanterReinforceCount),
+    };
+
+    auto listIndex = rand() % (int)enemyNpcReinforceDataList.size();
+    auto& reinforceData = enemyNpcReinforceDataList[listIndex];
+    _gameWorld->_createNpcAroundBaseCamp(ForceType::AI, reinforceData.templateName, reinforceData.reinforceCount);
 }
 
 void ForceManager::onPlayerReinforcePointIncrease()
@@ -157,6 +186,28 @@ const ForceData& ForceManager::getForceDataBy(ForceType forceType)
 {
     CCASSERT(forceType != ForceType::Invalid, "");
     return _forceDataMap[forceType];
+}
+
+int ForceManager::getGameObjectLevel(const string& templateName)
+{
+    int level = 0;
+
+    auto iter = _gameObjectLevelMap.find(templateName);
+    if (iter != _gameObjectLevelMap.end())
+    {
+        level = iter->second;
+    }
+
+    return level;
+}
+
+void ForceManager::setGameObjectLevel(const string& templateName, int level)
+{
+    auto iter = _gameObjectLevelMap.find(templateName);
+    if (iter != _gameObjectLevelMap.end())
+    {
+        iter->second = level;
+    }
 }
 
 cocos2d::Vec2 ForceManager::computeEnemyMoveToPosition()

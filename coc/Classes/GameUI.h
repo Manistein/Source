@@ -6,6 +6,8 @@ class MapManager;
 class GameWorldCallBackFunctionsManager;
 class ForceManager;
 
+const float UPGRADE_TIME = 10.0f;
+
 class GameUI : public Node
 {
 public:
@@ -26,7 +28,17 @@ private:
     void initSelectReinforcementButton(Button* button, const string& reinforcementTemplateName, GameObjectType gameObjectType, int reinforcmentCount);
     void onSelectReinforcementButtonTouched(Ref* sender, Widget::TouchEventType touchType);
     void onCreateReinforcement(const string& reinforcementTempalteName, GameObjectType gameObjectType, int reinforcementCount);
+    void onTurnToUpgradePanel(Ref* sender, Widget::TouchEventType touchType);
     map<Ref*, std::function<void()>> _onSelectReinforcementButtonTouchEventMap;
+    map<string, Button*> _reinforceTemplateNameToButtonMap;
+
+    void initUpgradePanel();
+    void initUpgradeButton(Button* button, const string& gameObjectTemplateName);
+    void onTurnToSelectReinforcePanel(Ref* sender, Widget::TouchEventType touchType);
+    void onUpgradeButtonTouched(Ref* sender, Widget::TouchEventType touchType);
+    void onUpgradeSuccess(Button* sender, int newLevel);
+    Layout* _upgradeTipsPanel = nullptr;
+    map<Ref*, string> _upgradeButtonToTemplateNameMap;
 
     void update(float deltaTime) override;
     void onReinforceButtonSparkMove();
@@ -37,6 +49,8 @@ private:
     void updateGamePassTime();
 
     void syncCursorPoint(const Vec2& cursorPoint);
+
+    Sprite* createNextRankAt(Button* button, const string& childName);
 
     GameWorldCallBackFunctionsManager* _gameWorld = nullptr;
     ForceManager* _forceManager = nullptr;
@@ -56,4 +70,5 @@ private:
     Vec2 _cursorPoint;
 
     vector<Button*> _reinforcementButtonList;
+    vector<Button*> _upgradeButtonList;
 };

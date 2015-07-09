@@ -4,8 +4,6 @@ struct ForceData
 {
     int reinforcePoint = 0;
     int technologyPoint = 0; // 用于升级的科技点
-
-    std::map<string, int> reinforcementCountMap;
 };
 
 const float ENEMY_LAUNCH_ATTACK_TIME_INTERVAL = 60;
@@ -21,6 +19,8 @@ public:
     void update(float delta);
 
     const ForceData& getForceDataBy(ForceType forceType);
+    int getGameObjectLevel(const string& templateName);
+    void setGameObjectLevel(const string& templateName, int level);
 
     void onPlayerReinforcePointIncrease();
     void onPlayerReinforcePointReduce();
@@ -29,6 +29,7 @@ public:
     void costTechnologyPoint(ForceType type, int technologyPoint);
 private:
     bool init();
+    bool initGameObjectLevelMap();
     void onEnemyLaunchAttack();
     void onEnemyReinforcementArrive();
     Vec2 computeEnemyMoveToPosition();
@@ -42,6 +43,10 @@ private:
 
     map<ForceType, ForceData> _forceDataMap;
     GameWorldCallBackFunctionsManager* _gameWorld = nullptr;
+
+    typedef string TemplateName;
+    typedef int Level;
+    map<TemplateName, Level> _gameObjectLevelMap;
 
     ForceManager(){}
     ForceManager(const ForceManager&);
