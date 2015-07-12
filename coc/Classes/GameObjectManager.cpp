@@ -7,6 +7,7 @@
 #include "Building.h"
 #include "GameWorldCallBackFunctionsManager.h"
 #include "Utils.h"
+#include "audio/include/AudioEngine.h"
 #include "SoundManager.h"
 
 static GameObjectManager* s_gameObjectManager = nullptr;

@@ -10,20 +10,26 @@
     <Filter Include="src">
       <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\GameWorld">
-      <UniqueIdentifier>{6b278991-674d-45a0-8c3d-025ce4a99c64}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\GameUI">
-      <UniqueIdentifier>{8f81eea5-08a5-4245-bdb5-c5be7177aa51}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Utils">
       <UniqueIdentifier>{88d985ec-d9d8-476d-a5f8-38c18fc773da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\GameWorld\GameObject">
+    <Filter Include="src\GameScene">
+      <UniqueIdentifier>{fce6295d-bb15-47c1-b30a-1896274605d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\GameScene\GameUI">
+      <UniqueIdentifier>{8f81eea5-08a5-4245-bdb5-c5be7177aa51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\GameScene\GameWorld">
+      <UniqueIdentifier>{6b278991-674d-45a0-8c3d-025ce4a99c64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\GameScene\GameWorld\GameObject">
       <UniqueIdentifier>{af6d8ef3-c05f-4e22-883b-c925f5c62184}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\GameWorld\GameManager">
+    <Filter Include="src\GameScene\GameWorld\GameManager">
       <UniqueIdentifier>{e013cb3a-8983-4e73-a817-12117edc678e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\MenuScene">
+      <UniqueIdentifier>{5190c683-05e7-4ab0-bc17-e3e3e5ac92d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -33,77 +39,80 @@
     <ClCompile Include="..\Classes\AppDelegate.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\GameScene.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\Base.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GameWorld.cpp">
-      <Filter>src\GameWorld</Filter>
+      <Filter>src\GameScene\GameWorld</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GameUI.cpp">
-      <Filter>src\GameUI</Filter>
+      <Filter>src\GameScene\GameUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\DebugInfoLayer.cpp">
-      <Filter>src\GameUI</Filter>
+      <Filter>src\GameScene\GameUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\TabFileReader.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GameObjectSelectBox.cpp">
-      <Filter>src\GameWorld</Filter>
+      <Filter>src\GameScene\GameWorld</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GameObject.cpp">
-      <Filter>src\GameWorld\GameObject</Filter>
+      <Filter>src\GameScene\GameWorld\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Npc.cpp">
-      <Filter>src\GameWorld\GameObject</Filter>
+      <Filter>src\GameScene\GameWorld\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GameObjectManager.cpp">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\MapManager.cpp">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\TemplatesManager.cpp">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\BulletManager.cpp">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GameWorldCallBackFunctionsManager.cpp">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Utils.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\AutoFindPathHelper.cpp">
-      <Filter>src\GameWorld</Filter>
+      <Filter>src\GameScene\GameWorld</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Building.cpp">
-      <Filter>src\GameWorld\GameObject</Filter>
+      <Filter>src\GameScene\GameWorld\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\SpecialEffectManager.cpp">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\ForceManager.cpp">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\CustomMoveBy.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GameConfigManager.cpp">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GameUICallBackFunctionsManager.cpp">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\SoundManager.cpp">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\WindowsHelper.cpp">
       <Filter>src\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameScene.cpp">
+      <Filter>src\GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MenuScene.cpp">
+      <Filter>src\MenuScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -113,80 +122,83 @@
     <ClInclude Include="..\Classes\AppDelegate.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\GameScene.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\Base.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameWorld.h">
-      <Filter>src\GameWorld</Filter>
+      <Filter>src\GameScene\GameWorld</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameUI.h">
-      <Filter>src\GameUI</Filter>
+      <Filter>src\GameScene\GameUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\DebugInfoLayer.h">
-      <Filter>src\GameUI</Filter>
+      <Filter>src\GameScene\GameUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\TabFileReader.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameObjectSelectBox.h">
-      <Filter>src\GameWorld</Filter>
+      <Filter>src\GameScene\GameWorld</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameSetting.h">
-      <Filter>src\GameWorld</Filter>
+      <Filter>src\GameScene\GameWorld</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameObject.h">
-      <Filter>src\GameWorld\GameObject</Filter>
+      <Filter>src\GameScene\GameWorld\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Npc.h">
-      <Filter>src\GameWorld\GameObject</Filter>
+      <Filter>src\GameScene\GameWorld\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameObjectManager.h">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\MapManager.h">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\TemplatesManager.h">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\BulletManager.h">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameWorldCallBackFunctionsManager.h">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Utils.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\AutoFindPathHelper.h">
-      <Filter>src\GameWorld</Filter>
+      <Filter>src\GameScene\GameWorld</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Building.h">
-      <Filter>src\GameWorld\GameObject</Filter>
+      <Filter>src\GameScene\GameWorld\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\SpecialEffectManager.h">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\ForceManager.h">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\CustomMoveBy.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameConfigManager.h">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameUICallBackFunctionsManager.h">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\SoundManager.h">
-      <Filter>src\GameWorld\GameManager</Filter>
+      <Filter>src\GameScene\GameWorld\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\WindowsHelper.h">
       <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameScene.h">
+      <Filter>src\GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MenuScene.h">
+      <Filter>src\MenuScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

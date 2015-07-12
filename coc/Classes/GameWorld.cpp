@@ -13,6 +13,7 @@
 #include "SpecialEffectManager.h"
 #include "ForceManager.h"
 #include "GameUICallBackFunctionsManager.h"
+#include "audio/include/AudioEngine.h"
 #include "SoundManager.h"
 #include "WindowsHelper.h"
 

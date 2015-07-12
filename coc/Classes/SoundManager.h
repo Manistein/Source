@@ -42,13 +42,19 @@ public:
 
     static SoundManager* getInstance();
 
-    void setVolume(float volume);
-    float getVolume();
+    void setEffectVolume(float volume);
+    float getEffectVolume();
 
+    void setMusicVolume(float volume);
+    float getMusicVolume();
+
+    void playMusic(const string& musicName, bool isLoop);
     void playRandomBackgroundMusicOneByOne();
     void playNpcEffect(const string& templateName, NpcSoundEffectType type);
     void playBuildingEffect(BuildingSoundEffectType type);
     void playUIEffect(UIEffectType type);
+
+    void stopAll();
 private:
     bool init();
     bool initBackgroundMusicData();
@@ -65,7 +71,9 @@ private:
     typedef string TypeName;
     unordered_map<TypeName, string> _uiSoundEffectNameMap;
 
-    float _volume = 1.0f; // 音量大小，0.0f~1.0f
+    float _effectVolume = 1.0f; // 音量大小，0.0f~1.0f
+    float _musicVolume = 1.0f;
+    int _musicAudioID = experimental::AudioEngine::INVALID_AUDIO_ID;
 
     SoundManager(){};
     SoundManager(const SoundManager&);

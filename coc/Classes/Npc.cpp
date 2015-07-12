@@ -12,6 +12,7 @@
 #include "math/CCGeometry.h"
 #include "MapManager.h"
 #include "CustomMoveBy.h"
+#include "audio/include/AudioEngine.h"
 #include "SoundManager.h"
 #include "ForceManager.h"
 #include "GameConfigManager.h"

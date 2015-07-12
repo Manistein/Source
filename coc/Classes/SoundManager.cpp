@@ -87,15 +87,36 @@ bool SoundManager::initBuildingSoundEffectData()
     return true;
 }
 
-void SoundManager::setVolume(float volume)
+void SoundManager::setEffectVolume(float volume)
 {
-    _volume = std::max(0.0f, volume);
-    _volume = std::min(1.0f, volume);
+    _effectVolume = std::max(0.0f, volume);
+    _effectVolume = std::min(1.0f, volume);
 }
 
-float SoundManager::getVolume()
+float SoundManager::getEffectVolume()
 {
-    return _volume;
+    return _effectVolume;
+}
+
+void SoundManager::setMusicVolume(float volume)
+{
+    _musicVolume = std::max(0.0f, volume);
+    _musicVolume = std::min(1.0f, volume);
+
+    if (_musicVolume != AudioEngine::INVALID_AUDIO_ID)
+    {
+        AudioEngine::setVolume(_musicAudioID, volume);
+    }
+}
+
+float SoundManager::getMusicVolume()
+{
+    return _musicVolume;
+}
+
+void SoundManager::playMusic(const string& musicName, bool isLoop)
+{
+    _musicAudioID = AudioEngine::play2d(musicName, isLoop);
 }
 
 void SoundManager::playRandomBackgroundMusicOneByOne()
@@ -108,8 +129,10 @@ void SoundManager::playRandomBackgroundMusicOneByOne()
     int randomIndex = rand() % (int)_backgroundMusicNameList.size();
     auto backgroundMusicName = _backgroundMusicNameList[randomIndex];
 
-    int audioID = AudioEngine::play2d(backgroundMusicName, false, _volume);
+    int audioID = AudioEngine::play2d(backgroundMusicName, false, _musicVolume);
     AudioEngine::setFinishCallback(audioID, CC_CALLBACK_0(SoundManager::playRandomBackgroundMusicOneByOne, this));
+
+    _musicAudioID = audioID;
 }
 
 void SoundManager::playNpcEffect(const string& templateName, NpcSoundEffectType type)
@@ -137,7 +160,7 @@ void SoundManager::playNpcEffect(const string& templateName, NpcSoundEffectType 
         default:    break;
         }
 
-        AudioEngine::play2d(soundEffectName, false, _volume);
+        AudioEngine::play2d(soundEffectName, false, _effectVolume);
     }
 }
 
@@ -145,11 +168,11 @@ void SoundManager::playBuildingEffect(BuildingSoundEffectType type)
 {
     if (type == BuildingSoundEffectType::Construct)
     {
-        AudioEngine::play2d(_buildingSoundEffectData.constructName, false, _volume);
+        AudioEngine::play2d(_buildingSoundEffectData.constructName, false, _effectVolume);
     }
     else
     {
-        AudioEngine::play2d(_buildingSoundEffectData.destroyedName, false, _volume);
+        AudioEngine::play2d(_buildingSoundEffectData.destroyedName, false, _effectVolume);
     }
 }
 
@@ -171,7 +194,7 @@ void SoundManager::playUIEffect(UIEffectType type)
         break;
     }
 
-    AudioEngine::play2d(effectName, false, _volume);
+    AudioEngine::play2d(effectName, false, _effectVolume);
 }
 
 bool SoundManager::initUISoundEffectData()
@@ -189,4 +212,11 @@ bool SoundManager::initUISoundEffectData()
     }
 
     return true;
+}
+
+void SoundManager::stopAll()
+{
+    AudioEngine::stopAll();
+
+    _musicAudioID = AudioEngine::INVALID_AUDIO_ID;
 }

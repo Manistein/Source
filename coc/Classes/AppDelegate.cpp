@@ -1,6 +1,7 @@
 #include "Base.h"
 #include "AppDelegate.h"
 #include "GameScene.h"
+#include "MenuScene.h"
 
 USING_NS_CC;
 
@@ -28,7 +29,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLViewImpl::createWithFullScreen("Conqueror Of Clan");
+        glview = GLViewImpl::create("Conqueror Of Clan");
 		glview->setFrameSize(1280, 720);
 		auto windowHandle = glview->getWin32Window();
 		MoveWindow(windowHandle, 0, 0, 1280, 720, false);
@@ -54,6 +55,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
     searchPaths.push_back("Resources/publish/bullet");
     searchPaths.push_back("Resources/publish/building");
     searchPaths.push_back("Resources/publish/ui");
+    searchPaths.push_back("Resources/publish/ui/GameScene");
+    searchPaths.push_back("Resources/publish/ui/MenuScene");
+    searchPaths.push_back("Resources/publish/ui/SelectStageScene");
     searchPaths.push_back("Resources/publish/ui/CocosProject/res");
     searchPaths.push_back("Resources/publish/sound/effect");
     searchPaths.push_back("Resources/publish/sound/music");
@@ -62,7 +66,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setDisplayStats(false);
     director->setAnimationInterval(1.0 / 60.0);
 
-    auto scene = GameScene::createScene();
+    auto scene = MenuScene::createScene();
     director->runWithScene(scene);
 
     return true;

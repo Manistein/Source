@@ -10,6 +10,7 @@
 #include "GameObjectManager.h"
 #include "GameConfigManager.h"
 #include "GameUICallBackFunctionsManager.h"
+#include "audio/include/AudioEngine.h"
 #include "SoundManager.h"
 #include "GameSetting.h"
 
@@ -458,6 +459,8 @@ void GameUI::onUpgradeButtonTouched(Ref* sender, Widget::TouchEventType touchTyp
 {
     if (touchType == Widget::TouchEventType::ENDED)
     {
+        SoundManager::getInstance()->playUIEffect(UIEffectType::ButtonClick);
+
         auto forceManager = ForceManager::getInstance();
         auto gameConfigManager = GameConfigManager::getInstance();
         auto templateName = _upgradeButtonToTemplateNameMap[sender];

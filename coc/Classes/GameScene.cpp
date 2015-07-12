@@ -7,6 +7,7 @@
 #include "GameWorld.h"
 #include "GameScene.h"
 #include "GameSetting.h"
+#include "audio/include/AudioEngine.h"
 #include "SoundManager.h"
 #include "WindowsHelper.h"
 

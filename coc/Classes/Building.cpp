@@ -7,6 +7,7 @@
 #include <functional>
 #include "GameObjectManager.h"
 #include "Npc.h"
+#include "audio/include/AudioEngine.h"
 #include "SoundManager.h"
 #include "GameConfigManager.h"
 
