@@ -38,10 +38,8 @@ bool LoadingScene::init()
 
 void LoadingScene::initGameObjectResources()
 {
-    auto spriteFrameCache = SpriteFrameCache::getInstance();
-
-    spriteFrameCache->addSpriteFramesWithFile("BuildingCommon.plist");
-    spriteFrameCache->addSpriteFramesWithFile("LevelRanks.plist");
+    _plistFileNameList.push_back("BuildingCommon.plist");
+    _plistFileNameList.push_back("LevelRanks.plist");
 
     auto& npcTemplateMap = TemplateManager::getInstance()->getNpcTemplatesMap();
     for (auto& iter : npcTemplateMap)
@@ -80,8 +78,8 @@ void LoadingScene::update(float delta)
 
         _loadingIndex++;
         int totalNum = (int)_plistFileNameList.size();
-        float percentage = (float)(_loadingIndex / totalNum) * 100.0f;
-        _loadingLabel->setString(StringUtils::format("Loading... %d Percent", (int)percentage));
+        float percentage = (float)_loadingIndex / (float)totalNum * 100.0f;
+        _loadingLabel->setString(StringUtils::format("Loading... %d", (int)percentage) + "%");
     }
     else
     {
