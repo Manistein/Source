@@ -35,8 +35,6 @@ bool GameWorld::init()
         return false;
     }
 
-    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("BuildingCommon.plist");
-    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("LevelRanks.plist");
     _soundManager = SoundManager::getInstance();
 
     _mapManager = new MapManager();

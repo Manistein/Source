@@ -31,6 +31,9 @@
     <Filter Include="src\MenuScene">
       <UniqueIdentifier>{5190c683-05e7-4ab0-bc17-e3e3e5ac92d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\LoadingScene">
+      <UniqueIdentifier>{34d0a9d8-a31a-4b90-aa04-10d97c152ee1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -113,6 +116,9 @@
     </ClCompile>
     <ClCompile Include="..\Classes\MenuScene.cpp">
       <Filter>src\MenuScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\LoadingScene.cpp">
+      <Filter>src\LoadingScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -199,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\MenuScene.h">
       <Filter>src\MenuScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\LoadingScene.h">
+      <Filter>src\LoadingScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

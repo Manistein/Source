@@ -14,7 +14,7 @@ public:
     void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event) override;
 private:
     bool init() override;
-    void initNpcResources();
+    // void initNpcResources();
     void update(float deltaTime) override;
 
     void onMouseMove(Event* event);
