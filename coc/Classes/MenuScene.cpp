@@ -5,6 +5,7 @@
 #include "audio/include/AudioEngine.h"
 #include "SoundManager.h"
 #include "LoadingScene.h"
+#include "SelectStageScene.h"
 
 cocos2d::Scene* MenuScene::createScene()
 {
@@ -85,8 +86,8 @@ void MenuScene::onGameStart(Ref* sender, Widget::TouchEventType type)
     {
         SoundManager::getInstance()->stopAll();
 
-        auto loadingScene = LoadingScene::createScene();
-        Director::getInstance()->replaceScene(loadingScene);
+        auto selectStageScene = SelectStageScene::createScene();
+        Director::getInstance()->replaceScene(selectStageScene);
     }
 }
 

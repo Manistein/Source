@@ -169,6 +169,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\MenuScene.cpp" />
     <ClCompile Include="..\Classes\MapManager.cpp" />
     <ClCompile Include="..\Classes\Npc.cpp" />
+    <ClCompile Include="..\Classes\SelectStageScene.cpp" />
     <ClCompile Include="..\Classes\SoundManager.cpp" />
     <ClCompile Include="..\Classes\SpecialEffectManager.cpp" />
     <ClCompile Include="..\Classes\TabFileReader.cpp" />
@@ -200,6 +201,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\MenuScene.h" />
     <ClInclude Include="..\Classes\MapManager.h" />
     <ClInclude Include="..\Classes\Npc.h" />
+    <ClInclude Include="..\Classes\SelectStageScene.h" />
     <ClInclude Include="..\Classes\SoundManager.h" />
     <ClInclude Include="..\Classes\SpecialEffectManager.h" />
     <ClInclude Include="..\Classes\TabFileReader.h" />

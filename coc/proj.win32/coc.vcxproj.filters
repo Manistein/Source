@@ -34,6 +34,9 @@
     <Filter Include="src\LoadingScene">
       <UniqueIdentifier>{34d0a9d8-a31a-4b90-aa04-10d97c152ee1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\SelectStageScene">
+      <UniqueIdentifier>{7f2ed07f-5b80-4162-8b25-e163cf8fae65}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -119,6 +122,9 @@
     </ClCompile>
     <ClCompile Include="..\Classes\LoadingScene.cpp">
       <Filter>src\LoadingScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\SelectStageScene.cpp">
+      <Filter>src\SelectStageScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -208,6 +214,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\LoadingScene.h">
       <Filter>src\LoadingScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\SelectStageScene.h">
+      <Filter>src\SelectStageScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
