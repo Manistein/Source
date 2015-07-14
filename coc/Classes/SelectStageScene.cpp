@@ -63,6 +63,41 @@ void SelectStageScene::initFrontUI()
 void SelectStageScene::initSelectStageScrollView()
 {
     _selectStageScrollView = _rootPanel->getChildByName<ScrollView*>("ScrollView_SelectStage");
+
+    for (int i = 1; i < INT_MAX; i ++)
+    {
+        auto stageCheckBoxNode = _selectStageScrollView->getChildByName(StringUtils::format("CheckBox_Stage%d", i));
+        if (stageCheckBoxNode)
+        {
+            auto stageCheckBox = static_cast<CheckBox*>(stageCheckBoxNode);
+            stageCheckBox->addEventListener(CC_CALLBACK_2(SelectStageScene::onStageCheckBoxTouch, this));
+
+            _stageCheckBoxList.push_back(stageCheckBox);
+        }
+        else
+        {
+            break;
+        }
+    }
+}
+
+void SelectStageScene::onStageCheckBoxTouch(Ref* sender, CheckBox::EventType type)
+{
+    if (type == CheckBox::EventType::SELECTED || type == CheckBox::EventType::UNSELECTED)
+    {
+        auto currentCheckBox = static_cast<CheckBox*>(sender);
+        for (auto stageCheckBox : _stageCheckBoxList)
+        {
+            if (stageCheckBox == currentCheckBox)
+            {
+                stageCheckBox->setSelected(true);
+            }
+            else
+            {
+                stageCheckBox->setSelected(false);
+            }
+        }
+    }
 }
 
 void SelectStageScene::onSelectDifficultyLevelCheckBoxTouch(Ref* sender, CheckBox::EventType type)

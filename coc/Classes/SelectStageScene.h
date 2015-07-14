@@ -18,6 +18,7 @@ private:
     void initFrontUI();
     void initSelectStageScrollView();
 
+    void onStageCheckBoxTouch(Ref* sender, CheckBox::EventType type);
     void onSelectDifficultyLevelCheckBoxTouch(Ref* sender, CheckBox::EventType type);
     void onGameStart(Ref* sender, Widget::TouchEventType type);
 
