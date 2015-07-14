@@ -30,7 +30,7 @@ bool SelectStageScene::init()
     initFrontUI();
     initSelectStageScrollView();
 
-    auto delayPlayMusic = CallFunc::create(CC_CALLBACK_0(SoundManager::playMusic, SoundManager::getInstance(), "SelectStageDialog2.ogg", true));
+    auto delayPlayMusic = CallFunc::create(CC_CALLBACK_0(SoundManager::playMusic, SoundManager::getInstance(), "SelectStageDialog.mp3", true));
     auto sequenceAction = Sequence::create(DelayTime::create(0.5f), delayPlayMusic, nullptr);
     runAction(sequenceAction);
     // SoundManager::getInstance()->playMusic("SelectStageDialog2.ogg", true);
