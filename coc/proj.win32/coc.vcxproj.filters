@@ -25,9 +25,6 @@
     <Filter Include="src\GameScene\GameWorld\GameObject">
       <UniqueIdentifier>{af6d8ef3-c05f-4e22-883b-c925f5c62184}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\GameScene\GameWorld\GameManager">
-      <UniqueIdentifier>{e013cb3a-8983-4e73-a817-12117edc678e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\MenuScene">
       <UniqueIdentifier>{5190c683-05e7-4ab0-bc17-e3e3e5ac92d3}</UniqueIdentifier>
     </Filter>
@@ -36,6 +33,9 @@
     </Filter>
     <Filter Include="src\SelectStageScene">
       <UniqueIdentifier>{7f2ed07f-5b80-4162-8b25-e163cf8fae65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\GameManager">
+      <UniqueIdentifier>{e013cb3a-8983-4e73-a817-12117edc678e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -70,19 +70,19 @@
       <Filter>src\GameScene\GameWorld\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GameObjectManager.cpp">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\MapManager.cpp">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\TemplatesManager.cpp">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\BulletManager.cpp">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GameWorldCallBackFunctionsManager.cpp">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Utils.cpp">
       <Filter>src\Utils</Filter>
@@ -94,22 +94,22 @@
       <Filter>src\GameScene\GameWorld\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\SpecialEffectManager.cpp">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\ForceManager.cpp">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\CustomMoveBy.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GameConfigManager.cpp">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GameUICallBackFunctionsManager.cpp">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\SoundManager.cpp">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\WindowsHelper.cpp">
       <Filter>src\Utils</Filter>
@@ -125,6 +125,9 @@
     </ClCompile>
     <ClCompile Include="..\Classes\SelectStageScene.cpp">
       <Filter>src\SelectStageScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\StorageManager.cpp">
+      <Filter>src\GameManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -162,19 +165,19 @@
       <Filter>src\GameScene\GameWorld\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameObjectManager.h">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\MapManager.h">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\TemplatesManager.h">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\BulletManager.h">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameWorldCallBackFunctionsManager.h">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Utils.h">
       <Filter>src\Utils</Filter>
@@ -186,22 +189,22 @@
       <Filter>src\GameScene\GameWorld\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\SpecialEffectManager.h">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\ForceManager.h">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\CustomMoveBy.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameConfigManager.h">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameUICallBackFunctionsManager.h">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\SoundManager.h">
-      <Filter>src\GameScene\GameWorld\GameManager</Filter>
+      <Filter>src\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\WindowsHelper.h">
       <Filter>src\Utils</Filter>
@@ -217,6 +220,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\SelectStageScene.h">
       <Filter>src\SelectStageScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\StorageManager.h">
+      <Filter>src\GameManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

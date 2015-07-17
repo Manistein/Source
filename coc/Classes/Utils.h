@@ -7,4 +7,5 @@ namespace GameUtils
     bool isFloatEqual(float left, float right);
     bool isVec2Equal(const Vec2& left, const Vec2& right);
     Animation* createAnimationWithPList(const string& plistFileName);
+    void pauseTargetAndChildren(Node* target);
 }

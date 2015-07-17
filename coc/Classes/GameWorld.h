@@ -58,6 +58,8 @@ public:
     bool isPlayerHoldingBuilding();
 
     void onSelectGameObjectEvent();
+
+    void pauseGameWorld();
 private:
     bool init() override;
     void initEditedGameObjects();

@@ -154,3 +154,14 @@ Animation* GameUtils::createAnimationWithPList(const string& plistFileName)
     
     return animation;
 }
+
+void GameUtils::pauseTargetAndChildren(Node* target)
+{
+    target->pause();
+
+    auto& children = target->getChildren();
+    for (auto child : children)
+    {
+        pauseTargetAndChildren(child);
+    }
+}

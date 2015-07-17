@@ -28,6 +28,9 @@ bool MenuScene::init()
     _mainMenu = CSLoader::createNode("MenuScene.csb");
     addChild(_mainMenu);
 
+    _storageManager = StorageManager::getInstance();
+    _storageManager->load();
+
     _mainMenuPanel = _mainMenu->getChildByName("Panel_MainMenu");
 
     initSettingDialog();
@@ -38,9 +41,6 @@ bool MenuScene::init()
 
     Director::getInstance()->setProjection(Director::Projection::_2D);
     Director::getInstance()->setDepthTest(true);
-
-    _storageManager = StorageManager::getInstance();
-    _storageManager->load();
 
     return true;
 }
@@ -53,9 +53,11 @@ void MenuScene::initSettingDialog()
 
     auto musicVolumeSlider = _settingDialog->getChildByName<Slider*>("Slider_MusicVolume");
     musicVolumeSlider->addEventListener(CC_CALLBACK_2(MenuScene::onMusicVolumeSliderMoved, this));
+    musicVolumeSlider->setPercent(SoundManager::getInstance()->getMusicVolume() * 100.0f);
 
     auto effectVolumeSlider = _settingDialog->getChildByName<Slider*>("Slider_EffectVolume");
     effectVolumeSlider->addEventListener(CC_CALLBACK_2(MenuScene::onEffectVolumeSliderMoved, this));
+    effectVolumeSlider->setPercent(SoundManager::getInstance()->getEffectVolume() * 100.0f);
 
     _settingDialog->setVisible(false);
 }

@@ -13,6 +13,7 @@
 #include "audio/include/AudioEngine.h"
 #include "SoundManager.h"
 #include "GameSetting.h"
+#include "Utils.h"
 
 const string UPGRADE_PROGRESS_BAR_BG = "upgradeProgressBarBG";
 const string UPGRADE_PROGRESS_BAR = "upgradeProgressBar";
@@ -40,6 +41,7 @@ bool GameUI::init()
     initMiniMapPresent();
     initReinforcementSelectPanel();
     initUpgradePanel();
+    initGameEndTips();
 
     Director::getInstance()->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameUI::onMouseMove, this));
 
@@ -362,6 +364,11 @@ void GameUI::onMinimapTouched(Ref* sender, Widget::TouchEventType touchType)
             touchPosition.y / widgetSize.height * _tileMapHeight * mapScale - visibleSize.height / 2.0f);
 
         _mapManager->setTileMapPosition(-tileMapNewPosition);
+
+        if (Director::getInstance()->isPaused())
+        {
+            updateMinimap();
+        }
     }
 }
 

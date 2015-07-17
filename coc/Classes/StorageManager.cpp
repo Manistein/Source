@@ -1,6 +1,7 @@
 #include "Base.h"
 #include "StorageManager.h"
 #include "base/CCUserDefault.h"
+#include "audio/include/AudioEngine.h"
 #include "SoundManager.h"
 
 static StorageManager* s_storageManager = nullptr;
@@ -36,6 +37,8 @@ void StorageManager::load()
 
     _stageData.maxPlayableStage = _userDefault->getIntegerForKey("MaxPlayableStage", FIRST_STAGE);
     _stageData.playerSelectedStage = _userDefault->getIntegerForKey("SelectedStage", FIRST_STAGE);
+
+    log(_userDefault->getXMLFilePath().c_str());
 }
 
 void StorageManager::save()

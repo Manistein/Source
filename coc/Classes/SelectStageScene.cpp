@@ -77,6 +77,7 @@ void SelectStageScene::initSelectStageScrollView()
             if (i <= StorageManager::getInstance()->_stageData.maxPlayableStage)
             {
                 stageCheckBox->setEnabled(true);
+                stageCheckBox->setBright(true);
             }
 
             _stageCheckBoxList.push_back(stageCheckBox);

@@ -103,7 +103,7 @@ void SoundManager::setMusicVolume(float volume)
     _musicVolume = std::max(0.0f, volume);
     _musicVolume = std::min(1.0f, volume);
 
-    if (_musicVolume != AudioEngine::INVALID_AUDIO_ID)
+    if (_musicAudioID != AudioEngine::INVALID_AUDIO_ID)
     {
         AudioEngine::setVolume(_musicAudioID, volume);
     }
@@ -116,7 +116,7 @@ float SoundManager::getMusicVolume()
 
 void SoundManager::playMusic(const string& musicName, bool isLoop)
 {
-    _musicAudioID = AudioEngine::play2d(musicName, isLoop);
+    _musicAudioID = AudioEngine::play2d(musicName, isLoop, _musicVolume);
 }
 
 void SoundManager::playRandomBackgroundMusicOneByOne()
