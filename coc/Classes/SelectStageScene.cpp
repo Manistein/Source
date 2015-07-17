@@ -89,6 +89,9 @@ void SelectStageScene::initSelectStageScrollView()
     }
 
     g_setting.maxStage = (int)_stageCheckBoxList.size();
+
+    int selectedStage = StorageManager::getInstance()->_stageData.playerSelectedStage;
+    onStageCheckBoxTouch(_stageCheckBoxList[selectedStage - 1], CheckBox::EventType::SELECTED, selectedStage);
 }
 
 void SelectStageScene::onStageCheckBoxTouch(Ref* sender, CheckBox::EventType type, int stageIndex)
