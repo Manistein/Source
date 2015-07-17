@@ -18,4 +18,6 @@ GameUICallbackFunctionsManager* GameUICallbackFunctionsManager::getInstance()
 void GameUICallbackFunctionsManager::registerCallBackFunctions(GameUI* gameUI)
 {
     _onUpdateReinforcePresent = CC_CALLBACK_0(GameUI::onUpdateReinforcePresent, gameUI);
+    _showGameWinTips = CC_CALLBACK_0(GameUI::showGameWinTips, gameUI);
+    _showGameLostTips = CC_CALLBACK_0(GameUI::showGameLostTips, gameUI);
 }

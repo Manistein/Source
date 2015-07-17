@@ -5,6 +5,8 @@
 #include "LoadingScene.h"
 #include "audio/include/AudioEngine.h"
 #include "SoundManager.h"
+#include "GameSetting.h"
+#include "StorageManager.h"
 
 cocos2d::Scene* SelectStageScene::createScene()
 {
@@ -70,7 +72,12 @@ void SelectStageScene::initSelectStageScrollView()
         if (stageCheckBoxNode)
         {
             auto stageCheckBox = static_cast<CheckBox*>(stageCheckBoxNode);
-            stageCheckBox->addEventListener(CC_CALLBACK_2(SelectStageScene::onStageCheckBoxTouch, this));
+            stageCheckBox->addEventListener(CC_CALLBACK_2(SelectStageScene::onStageCheckBoxTouch, this, i));
+
+            if (i <= StorageManager::getInstance()->_stageData.maxPlayableStage)
+            {
+                stageCheckBox->setEnabled(true);
+            }
 
             _stageCheckBoxList.push_back(stageCheckBox);
         }
@@ -79,9 +86,11 @@ void SelectStageScene::initSelectStageScrollView()
             break;
         }
     }
+
+    g_setting.maxStage = (int)_stageCheckBoxList.size();
 }
 
-void SelectStageScene::onStageCheckBoxTouch(Ref* sender, CheckBox::EventType type)
+void SelectStageScene::onStageCheckBoxTouch(Ref* sender, CheckBox::EventType type, int stageIndex)
 {
     if (type == CheckBox::EventType::SELECTED || type == CheckBox::EventType::UNSELECTED)
     {
@@ -91,6 +100,7 @@ void SelectStageScene::onStageCheckBoxTouch(Ref* sender, CheckBox::EventType typ
             if (stageCheckBox == currentCheckBox)
             {
                 stageCheckBox->setSelected(true);
+                StorageManager::getInstance()->_stageData.playerSelectedStage = stageIndex;
             }
             else
             {

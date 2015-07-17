@@ -1,5 +1,7 @@
 #pragma once
 
+class StorageManager;
+
 class MenuScene : public Layer
 {
 public:
@@ -27,4 +29,6 @@ private:
 
     Layout* _settingDialog = nullptr;
     Layout* _developerDialog = nullptr;
+
+    StorageManager* _storageManager = nullptr;
 };

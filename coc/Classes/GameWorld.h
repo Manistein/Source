@@ -75,6 +75,12 @@ private:
 
     void updateCursor();
 
+    bool isPlayerBaseCampDestroy();
+    bool isAIBaseCampDestroy();
+
+    void onWin();
+    void onLost();
+
     GameObjectManager* _gameObjectManager = nullptr;
     GameObjectSelectBox* _gameObjectSelectBox = nullptr;
     BulletManager* _bulletManager = nullptr;

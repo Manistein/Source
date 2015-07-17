@@ -649,3 +649,25 @@ void GameUI::setDebugLayerShowStatus(bool isShow)
 {
     _debugInfoLayer->setVisible(isShow);
 }
+
+void GameUI::initGameEndTips()
+{
+    auto gameMainPanel = _gameMainUI->getChildByName("Panel_GameMain");
+    _winTips = gameMainPanel->getChildByName<Text*>("Text_WinTips");
+    _lostTips = gameMainPanel->getChildByName<Text*>("Text_LostTips");
+
+    _winTips->setVisible(false);
+    _lostTips->setVisible(false);
+}
+
+void GameUI::showGameWinTips()
+{
+    _winTips->setVisible(true);
+    _lostTips->setVisible(false);
+}
+
+void GameUI::showGameLostTips()
+{
+    _lostTips->setVisible(true);
+    _winTips->setVisible(false);
+}

@@ -23,6 +23,9 @@ public:
 
     bool isShowDebugLayer();
     void setDebugLayerShowStatus(bool isShow);
+
+    void showGameWinTips();
+    void showGameLostTips();
 private:
     bool init() override;
     void initReinforcePresent();
@@ -46,6 +49,10 @@ private:
     bool isUpgrading(Button* button);
     Layout* _upgradeTipsPanel = nullptr;
     map<Ref*, string> _upgradeButtonToTemplateNameMap;
+
+    void initGameEndTips();
+    Text* _winTips = nullptr;
+    Text* _lostTips = nullptr;
 
     void update(float deltaTime) override;
     void onReinforceButtonSparkMove();

@@ -6,6 +6,7 @@
 #include "SoundManager.h"
 #include "LoadingScene.h"
 #include "SelectStageScene.h"
+#include "StorageManager.h"
 
 cocos2d::Scene* MenuScene::createScene()
 {
@@ -37,6 +38,9 @@ bool MenuScene::init()
 
     Director::getInstance()->setProjection(Director::Projection::_2D);
     Director::getInstance()->setDepthTest(true);
+
+    _storageManager = StorageManager::getInstance();
+    _storageManager->load();
 
     return true;
 }
@@ -128,6 +132,8 @@ void MenuScene::onSettingDialogClose(Ref* sender, Widget::TouchEventType type)
         SoundManager::getInstance()->playUIEffect(UIEffectType::ButtonClick);
 
         _settingDialog->setVisible(false);
+
+        _storageManager->save();
     }
 }
 

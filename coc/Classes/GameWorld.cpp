@@ -16,6 +16,8 @@
 #include "audio/include/AudioEngine.h"
 #include "SoundManager.h"
 #include "WindowsHelper.h"
+#include "StorageManager.h"
+#include "GameSetting.h"
 
 static Vec2 s_mouseDownPoint;
 const float MOUSE_CLICK_AREA = 5.0f;
@@ -179,6 +181,18 @@ void GameWorld::initMapGIDTable()
 
 void GameWorld::update(float deltaTime)
 {
+    if (isPlayerBaseCampDestroy())
+    {
+        onLost();
+        return;
+    }
+
+    if (isAIBaseCampDestroy())
+    {
+        onWin();
+        return;
+    }
+
     if (!_isLeftMouseButtonDown)
     {
         _mapManager->updateMapPosition();
@@ -764,4 +778,48 @@ void GameWorld::onSelectGameObjectEvent()
         auto selectRect = _gameObjectSelectBox->getRect();
         _gameObjectManager->selectGameObjectsBy(selectRect);
     }
+}
+
+bool GameWorld::isPlayerBaseCampDestroy()
+{
+    bool result = false;
+
+    auto baseCamp = _gameObjectManager->getGameObjectBy(_playerBaseCampUniqueID);
+    if (!baseCamp)
+    {
+        result = true;
+    }
+
+    return result;
+}
+
+bool GameWorld::isAIBaseCampDestroy()
+{
+    bool result = false;
+
+    auto baseCamp = _gameObjectManager->getGameObjectBy(_aiBaseCampUniqueID);
+    if (!baseCamp)
+    {
+        result = true;
+    }
+
+    return result;
+}
+
+void GameWorld::onWin()
+{
+    pause();
+
+    auto storageManager = StorageManager::getInstance();
+    storageManager->_stageData.maxPlayableStage = std::min(g_setting.maxStage, storageManager->_stageData.maxPlayableStage++);
+    storageManager->_stageData.playerSelectedStage = std::min(storageManager->_stageData.maxPlayableStage, storageManager->_stageData.playerSelectedStage++);
+    storageManager->save();
+
+    _gameUI->_showGameWinTips();
+}
+
+void GameWorld::onLost()
+{
+    pause();
+    _gameUI->_showGameLostTips();
 }
