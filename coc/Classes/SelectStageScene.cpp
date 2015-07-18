@@ -91,7 +91,21 @@ void SelectStageScene::initSelectStageScrollView()
     g_setting.maxStage = (int)_stageCheckBoxList.size();
 
     int selectedStage = StorageManager::getInstance()->_stageData.playerSelectedStage;
-    onStageCheckBoxTouch(_stageCheckBoxList[selectedStage - 1], CheckBox::EventType::SELECTED, selectedStage);
+    auto selectedCheckBox = _stageCheckBoxList[selectedStage - 1];
+    onStageCheckBoxTouch(selectedCheckBox, CheckBox::EventType::SELECTED, selectedStage);
+
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    auto innerContainer = _selectStageScrollView->getInnerContainer();
+    auto selectedCheckBoxWorldPosition = innerContainer->convertToWorldSpace(selectedCheckBox->getPosition());
+    float yDelta = visibleSize.height / 2.0f - selectedCheckBoxWorldPosition.y;
+
+    auto innerContainerPosition = innerContainer->getPosition();
+    auto innerContainerSize = innerContainer->getContentSize();
+
+    float newInnerContainerYPosition = innerContainerPosition.y + yDelta;
+    newInnerContainerYPosition = std::max(visibleSize.height - innerContainerSize.height, newInnerContainerYPosition);
+    newInnerContainerYPosition = std::min(0.0f, newInnerContainerYPosition);
+    innerContainer->setPosition(Vec2(innerContainerPosition.x, newInnerContainerYPosition));
 }
 
 void SelectStageScene::onStageCheckBoxTouch(Ref* sender, CheckBox::EventType type, int stageIndex)
