@@ -59,7 +59,7 @@ public:
 
     void onSelectGameObjectEvent();
 
-    void pauseGameWorld();
+    void pauseGame();
 private:
     bool init() override;
     void initEditedGameObjects();

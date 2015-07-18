@@ -780,7 +780,7 @@ void GameWorld::onSelectGameObjectEvent()
     }
 }
 
-void GameWorld::pauseGameWorld()
+void GameWorld::pauseGame()
 {
     Director::getInstance()->pause();
 }
@@ -813,11 +813,21 @@ bool GameWorld::isAIBaseCampDestroy()
 
 void GameWorld::onWin()
 {
-    pauseGameWorld();
+    pauseGame();
 
     auto storageManager = StorageManager::getInstance();
-    storageManager->_stageData.maxPlayableStage = std::min(g_setting.maxStage, ++(storageManager->_stageData.maxPlayableStage));
-    storageManager->_stageData.playerSelectedStage = std::min(storageManager->_stageData.maxPlayableStage, ++(storageManager->_stageData.playerSelectedStage));
+    auto& maxPlayableStage = storageManager->_stageData.maxPlayableStage;
+    auto& playerSelectedStage = storageManager->_stageData.playerSelectedStage;
+
+    if (playerSelectedStage < maxPlayableStage)
+    {
+        playerSelectedStage = std::min(maxPlayableStage, ++playerSelectedStage);
+    }
+    else
+    {
+        maxPlayableStage = std::min(g_setting.maxStage, ++maxPlayableStage);
+        playerSelectedStage = std::min(maxPlayableStage, ++playerSelectedStage);
+    }
     storageManager->save();
 
     _gameUI->_showGameWinTips();
@@ -825,6 +835,6 @@ void GameWorld::onWin()
 
 void GameWorld::onLost()
 {
-    pauseGameWorld();
+    pauseGame();
     _gameUI->_showGameLostTips();
 }
