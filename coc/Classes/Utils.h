@@ -8,4 +8,5 @@ namespace GameUtils
     bool isVec2Equal(const Vec2& left, const Vec2& right);
     Animation* createAnimationWithPList(const string& plistFileName);
     void pauseTargetAndChildren(Node* target);
+    bool convertEncoding(const string& toCode, const string& fromCode, const string& fromCodeText, string& toCodeText);
 }

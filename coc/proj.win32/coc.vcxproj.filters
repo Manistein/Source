@@ -37,6 +37,9 @@
     <Filter Include="src\GameManager">
       <UniqueIdentifier>{e013cb3a-8983-4e73-a817-12117edc678e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Libs">
+      <UniqueIdentifier>{4c134dde-382c-4b31-840d-ea62cdd61333}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -223,6 +226,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\StorageManager.h">
       <Filter>src\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libs\iconv-1.9.2.win32\include\iconv.h">
+      <Filter>src\Libs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

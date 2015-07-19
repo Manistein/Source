@@ -86,9 +86,9 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);libcocos2d.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);libcocos2d.lib;iconv.lib;iconv_a.lib;</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);../../../DevEnv/cocos2d-x-3.4\Bin;../../../DevEnv/cocos2d-x-3.4/cocos/2d/Debug.win32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);../../../DevEnv/cocos2d-x-3.4\Bin;../../../DevEnv/cocos2d-x-3.4/cocos/2d/Debug.win32;../Libs/iconv/lib;</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -210,6 +210,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\TemplatesManager.h" />
     <ClInclude Include="..\Classes\Utils.h" />
     <ClInclude Include="..\Classes\WindowsHelper.h" />
+    <ClInclude Include="..\Libs\iconv-1.9.2.win32\include\iconv.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

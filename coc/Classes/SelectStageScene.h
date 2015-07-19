@@ -27,6 +27,7 @@ private:
     Layout* _frontUI = nullptr;
     unordered_map<CheckBox*, DifficultyLevel> _difficultyLevelMap;
     ImageView* _stageTips = nullptr;
+    Label* _stageIntroduction = nullptr;
 
     ScrollView* _selectStageScrollView = nullptr;
     vector<CheckBox*> _stageCheckBoxList;

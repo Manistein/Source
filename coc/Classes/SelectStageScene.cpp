@@ -7,6 +7,8 @@
 #include "SoundManager.h"
 #include "GameSetting.h"
 #include "StorageManager.h"
+#include "GameObject.h"
+#include "GameConfigManager.h"
 
 cocos2d::Scene* SelectStageScene::createScene()
 {
@@ -44,7 +46,7 @@ void SelectStageScene::initFrontUI()
 {
     _frontUI = _rootPanel->getChildByName<Layout*>("Panel_FrontUI");
     _stageTips = _frontUI->getChildByName<ImageView*>("Image_StageTips");
-    _stageTips->setVisible(false);
+    // _stageTips->setVisible(false);
 
     auto easyLevel = _frontUI->getChildByName<CheckBox*>("CheckBox_EasyLevel");
     auto normalLevel = _frontUI->getChildByName<CheckBox*>("CheckBox_NormalLevel");
@@ -119,6 +121,10 @@ void SelectStageScene::onStageCheckBoxTouch(Ref* sender, CheckBox::EventType typ
             {
                 stageCheckBox->setSelected(true);
                 StorageManager::getInstance()->_stageData.playerSelectedStage = stageIndex;
+
+                auto introduction = GameConfigManager::getInstance()->getStageIntroductionBy(stageIndex);
+                auto introductionLabel = _stageTips->getChildByName<Text*>("Text_StageTips");
+                introductionLabel->setString(introduction);
             }
             else
             {

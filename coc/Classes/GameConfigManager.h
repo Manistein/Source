@@ -35,13 +35,17 @@ public:
     static GameConfigManager* getInstance();
     const ReinforceConfig* getReinforceConfigBy(ForceType forceType);
     const GameObjectLevelConfig* getGameObjectLevelConfig(const string& templateName, int level);
+    string getStageIntroductionBy(int stageIndex);
 private:
     bool init();
     bool initReinforcementConfig();
     bool initGameObjectLevelConfig();
+    bool initStageIntroduction();
 
     map<ForceType, ReinforceConfig*> _reinforceConfigMap;
     GameObjectLevelConfigMap _gameObjectLevelConfigMap;
+
+    map<int, string> _stageIntrodutionMap;
 
     GameConfigManager(){};
     GameConfigManager(const GameConfigManager&);

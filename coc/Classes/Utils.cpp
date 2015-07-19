@@ -165,3 +165,53 @@ void GameUtils::pauseTargetAndChildren(Node* target)
         pauseTargetAndChildren(child);
     }
 }
+
+bool GameUtils::convertEncoding(const string& toCode, const string& fromCode, const string& fromCodeText, string& toCodeText)
+{
+    bool result = true;
+
+    iconv_t openCode = iconv_open(toCode.c_str(), fromCode.c_str());
+
+    char toText[4096] = { 0 };
+    char* toTextPointer = &toText[0];
+    size_t toTextMaxSize = 4096;
+
+    const char* constFromCodeText= fromCodeText.c_str();
+    size_t fromCodeTextSize = fromCodeText.length();
+    size_t convertResult = iconv(openCode, &constFromCodeText, &fromCodeTextSize, &toTextPointer, &toTextMaxSize);
+
+    if (convertResult == -1)
+    {
+        auto error = *_errno();
+        switch (error)
+        {
+        case EILSEQ:
+            log("Input conversion stopped due to an input byte that does not belong to the input codeset");
+            break;
+        case E2BIG:
+            log("Input conversion stopped due to lack of space in the output buffer.");
+            break;
+        case EINVAL:
+            log("Input conversion stopped due to an incomplete character or shift sequence at the end of the input buffer.");
+            break;
+        case EBADF:
+            log("The cd argument is not a valid open conversion descriptor.");
+            break;
+        default:    break;
+        }
+
+        result = false;
+    }
+    else
+    {
+        toCodeText.assign(toText);
+    }
+
+    int closeCode = iconv_close(openCode);
+    if (closeCode == -1)
+    {
+        result = false;
+    }
+
+    return result;
+}

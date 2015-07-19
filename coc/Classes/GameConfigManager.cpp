@@ -42,6 +42,7 @@ bool GameConfigManager::init()
 
     reslut = initReinforcementConfig();
     reslut = initGameObjectLevelConfig();
+    reslut = initStageIntroduction();
 
     return reslut;
 }
@@ -73,6 +74,21 @@ bool GameConfigManager::initReinforcementConfig()
             {
                 _reinforceConfigMap[ForceType::AI] = reinforceConfig;
             }
+        }
+    }
+
+    return true;
+}
+
+bool GameConfigManager::initStageIntroduction()
+{
+    TabFileReader tabFileReader;
+    if (tabFileReader.open("StageIntroduction.tab"))
+    {
+        for (int i = 0; i < tabFileReader.getRowCount(); i ++)
+        {
+            int stageIndex = i + 1;
+            _stageIntrodutionMap[stageIndex] = tabFileReader.getString(i, "Introduction");
         }
     }
 
@@ -138,4 +154,17 @@ const GameObjectLevelConfig* GameConfigManager::getGameObjectLevelConfig(const s
     }
 
     return gameObjectLevelConfig;
+}
+
+std::string GameConfigManager::getStageIntroductionBy(int stageIndex)
+{
+    string introduction;
+
+    auto infoIter = _stageIntrodutionMap.find(stageIndex);
+    if (infoIter != _stageIntrodutionMap.end())
+    {
+        introduction = infoIter->second;
+    }
+
+    return introduction;
 }
