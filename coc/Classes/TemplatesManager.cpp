@@ -273,6 +273,16 @@ bool TemplateManager::initBuildingTemplates()
             buildingTemplate->redSelectedTipsTextureName = tabFileReader.getString(i, "RedSelectedTipsTextureName");
             buildingTemplate->technologyPointForEnemy = tabFileReader.getInteger(i, "TechnologyPointForEnemy");
 
+            auto canDestroyString = tabFileReader.getString(i, "CanDestroy");
+            if (canDestroyString == "TRUE")
+            {
+                buildingTemplate->canDestroy = true;
+            }
+            else
+            {
+                buildingTemplate->canDestroy = false;
+            }
+
             auto buildingTemplateName = tabFileReader.getString(i, "BuildingTemplateName");
             _buildingTemplatesMap[buildingTemplateName] = buildingTemplate;
         }

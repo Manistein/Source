@@ -40,6 +40,9 @@ const int TEAM_INVALID_ID = -1;
 const float FORBID_ENEMY_APPROACH_TIME_INTERVAL = 15.0f;
 const int MAX_LEVEL = 5;
 
+const string PLAYER_HP_BAR_TEXTURE_NAME = "PlayerHPBar.png";
+const string AI_HP_BAR_TEXTURE_NAME = "AIHPBar.png";
+
 class GameObject : public Sprite
 {
 public:

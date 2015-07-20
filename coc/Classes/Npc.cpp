@@ -506,7 +506,7 @@ void Npc::runFightWithEnemyAI(float delta)
     if (_enemyUniqueID != ENEMY_UNIQUE_ID_INVALID)
     {
         auto enemy = GameObjectManager::getInstance()->getGameObjectBy(_enemyUniqueID);
-        if (!enemy || enemy->isReadyToRemove())
+        if (!enemy || enemy->isReadyToRemove() || enemy->getForceType() == _forceType)
         {
             setEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
 

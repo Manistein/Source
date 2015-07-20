@@ -80,6 +80,8 @@ struct BuildingTemplate
     string redSelectedTipsTextureName;
 
     int technologyPointForEnemy = 0;
+
+    bool canDestroy = true;
 };
 
 struct SpecialEffectTemplate

@@ -69,12 +69,14 @@ private:
     void addToRemoveQueue();
 
     void updateLevelRepresentTexture(const string& spriteFrameName) override;
+    void onJoinEnemyForce();
 
     map<BuildingStatus, Sprite*> _buildingStatusSpriteMap;
     vector<Sprite*> _bottomGridSpritesList;
     Vec2 _bottomGridsPlaneCenterPositionInLocalSpace; // 建筑物底部面片的中心位置
 
     BuildingStatus _buildingStatus;
+    bool _canDestroy = true;
 
     float _buildingTimeBySecond = 0.0f;
     float _passTimeBySecondInBeingBuiltStatus = 0.0f;

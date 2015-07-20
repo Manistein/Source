@@ -19,6 +19,9 @@ const string ENABLE_BUILD_GRID_FILE_NAME = "EnableBuildGBrid.png";
 const string DISABLE_BUILD_GRID_FILE_NAME = "DisableBuildGrid.png";
 const string BEING_BUILT_PROGRESS_BAR = "PlayerHPBar.png";
 
+const string PLAYER_PILLBOX_NAME = "PlayerPillbox.png";
+const string AI_PILLBOX_NAME = "AIPillbox.png";
+
 Building* Building::create(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID, int level)
 {
     auto building = new Building();
@@ -97,7 +100,7 @@ Sprite* Building::createBuildingStatusSprite(const string& buildingTemplateName,
     switch (buildingStatus)
     {
     case BuildingStatus::PrepareToBuild:
-        spriteTextureName = StringUtils::format(buildingTemplate->prepareToBuildStatusTextureName.c_str(), _level);
+        spriteTextureName = buildingTemplate->prepareToBuildStatusTextureName;
         break;
     case BuildingStatus::BeingBuilt:
         shadowYPosition = buildingTemplate->shadowYPositionInBeingBuiltStatus;
@@ -106,7 +109,7 @@ Sprite* Building::createBuildingStatusSprite(const string& buildingTemplateName,
         break;
     case BuildingStatus::Working:
         shadowYPosition = buildingTemplate->shadowYPositionInWorkingStatus;
-        spriteTextureName = StringUtils::format(buildingTemplate->workingStatusTextureName.c_str(), _level);
+        spriteTextureName = buildingTemplate->workingStatusTextureName.c_str();
         hasShadow = true;
         break;
     case BuildingStatus::Destory:
@@ -209,6 +212,7 @@ void Building::initBattleData(const string& buildingTemplateName)
     _extraEnemyAttackRadius = buildingTemplate->extraEnemyAttackRadius;
     _destroySpecialEffectTemplateName = buildingTemplate->destroySpecialEffectTemplateName;
     _technologyPointForEnemy = buildingTemplate->technologyPointForEnemy;
+    _canDestroy = buildingTemplate->canDestroy;
 }
 
 void Building::initSelectedTips(const string& buildingTemplateName)
@@ -413,10 +417,17 @@ bool Building::canBuild()
 
 void Building::onPrepareToRemove()
 {
-    stopAllActions();
-    hideBeingBuiltProgressBar();
+    if (_canDestroy)
+    {
+        stopAllActions();
+        hideBeingBuiltProgressBar();
 
-    updateStatus(BuildingStatus::Destory);
+        updateStatus(BuildingStatus::Destory);
+    }
+    else
+    {
+        onJoinEnemyForce();
+    }
 }
 
 void Building::debugDraw()
@@ -674,4 +685,31 @@ void Building::updateLevelRepresentTexture(const string& spriteFrameName)
 
     inPrepareToBuildStatus->setSpriteFrame(newPrepareToBuildSpriteFrame);
     inWorkingStatus->setSpriteFrame(newWorkingSpriteFrame);
+}
+
+void Building::onJoinEnemyForce()
+{
+    string pillboxName;
+    string hpbarTextureName;
+    if (_forceType == ForceType::Player)
+    {
+        _forceType = ForceType::AI;
+        pillboxName = AI_PILLBOX_NAME;
+        hpbarTextureName = AI_HP_BAR_TEXTURE_NAME;
+        _templateName = "AIPillbox";
+    }
+    else
+    {
+        _forceType = ForceType::Player;
+        pillboxName = PLAYER_PILLBOX_NAME;
+        hpbarTextureName = PLAYER_HP_BAR_TEXTURE_NAME;
+        _templateName = "PlayerPillbox";
+    }
+
+    initSelectedTips(_templateName);
+
+    _hpBar->loadTexture(hpbarTextureName);
+    _hp = _maxHp;
+
+    _buildingStatusSpriteMap[BuildingStatus::Working]->setSpriteFrame(pillboxName);
 }

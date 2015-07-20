@@ -8,9 +8,6 @@
 
 static int g_uniqueID = 0;
 
-const string PLAYER_HP_BAR_TEXTURE_NAME = "PlayerHPBar.png";
-const string AI_HP_BAR_TEXTURE_NAME = "AIHPBar.png";
-
 const float MAX_SHOW_HP_BAR_TIME_LIMIT_AFTER_BEING_ATTACKED = 3.0f;
 
 GameObject::~GameObject()
