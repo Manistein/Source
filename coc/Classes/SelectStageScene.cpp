@@ -9,6 +9,7 @@
 #include "StorageManager.h"
 #include "GameObject.h"
 #include "GameConfigManager.h"
+#include "MenuScene.h"
 
 cocos2d::Scene* SelectStageScene::createScene()
 {
@@ -62,6 +63,9 @@ void SelectStageScene::initFrontUI()
     
     auto startGameButton = _frontUI->getChildByName<Button*>("Button_GameStart");
     startGameButton->addTouchEventListener(CC_CALLBACK_2(SelectStageScene::onGameStart, this));
+
+    auto backToMenuSceneButton = _frontUI->getChildByName<Button*>("Button_BackToMenuScene");
+    backToMenuSceneButton->addTouchEventListener(CC_CALLBACK_2(SelectStageScene::onBackToMenuScene, this));
 }
 
 void SelectStageScene::initSelectStageScrollView()
@@ -162,5 +166,16 @@ void SelectStageScene::onGameStart(Ref* sender, Widget::TouchEventType type)
 
         auto loadingScene = LoadingScene::createScene();
         Director::getInstance()->replaceScene(loadingScene);
+    }
+}
+
+void SelectStageScene::onBackToMenuScene(Ref* sender, Widget::TouchEventType type)
+{
+    if (type == Widget::TouchEventType::ENDED)
+    {
+        SoundManager::getInstance()->stopAll();
+
+        auto menuScene = MenuScene::createScene();
+        Director::getInstance()->replaceScene(menuScene);
     }
 }

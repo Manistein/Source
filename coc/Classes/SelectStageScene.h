@@ -14,6 +14,7 @@ private:
     void onStageCheckBoxTouch(Ref* sender, CheckBox::EventType type, int stageID);
     void onSelectDifficultyLevelCheckBoxTouch(Ref* sender, CheckBox::EventType type);
     void onGameStart(Ref* sender, Widget::TouchEventType type);
+    void onBackToMenuScene(Ref* sender, Widget::TouchEventType type);
 
     Layout* _rootPanel = nullptr;
 
