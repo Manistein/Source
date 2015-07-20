@@ -42,6 +42,7 @@ bool GameConfigManager::init()
 
     reslut = initReinforcementConfig();
     reslut = initGameObjectLevelConfig();
+    reslut = initStageConfig();
     reslut = initStageIntroduction();
 
     return reslut;
@@ -78,6 +79,30 @@ bool GameConfigManager::initReinforcementConfig()
     }
 
     return true;
+}
+
+bool GameConfigManager::initStageConfig()
+{
+    bool result = true;
+
+    TabFileReader tabFileReader;
+    if (tabFileReader.open("StageConfig.tab"))
+    {
+        for (int i = 0; i < tabFileReader.getRowCount(); i++)
+        {
+            StageConfig stageConfig;
+            stageConfig.mapName = tabFileReader.getString(i, "MapName");
+            stageConfig.easyModeFactor = tabFileReader.getFloat(i, "EasyFactor");
+            stageConfig.normalModeFactor = tabFileReader.getFloat(i, "NormalFactor");
+            stageConfig.hardModeFactor = tabFileReader.getFloat(i, "HardFactor");
+
+            int stageID = tabFileReader.getInteger(i, "StageID");
+            _stageConfigMap[stageID] = stageConfig;
+        }
+    }
+
+
+    return result;
 }
 
 bool GameConfigManager::initStageIntroduction()
@@ -154,6 +179,19 @@ const GameObjectLevelConfig* GameConfigManager::getGameObjectLevelConfig(const s
     }
 
     return gameObjectLevelConfig;
+}
+
+const StageConfig* GameConfigManager::getStageConfigBy(int stageID)
+{
+    StageConfig* stageConfig = nullptr;
+
+    auto stageConfigIter = _stageConfigMap.find(stageID);
+    if (stageConfigIter != _stageConfigMap.end())
+    {
+        stageConfig = &stageConfigIter->second;
+    }
+
+    return stageConfig;
 }
 
 std::string GameConfigManager::getStageIntroductionBy(int stageIndex)

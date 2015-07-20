@@ -25,3 +25,10 @@ const int MAX_GAME_OBJECT_COUNT = 1000;
 
 const int FIRST_STAGE = 1;
 const float MAX_VOLUME = 1.0f;
+
+enum class DifficultyLevel
+{
+    Easy,
+    Normal,
+    Hard
+};

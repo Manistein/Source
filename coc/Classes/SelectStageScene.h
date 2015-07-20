@@ -1,12 +1,5 @@
 #pragma once
 
-enum class DifficultyLevel
-{
-    Easy,
-    Normal,
-    Hard
-};
-
 class SelectStageScene : public Layer
 {
 public:
@@ -18,7 +11,7 @@ private:
     void initFrontUI();
     void initSelectStageScrollView();
 
-    void onStageCheckBoxTouch(Ref* sender, CheckBox::EventType type, int stageIndex);
+    void onStageCheckBoxTouch(Ref* sender, CheckBox::EventType type, int stageID);
     void onSelectDifficultyLevelCheckBoxTouch(Ref* sender, CheckBox::EventType type);
     void onGameStart(Ref* sender, Widget::TouchEventType type);
 

@@ -23,6 +23,14 @@ struct GameObjectLevelConfig
     int costTechnologyPoint = 0;
 };
 
+struct StageConfig
+{
+    string mapName;
+    float easyModeFactor = 0.0f;
+    float normalModeFactor = 0.0f;
+    float hardModeFactor = 0.0f;
+};
+
 typedef int Level;
 typedef unordered_map<Level, GameObjectLevelConfig*> LevelConfigMap;
 typedef unordered_map<string, LevelConfigMap> GameObjectLevelConfigMap;
@@ -35,17 +43,21 @@ public:
     static GameConfigManager* getInstance();
     const ReinforceConfig* getReinforceConfigBy(ForceType forceType);
     const GameObjectLevelConfig* getGameObjectLevelConfig(const string& templateName, int level);
+    const StageConfig* getStageConfigBy(int stageID);
     string getStageIntroductionBy(int stageIndex);
 private:
     bool init();
     bool initReinforcementConfig();
     bool initGameObjectLevelConfig();
+    bool initStageConfig();
     bool initStageIntroduction();
 
     map<ForceType, ReinforceConfig*> _reinforceConfigMap;
     GameObjectLevelConfigMap _gameObjectLevelConfigMap;
 
-    map<int, string> _stageIntrodutionMap;
+    typedef int StageID;
+    map<StageID, StageConfig> _stageConfigMap;
+    map<StageID, string> _stageIntrodutionMap;
 
     GameConfigManager(){};
     GameConfigManager(const GameConfigManager&);

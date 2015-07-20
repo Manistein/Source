@@ -18,6 +18,7 @@
 #include "WindowsHelper.h"
 #include "StorageManager.h"
 #include "GameSetting.h"
+#include "GameConfigManager.h"
 
 static Vec2 s_mouseDownPoint;
 const float MOUSE_CLICK_AREA = 5.0f;
@@ -39,8 +40,20 @@ bool GameWorld::init()
 
     _soundManager = SoundManager::getInstance();
 
+    string mapName;
+    int selectedStage = StorageManager::getInstance()->_stageData.playerSelectedStage;
+    auto stageConfig = GameConfigManager::getInstance()->getStageConfigBy(selectedStage);
+    if (stageConfig)
+    {
+        mapName = stageConfig->mapName;
+    }
+    else
+    {
+        mapName = "isoMap.tmx";
+    }
+
     _mapManager = new MapManager();
-    _mapManager->init(this, "isoMap.tmx");
+    _mapManager->init(this, mapName);
 
     _gameObjectManager = GameObjectManager::getInstance();
     _gameObjectManager->init(this);

@@ -110,7 +110,7 @@ void SelectStageScene::initSelectStageScrollView()
     innerContainer->setPosition(Vec2(innerContainerPosition.x, newInnerContainerYPosition));
 }
 
-void SelectStageScene::onStageCheckBoxTouch(Ref* sender, CheckBox::EventType type, int stageIndex)
+void SelectStageScene::onStageCheckBoxTouch(Ref* sender, CheckBox::EventType type, int stageID)
 {
     if (type == CheckBox::EventType::SELECTED || type == CheckBox::EventType::UNSELECTED)
     {
@@ -120,9 +120,9 @@ void SelectStageScene::onStageCheckBoxTouch(Ref* sender, CheckBox::EventType typ
             if (stageCheckBox == currentCheckBox)
             {
                 stageCheckBox->setSelected(true);
-                StorageManager::getInstance()->_stageData.playerSelectedStage = stageIndex;
+                StorageManager::getInstance()->_stageData.playerSelectedStage = stageID;
 
-                auto introduction = GameConfigManager::getInstance()->getStageIntroductionBy(stageIndex);
+                auto introduction = GameConfigManager::getInstance()->getStageIntroductionBy(stageID);
                 auto introductionLabel = _stageTips->getChildByName<Text*>("Text_StageTips");
                 introductionLabel->setString(introduction);
             }
@@ -144,6 +144,7 @@ void SelectStageScene::onSelectDifficultyLevelCheckBoxTouch(Ref* sender, CheckBo
             if (iter.first == currentCheckBox)
             {
                 iter.first->setSelected(true);
+                g_setting.difficultyLevel = iter.second;
             }
             else
             {

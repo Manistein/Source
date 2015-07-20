@@ -6,6 +6,8 @@
 #include "Building.h"
 #include "Npc.h"
 #include "GameConfigManager.h"
+#include "StorageManager.h"
+#include "GameSetting.h"
 
 static ForceManager* s_forceManager = nullptr;
 
@@ -92,6 +94,25 @@ void ForceManager::onEnemyLaunchAttack()
 
 void ForceManager::onEnemyReinforcementArrive()
 {
+    int selectedStage = StorageManager::getInstance()->_stageData.playerSelectedStage;
+    auto stageConfig = GameConfigManager::getInstance()->getStageConfigBy(selectedStage);
+    CCASSERT(stageConfig, "");
+
+    float difficultyLevelFactor = 0.0f;
+    switch (g_setting.difficultyLevel)
+    {
+    case DifficultyLevel::Easy:
+        difficultyLevelFactor = stageConfig->easyModeFactor;
+        break;
+    case DifficultyLevel::Normal:
+        difficultyLevelFactor = stageConfig->normalModeFactor;
+        break;
+    case DifficultyLevel::Hard:
+        difficultyLevelFactor = stageConfig->hardModeFactor;
+        break;
+    default:    break;
+    }
+
     auto reinforceConfig = GameConfigManager::getInstance()->getReinforceConfigBy(ForceType::AI);
 
     struct ReinforceData
@@ -107,9 +128,9 @@ void ForceManager::onEnemyReinforcementArrive()
     };
 
     vector<ReinforceData> enemyNpcReinforceDataList = {
-        ReinforceData(reinforceConfig->archerTemplateName, reinforceConfig->archerReinforceCount),
-        ReinforceData(reinforceConfig->barbarianTemplateName, reinforceConfig->barbarianReinforceCount),
-        ReinforceData(reinforceConfig->enchanterTemplateName, reinforceConfig->enchanterReinforceCount),
+        ReinforceData(reinforceConfig->archerTemplateName, reinforceConfig->archerReinforceCount * difficultyLevelFactor),
+        ReinforceData(reinforceConfig->barbarianTemplateName, reinforceConfig->barbarianReinforceCount * difficultyLevelFactor),
+        ReinforceData(reinforceConfig->enchanterTemplateName, reinforceConfig->enchanterReinforceCount * difficultyLevelFactor),
     };
 
     auto listIndex = rand() % (int)enemyNpcReinforceDataList.size();
