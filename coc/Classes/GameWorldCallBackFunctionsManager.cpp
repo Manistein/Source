@@ -25,7 +25,7 @@ void GameWorldCallBackFunctionsManager::registerCallBackFunctions(GameWorld* gam
     _createSpecialEffect = CC_CALLBACK_3(GameWorld::createSpecialEffect, gameWorld);
     _getDebugInfo = CC_CALLBACK_0(GameWorld::getDebugInfo, gameWorld);
 
-    _createNpcAroundBaseCamp = CC_CALLBACK_3(GameWorld::createNpcAroundBaseCamp, gameWorld);
+    _createReinfoecement = CC_CALLBACK_3(GameWorld::createReinforcement, gameWorld);
     _createGameObject = CC_CALLBACK_4(GameWorld::createGameObject, gameWorld);
 
     _getAIBaseCampUniqueID = CC_CALLBACK_0(GameWorld::getEnemyBaseCampUniqueID, gameWorld);

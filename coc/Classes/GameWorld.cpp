@@ -81,7 +81,6 @@ bool GameWorld::init()
     director->getEventDispatcher()->addCustomEventListener("GameWorldMouseRightButtonUpEvent", CC_CALLBACK_0(GameWorld::onMouseRightButtonUp, this));
     director->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameWorld::onMouseMove, this));
     director->getEventDispatcher()->addCustomEventListener("ClearDebugDraw", CC_CALLBACK_0(GameWorld::onClearDebugDraw, this));
-    director->getEventDispatcher()->addCustomEventListener("CreateNpcAroundPlayerBaseCamp", CC_CALLBACK_0(GameWorld::createNpcAroundBaseCamp, this, ForceType::Player, "BlueEnchanter", 16));
 
     initEditedGameObjects();
     initMapGIDTable();
@@ -175,6 +174,11 @@ void GameWorld::initEditedGameObjects()
                 {
                     _aiBaseCampUniqueID = gameObject->getUniqueID();
                 }
+            }
+            else if (gameObjectTemplateName == "PlayerPillbox" || 
+                gameObjectTemplateName == "AIPillbox")
+            {
+                _pillboxList.push_back(gameObject);
             }
         }
     }
@@ -459,27 +463,22 @@ void GameWorld::cancelConstructBuilding()
     }
 }
 
-vector<Vec2> GameWorld::computeNpcCreatePointList(ForceType forceType, int readyToCreateNpcCount)
+vector<Vec2> GameWorld::computeNpcCreatePointList(int buildingUniqueID, int readyToCreateNpcCount, bool shouldRefreshMap)
 {
     vector<Vec2> npcCreatePointList;
 
-    int baseCampUniqueID = GAME_OBJECT_UNIQUE_ID_INVALID;
-    if (forceType == ForceType::Player)
-    {
-        baseCampUniqueID = _playerBaseCampUniqueID;
-    }
-    else
-    {
-        baseCampUniqueID = _aiBaseCampUniqueID;
-    }
-
     auto mapSize = _mapManager->getMapSize();
-    for (int columnIndex = 0; columnIndex < (int)mapSize.width; columnIndex++)
+
+    // 刷新地图障碍分布
+    if (shouldRefreshMap)
     {
-        for (int rowIndex = 0; rowIndex < (int)mapSize.height; rowIndex ++)
+        for (int columnIndex = 0; columnIndex < (int)mapSize.width; columnIndex++)
         {
-            auto tileNode = _mapManager->getTileNodeAt(columnIndex, rowIndex);
-            _mapGIDTable[columnIndex][rowIndex] = tileNode->gid;
+            for (int rowIndex = 0; rowIndex < (int)mapSize.height; rowIndex++)
+            {
+                auto tileNode = _mapManager->getTileNodeAt(columnIndex, rowIndex);
+                _mapGIDTable[columnIndex][rowIndex] = tileNode->gid;
+            }
         }
     }
 
@@ -503,10 +502,10 @@ vector<Vec2> GameWorld::computeNpcCreatePointList(ForceType forceType, int ready
     // * # # # *
     // * * * * *
     // 因此需要找到处于左上角*的下标，和处于右下角*的下标，然后以此为依据进行遍历
-    auto baseCamp = _gameObjectManager->getGameObjectBy(baseCampUniqueID);
-    if (baseCamp)
+    auto building = _gameObjectManager->getGameObjectBy(buildingUniqueID);
+    if (building)
     {
-        auto baseCampObject = static_cast<Building*>(baseCamp);
+        auto baseCampObject = static_cast<Building*>(building);
         auto& baseCampBottomGridPositionList = baseCampObject->getBottomGridInMapPositionList();
         auto firstBottomGridPosition = baseCampBottomGridPositionList.front();
         auto lastBottomGridPosition = baseCampBottomGridPositionList.back();
@@ -541,6 +540,11 @@ vector<Vec2> GameWorld::computeNpcCreatePointList(ForceType forceType, int ready
 
                     _mapGIDTable[columnIndex][rightBottomStartSearchRowIndex] = OBSTACLE_ID;
                 }
+
+                if ((int)npcCreatePointList.size() >= readyToCreateNpcCount)
+                {
+                    break;
+                }
             }
 
             for (int rowIndex = leftTopStartSearchRowIndex; rowIndex <= rightBottomStartSearchRowIndex; rowIndex ++)
@@ -562,6 +566,11 @@ vector<Vec2> GameWorld::computeNpcCreatePointList(ForceType forceType, int ready
 
                     _mapGIDTable[rightBottomStartSearchColumnIndex][rowIndex] = OBSTACLE_ID;
                 }
+
+                if ((int)npcCreatePointList.size() >= readyToCreateNpcCount)
+                {
+                    break;
+                }
             }
 
             leftTopStartSearchColumnIndex = std::max(leftTopStartSearchColumnIndex - 1, 0);
@@ -575,12 +584,35 @@ vector<Vec2> GameWorld::computeNpcCreatePointList(ForceType forceType, int ready
     return npcCreatePointList;
 }
 
-void GameWorld::createNpcAroundBaseCamp(ForceType forceType, const string& npcTemplateName, int npcCount)
+void GameWorld::createReinforcement(ForceType forceType, const string& npcTemplateName, int npcCount)
 {
-    auto npcCreatePointList = computeNpcCreatePointList(forceType, npcCount);
+    int buildingUniqueID = GAME_OBJECT_UNIQUE_ID_INVALID;
+    if (forceType == ForceType::Player)
+    {
+        buildingUniqueID = _playerBaseCampUniqueID;
+    }
+    else
+    {
+        buildingUniqueID = _aiBaseCampUniqueID;
+    }
+
+    auto npcCreatePointList = computeNpcCreatePointList(buildingUniqueID, npcCount, true);
     for (auto& point : npcCreatePointList)
     {
         createGameObject(GameObjectType::Npc, forceType, npcTemplateName, point);
+    }
+
+    for (auto pillbox : _pillboxList)
+    {
+        if (pillbox->getForceType() == forceType)
+        {
+            npcCreatePointList = computeNpcCreatePointList(pillbox->getUniqueID(), std::max(1, npcCount / 4), false);
+
+            for (auto& point : npcCreatePointList)
+            {
+                createGameObject(GameObjectType::Npc, forceType, npcTemplateName, point);
+            }
+        }
     }
 }
 

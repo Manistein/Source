@@ -41,7 +41,7 @@ public:
     list<Vec2>  computePathList(const Vec2& inMapStartPosition, const Vec2& inMapEndPosition, bool isAllowEndTileNodeToMoveIn = false);
     MapManager* getMapManager();
     const DebugInfo& getDebugInfo();
-    void createNpcAroundBaseCamp(ForceType forceType, const string& npcTemplateName, int npcCount);    
+    void createReinforcement(ForceType forceType, const string& npcTemplateName, int npcCount);    
 
     int getEnemyBaseCampUniqueID();
     int getPlayerBaseCampUniqueID();
@@ -70,7 +70,7 @@ private:
     void constructBuilding();
     void cancelConstructBuilding();
 
-    vector<Vec2> computeNpcCreatePointList(ForceType forceType, int readyToCreateNpcCount);
+    vector<Vec2> computeNpcCreatePointList(int buildingUniqueID, int readyToCreateNpcCount, bool shouldRefreshMap);
 
     bool isLeftButtonMultyClick();
     bool isTeamContinuousCalledInAFlash(int teamID);
@@ -107,4 +107,6 @@ private:
     int _playerBaseCampUniqueID = GAME_OBJECT_UNIQUE_ID_INVALID;
     int _aiBaseCampUniqueID = GAME_OBJECT_UNIQUE_ID_INVALID;
     vector<vector<int>> _mapGIDTable;   // 这个表用于寻找npc出兵点位置，如果场景中有npc，那么此npc所占用的格子算作障碍格
+
+    vector<GameObject*> _pillboxList;   // 可相互争夺的建筑物列表
 };

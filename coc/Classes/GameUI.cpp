@@ -187,7 +187,7 @@ void GameUI::onCreateReinforcement(const string& reinforcementTempalteName, Game
     }
     else
     {
-        _gameWorld->_createNpcAroundBaseCamp(ForceType::Player, reinforcementTempalteName, reinforcementCount);
+        _gameWorld->_createReinfoecement(ForceType::Player, reinforcementTempalteName, reinforcementCount);
 
         _forceManager->onPlayerReinforcePointReduce();
         onUpdateReinforcePresent();

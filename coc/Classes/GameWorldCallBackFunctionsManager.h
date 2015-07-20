@@ -17,7 +17,7 @@ public:
     std::function<MapManager*()> _getMapManager;
     std::function<void(const string&, const Vec2&, bool)> _createSpecialEffect;
     std::function<const DebugInfo&()> _getDebugInfo;
-    std::function<void(ForceType, const string&, int)> _createNpcAroundBaseCamp;
+    std::function<void(ForceType, const string&, int)> _createReinfoecement;
     std::function<GameObject*(GameObjectType, ForceType, const string&, const Vec2&)> _createGameObject;
     std::function<int()> _getPlayerBaseCampUniqueID;
     std::function<int()> _getAIBaseCampUniqueID;

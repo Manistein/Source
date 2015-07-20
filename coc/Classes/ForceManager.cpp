@@ -135,7 +135,7 @@ void ForceManager::onEnemyReinforcementArrive()
 
     auto listIndex = rand() % (int)enemyNpcReinforceDataList.size();
     auto& reinforceData = enemyNpcReinforceDataList[listIndex];
-    _gameWorld->_createNpcAroundBaseCamp(ForceType::AI, reinforceData.templateName, reinforceData.reinforceCount);
+    _gameWorld->_createReinfoecement(ForceType::AI, reinforceData.templateName, reinforceData.reinforceCount);
 }
 
 void ForceManager::onPlayerReinforcePointIncrease()
