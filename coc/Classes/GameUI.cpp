@@ -14,11 +14,19 @@
 #include "SoundManager.h"
 #include "GameSetting.h"
 #include "Utils.h"
+#include "SelectStageScene.h"
+#include "MenuScene.h"
+#include "WindowsHelper.h"
 
 const string UPGRADE_PROGRESS_BAR_BG = "upgradeProgressBarBG";
 const string UPGRADE_PROGRESS_BAR = "upgradeProgressBar";
 const string UPGRADE_NEXT_RANK = "nextRank";
 const string REINFORCEMENT_RANK = "reinforcementRank";
+
+GameUI::~GameUI()
+{
+
+}
 
 bool GameUI::init()
 {
@@ -42,6 +50,7 @@ bool GameUI::init()
     initReinforcementSelectPanel();
     initUpgradePanel();
     initGameEndTips();
+    initOptionPanel();
 
     Director::getInstance()->getEventDispatcher()->addCustomEventListener("MouseMove", CC_CALLBACK_1(GameUI::onMouseMove, this));
 
@@ -677,4 +686,80 @@ void GameUI::showGameLostTips()
 {
     _lostTips->setVisible(true);
     _winTips->setVisible(false);
+}
+
+void GameUI::initOptionPanel()
+{
+    auto gameMainPanel = _gameMainUI->getChildByName("Panel_GameMain");
+    auto openOptionPanelButton = gameMainPanel->getChildByName<Button*>("Button_OpenOptionPanel");
+    openOptionPanelButton->addTouchEventListener(CC_CALLBACK_2(GameUI::onOpenOptionPanel, this));
+
+    _optionPanel = _gameMainUI->getChildByName<Layout*>("Panel_Option");
+    _optionPanel->setVisible(false);
+
+    auto continueButton = _optionPanel->getChildByName<Button*>("Button_Continue");
+    auto gotoSelectStageSceneButton = _optionPanel->getChildByName<Button*>("Button_GotoSelectStageScene");
+    auto gotoMenuSceneButton = _optionPanel->getChildByName<Button*>("Button_GotoMenuScene");
+    auto backToWindowsButton = _optionPanel->getChildByName<Button*>("Button_BackToWindows");
+
+    continueButton->addTouchEventListener(CC_CALLBACK_2(GameUI::onGameContinue, this));
+    gotoSelectStageSceneButton->addTouchEventListener(CC_CALLBACK_2(GameUI::onGotoSelectStageScene, this));
+    gotoMenuSceneButton->addTouchEventListener(CC_CALLBACK_2(GameUI::onGotoMenuScene, this));
+    backToWindowsButton->addTouchEventListener(CC_CALLBACK_2(GameUI::onBackToWindows, this));
+}
+
+void GameUI::onOpenOptionPanel(Ref* sender, Widget::TouchEventType type)
+{
+    if (type == Widget::TouchEventType::ENDED)
+    {
+        SoundManager::getInstance()->playUIEffect(UIEffectType::ButtonClick);
+        _optionPanel->setVisible(true);
+    }
+}
+
+void GameUI::onGameContinue(Ref* sender, Widget::TouchEventType type)
+{
+    if (type == Widget::TouchEventType::ENDED)
+    {
+        SoundManager::getInstance()->playUIEffect(UIEffectType::ButtonClick);
+        _optionPanel->setVisible(false);
+    }
+}
+
+void GameUI::onGotoSelectStageScene(Ref* sender, Widget::TouchEventType type)
+{
+    if (type == Widget::TouchEventType::ENDED)
+    {
+        SoundManager::getInstance()->stopAll();
+
+        auto selectStageScene = SelectStageScene::createScene();
+        Director::getInstance()->replaceScene(selectStageScene);
+    }
+}
+
+void GameUI::onGotoMenuScene(Ref* sender, Widget::TouchEventType type)
+{
+    if (type == Widget::TouchEventType::ENDED)
+    {
+        SoundManager::getInstance()->stopAll();
+
+        auto menuScene = MenuScene::createScene();
+        Director::getInstance()->replaceScene(menuScene);
+    }
+}
+
+void GameUI::onBackToWindows(Ref* sender, Widget::TouchEventType type)
+{
+    if (type == Widget::TouchEventType::ENDED)
+    {
+        SoundManager::getInstance()->playUIEffect(UIEffectType::ButtonClick);
+
+        WindowsHelper::getInstance()->uninitInstane();
+        Director::getInstance()->end();
+    }
+}
+
+void GameUI::clear()
+{
+    Director::getInstance()->getEventDispatcher()->removeCustomEventListeners("MouseMove");
 }

@@ -81,38 +81,6 @@ bool GameScene::init()
     return true;
 }
 
-//void GameScene::initNpcResources()
-//{
-//    auto spriteFrameCache = SpriteFrameCache::getInstance();
-//
-//    auto& npcTemplateMap = TemplateManager::getInstance()->getNpcTemplatesMap();
-//    for (auto& iter : npcTemplateMap)
-//    {
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->attackToEastAnimationPList);
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->attackToNorthEastAnimationPList);
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->attackToNorthWestAnimationPList);
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->attackToSouthEastAnimationPList);
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->attackToSouthWestAnimationPList);
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->attackToWestAnimationPList);
-//
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->moveToEastAnimationPList);
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->moveToNorthEastAnimationPList);
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->moveToNorthWestAnimationPList);
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->moveToSouthEastAnimationPList);
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->moveToSouthWestAnimationPList);
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->moveToWestAnimationPList);
-//
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->standAndFaceToEastAnimationPList);
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->standAndFaceToNorthEastAnimationPList);
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->standAndFaceToNorthWestAnimationPList);
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->standAndFaceToSouthEastAnimationPList);
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->standAndFaceToSouthWestAnimationPList);
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->standAndFaceToWestAnimationPList);
-//
-//        spriteFrameCache->addSpriteFramesWithFile(iter.second->dieAnimationPList);
-//    }
-//}
-
 void GameScene::update(float deltaTime)
 {
 
@@ -138,11 +106,6 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 {
     switch (keyCode)
     {
-    case EventKeyboard::KeyCode::KEY_ESCAPE:
-    {
-        onExitGame();
-    }
-        break;
     case EventKeyboard::KeyCode::KEY_F5:
     {
         if (g_setting.allowDebugDraw)

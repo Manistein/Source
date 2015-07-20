@@ -57,6 +57,15 @@ GameObjectManager* GameObjectManager::getInstance()
     return s_gameObjectManager;
 }
 
+void GameObjectManager::destroyInstance()
+{
+    if (s_gameObjectManager)
+    {
+        delete s_gameObjectManager;
+        s_gameObjectManager = nullptr;
+    }
+}
+
 void GameObjectManager::init(GameWorld* gameWorld)
 {
     _gameWorld = gameWorld;

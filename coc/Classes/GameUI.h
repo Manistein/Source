@@ -11,6 +11,8 @@ const float UPGRADE_TIME = 30.0f;
 class GameUI : public Node
 {
 public:
+    ~GameUI();
+
     CREATE_FUNC(GameUI);
 
     void onMouseMove(EventCustom* eventCustom);
@@ -54,6 +56,14 @@ private:
     Text* _winTips = nullptr;
     Text* _lostTips = nullptr;
 
+    void initOptionPanel();
+    void onOpenOptionPanel(Ref* sender, Widget::TouchEventType type);
+    void onGameContinue(Ref* sender, Widget::TouchEventType type);
+    void onGotoSelectStageScene(Ref* sender, Widget::TouchEventType type);
+    void onGotoMenuScene(Ref* sender, Widget::TouchEventType type);
+    void onBackToWindows(Ref* sender, Widget::TouchEventType type);
+    Layout* _optionPanel = nullptr;
+
     void update(float deltaTime) override;
     void onReinforceButtonSparkMove();
     void updateMinimap();
@@ -65,6 +75,8 @@ private:
     void syncCursorPoint(const Vec2& cursorPoint);
 
     Sprite* createNextRankAt(Button* button, const string& childName);
+
+    void clear();
 
     GameWorldCallBackFunctionsManager* _gameWorld = nullptr;
     ForceManager* _forceManager = nullptr;

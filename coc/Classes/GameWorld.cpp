@@ -25,10 +25,7 @@ const float MOUSE_CLICK_AREA = 5.0f;
 
 GameWorld::~GameWorld()
 {
-    if (_mapManager != nullptr)
-    {
-        CC_SAFE_DELETE(_mapManager);
-    }
+    clear();
 }
 
 bool GameWorld::init()
@@ -882,4 +879,26 @@ void GameWorld::onLost()
 {
     pauseGame();
     _gameUI->_showGameLostTips();
+}
+
+void GameWorld::clear()
+{
+    if (_mapManager != nullptr)
+    {
+        CC_SAFE_DELETE(_mapManager);
+    }
+
+    if (_gameObjectManager)
+    {
+        GameObjectManager::destroyInstance();
+        _gameObjectManager = nullptr;
+    }
+
+    auto director = Director::getInstance();
+    director->getEventDispatcher()->removeCustomEventListeners("GameWorldMouseLeftButtonDownEvent");
+    director->getEventDispatcher()->removeCustomEventListeners("GameWorldMouseLeftButtonUpEvent");
+    director->getEventDispatcher()->removeCustomEventListeners("GameWorldMouseRightButtonDownEvent");
+    director->getEventDispatcher()->removeCustomEventListeners("GameWorldMouseRightButtonUpEvent");
+    director->getEventDispatcher()->removeCustomEventListeners("MouseMove");
+    director->getEventDispatcher()->removeCustomEventListeners("ClearDebugDraw");
 }

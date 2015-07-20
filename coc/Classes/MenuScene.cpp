@@ -7,6 +7,7 @@
 #include "LoadingScene.h"
 #include "SelectStageScene.h"
 #include "StorageManager.h"
+#include "WindowsHelper.h"
 
 cocos2d::Scene* MenuScene::createScene()
 {
@@ -24,6 +25,8 @@ bool MenuScene::init()
     {
         return false;
     }
+
+    WindowsHelper::getInstance()->switchToNormalCursor();
 
     _mainMenu = CSLoader::createNode("MenuScene.csb");
     addChild(_mainMenu);
@@ -123,6 +126,7 @@ void MenuScene::onGameExit(Ref* sender, Widget::TouchEventType type)
     {
         SoundManager::getInstance()->stopAll();
 
+        WindowsHelper::getInstance()->uninitInstane();
         Director::getInstance()->end();
     }
 }

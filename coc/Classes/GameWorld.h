@@ -83,6 +83,8 @@ private:
     void onWin();
     void onLost();
 
+    void clear();
+
     GameObjectManager* _gameObjectManager = nullptr;
     GameObjectSelectBox* _gameObjectSelectBox = nullptr;
     BulletManager* _bulletManager = nullptr;

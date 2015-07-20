@@ -4,6 +4,7 @@
 #include "TemplatesManager.h"
 #include "Utils.h"
 #include "GameScene.h"
+#include "GameSetting.h"
 
 cocos2d::Scene* LoadingScene::createScene()
 {
@@ -73,8 +74,11 @@ void LoadingScene::update(float delta)
 {
     if (_loadingIndex < (int)_plistFileNameList.size())
     {
-        SpriteFrameCache::getInstance()->addSpriteFramesWithFile(_plistFileNameList[_loadingIndex]);
-        GameUtils::createAnimationWithPList(_plistFileNameList[_loadingIndex]);
+        if (!g_setting.hasLoadGameResouce)
+        {
+            SpriteFrameCache::getInstance()->addSpriteFramesWithFile(_plistFileNameList[_loadingIndex]);
+            GameUtils::createAnimationWithPList(_plistFileNameList[_loadingIndex]);
+        }
 
         _loadingIndex++;
         int totalNum = (int)_plistFileNameList.size();
@@ -83,6 +87,7 @@ void LoadingScene::update(float delta)
     }
     else
     {
+        g_setting.hasLoadGameResouce = true;
         auto gameScene = GameScene::createScene();
         Director::getInstance()->replaceScene(gameScene);
     }
