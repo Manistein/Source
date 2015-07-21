@@ -152,9 +152,18 @@ void GameObjectManager::gameObjectsDepthSort(const Size& tileSize)
                 gameObjectIter.second->depthSort(tileSize);
             }
         }
-        else if (gameObjectIter.second->getGameObjectType() != GameObjectType::DefenceInBuildingNpc)
+        else if (gameObjectIter.second->getGameObjectType() == GameObjectType::Npc)
         {
-            gameObjectIter.second->depthSort(tileSize);
+            auto npcObject = static_cast<Npc*>(gameObjectIter.second);
+            if (npcObject->isAir())
+            {
+                // npcObject->setPositionZ(MAX_GAME_OBJECT_COUNT - 1);
+                npcObject->depthSort(Size(tileSize.width, tileSize.height + MAX_GAME_OBJECT_COUNT));
+            }
+            else
+            {
+                npcObject->depthSort(tileSize);
+            }
         }
     }
 }

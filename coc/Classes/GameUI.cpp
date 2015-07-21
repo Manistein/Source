@@ -35,6 +35,8 @@ bool GameUI::init()
         return false;
     }
 
+    setPositionZ(MAX_GAME_OBJECT_COUNT);
+
     _debugInfoLayer = DebugInfoLayer::create();
     _debugInfoLayer->setVisible(false);
     addChild(_debugInfoLayer);
@@ -135,7 +137,7 @@ void GameUI::initReinforcementSelectPanel()
     auto selectEnchanterTowerButton = reinforcementSelectPanel->getChildByName<Button*>("Button_SelectEnchanterTower");
 
     auto reinforceConfig = GameConfigManager::getInstance()->getReinforceConfigBy(ForceType::Player);
-    initSelectReinforcementButton(selectEnchanterButton, reinforceConfig->enchanterTemplateName, GameObjectType::Npc, reinforceConfig->enchanterReinforceCount);
+    initSelectReinforcementButton(selectEnchanterButton, reinforceConfig->balloonTemplateName, GameObjectType::Npc, reinforceConfig->enchanterReinforceCount);
     initSelectReinforcementButton(selectArcherButton, reinforceConfig->archerTemplateName, GameObjectType::Npc, reinforceConfig->archerReinforceCount);
     initSelectReinforcementButton(selectBarbarianButton, reinforceConfig->barbarianTemplateName, GameObjectType::Npc, reinforceConfig->barbarianReinforceCount);
     initSelectReinforcementButton(selectArcherTowerButton, reinforceConfig->archerTowerTemplateName, GameObjectType::Building, 1);

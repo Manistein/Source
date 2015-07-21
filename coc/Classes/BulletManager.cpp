@@ -34,6 +34,12 @@ Node* BulletManager::createBullet(BulletType bulletType, int attackerID, int att
         auto attackerPosition = attacker->getPosition();
         auto targetPosition = target->getPosition();
 
+        if (bulletType == BulletType::Bomb)
+        {
+            attackerPosition.y = attackerPosition.y - attacker->getContentSize().height / 2.0f;
+            targetPosition.x = attackerPosition.x;
+        }
+
         bullet->setPosition(attackerPosition);
 
         auto rotation = GameUtils::computeRotatedDegree(attackerPosition, targetPosition);

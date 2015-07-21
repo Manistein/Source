@@ -13,6 +13,9 @@ struct ReinforceConfig
 
     string enchanterTowerTemplateName;
     string archerTowerTemplateName;
+
+    string balloonTemplateName;
+    int balloonReinforceCount = 0;
 };
 
 struct GameObjectLevelConfig

@@ -65,6 +65,8 @@ bool GameConfigManager::initReinforcementConfig()
             reinforceConfig->barbarianReinforceCount = tabFileReader.getInteger(i, "BarbarianReinforceCount");
             reinforceConfig->enchanterTowerTemplateName = tabFileReader.getString(i, "EnchanterTowerTemplateName");
             reinforceConfig->archerTowerTemplateName = tabFileReader.getString(i, "ArcherTowerTempalteName");
+            reinforceConfig->balloonTemplateName = tabFileReader.getString(i, "BalloonTemplateName");
+            reinforceConfig->balloonReinforceCount = tabFileReader.getInteger(i, "RedBalloonReinforceCount");
 
             string forceTypeString = tabFileReader.getString(i, "ForceType");
             if (forceTypeString == "Player")

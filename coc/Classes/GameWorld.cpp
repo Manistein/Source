@@ -85,6 +85,8 @@ bool GameWorld::init()
     _soundManager->playRandomBackgroundMusicOneByOne();
     scheduleUpdate();
 
+    onJumpToPlayerBaseCamp();
+
     return true;
 }
 

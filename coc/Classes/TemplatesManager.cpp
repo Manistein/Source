@@ -10,6 +10,7 @@ static unordered_map<string, BulletType> s_bulletTypeStringToEnum = {
     { "Invalid", BulletType::Invalid },
     { "Arrow", BulletType::Arrow },
     { "Magic", BulletType::Magic },
+    { "Bomb", BulletType::Bomb },
 };
 
 static unordered_map<string, DamageType> s_damageTypeStringToEnum = {
@@ -202,6 +203,26 @@ bool TemplateManager::initNpcTemplates()
             npcTemplate->redSelectedTipsTextureName = tabFileReader.getString(i, "RedSelectedTipsTextureName");
 
             npcTemplate->technologyPointForEnemy = tabFileReader.getInteger(i, "TechnologyPointForEnemy");
+
+            auto isAirString = tabFileReader.getString(i, "IsAir");
+            if (isAirString == "TRUE")
+            {
+                npcTemplate->isAir = true;
+            }
+            else
+            {
+                npcTemplate->isAir = false;
+            }
+
+            auto canAirAttackString = tabFileReader.getString(i, "CanAirAttack");
+            if (canAirAttackString == "TRUE")
+            {
+                npcTemplate->canAirAttack = true;
+            }
+            else
+            {
+                npcTemplate->canAirAttack = false;
+            }
 
             _npcTemplatesMap[templateName] = npcTemplate;
         }

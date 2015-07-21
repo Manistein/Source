@@ -47,6 +47,9 @@ struct NpcTemplate
     string redSelectedTipsTextureName;
 
     int technologyPointForEnemy = 0;
+
+    bool isAir = false;
+    bool canAirAttack = false;
 };
 
 struct BulletTemplate

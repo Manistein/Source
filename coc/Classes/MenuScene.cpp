@@ -45,6 +45,8 @@ bool MenuScene::init()
     Director::getInstance()->setProjection(Director::Projection::_2D);
     Director::getInstance()->setDepthTest(true);
 
+    Director::getInstance()->resume();
+
     return true;
 }
 

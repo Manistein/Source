@@ -40,6 +40,8 @@ bool SelectStageScene::init()
     runAction(sequenceAction);
     // SoundManager::getInstance()->playMusic("SelectStageDialog2.ogg", true);
 
+    Director::getInstance()->resume();
+
     return true;
 }
 

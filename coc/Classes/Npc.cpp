@@ -54,9 +54,9 @@ bool Npc::init(ForceType forceType, GameObjectType npcType, const string& templa
 
     initAnimates(templateName);
     initSwitchStatusFunctions();
+    initBattleData(templateName);
     initShadow(templateName);
     initHPBar(templateName);
-    initBattleData(templateName);
     initDebugDraw();
     initSelectedTips(templateName);
     initTeamIDLabel();
@@ -240,6 +240,8 @@ void Npc::initBattleData(const string& templateName)
     _reinforceRadius = npcTemplate->reinforceRadius;
     _maxAttackRangeWhenCollision = _maxAttackRadius + 50.0f;
     _technologyPointForEnemy = npcTemplate->technologyPointForEnemy;
+    _isAir = npcTemplate->isAir;
+    _canAirAttack = npcTemplate->canAirAttack;
 }
 
 void Npc::initDebugDraw()
@@ -278,7 +280,15 @@ void Npc::initSelectedTips(const string& templateName)
     }
 
     auto shadowPosition = _shadowSprite->getPosition();
-    _selectedTips->setPosition(shadowPosition);
+    if (_isAir)
+    {
+        _selectedTips->setPosition(Vec2(shadowPosition.x, 0.0f));
+    }
+    else
+    {
+        _selectedTips->setPosition(shadowPosition);
+    }
+
     _selectedTips->setVisible(false);
 
     _collisionRadius = _selectedTips->getContentSize().width / 4.0f;
@@ -446,6 +456,16 @@ void Npc::collisionTest()
             gameObject->getUniqueID() == _uniqueID)
         {
             continue;
+        }
+
+        // 空军只和空军碰撞，陆军只和陆军碰撞
+        if (gameObject->getGameObjectType() == GameObjectType::Npc)
+        {
+            auto npcObject = static_cast<Npc*>(gameObject);
+            if (npcObject->isAir() != _isAir)
+            {
+                continue;
+            }
         }
 
         auto unitMoveVector = _position - gameObject->getPosition();
@@ -625,15 +645,21 @@ void Npc::searchNearbyEnemy()
     for (auto& gameObjectIter : gameObjectMap)
     {
         Building* buildingObject = nullptr;
+        Npc* npcObject = nullptr;
         if (gameObjectIter.second->getGameObjectType() == GameObjectType::Building)
         {
             buildingObject = static_cast<Building*>(gameObjectIter.second);
+        }
+        else if (gameObjectIter.second->getGameObjectType() == GameObjectType::Npc)
+        {
+            npcObject = static_cast<Npc*>(gameObjectIter.second);
         }
 
         if (_forceType == gameObjectIter.second->getForceType() ||
             gameObjectIter.second->isReadyToRemove() ||
             !gameObjectIter.second->canEnemyApproach() ||
-            (buildingObject && buildingObject->getBuildingStatus() == BuildingStatus::PrepareToBuild))
+            (buildingObject && buildingObject->getBuildingStatus() == BuildingStatus::PrepareToBuild) ||
+            (npcObject && npcObject->isAir() && !_canAirAttack))
         {
             continue;
         }
@@ -687,12 +713,29 @@ bool Npc::isEnemyInAttackRange(GameObject* enemy)
 {
     bool result = false;
 
-    float distance = getDistanceFrom(enemy);
     float extraAttackRadius = enemy->getExtraEnemyAttackRadius();
 
-    if (distance <= _maxAttackRadius + extraAttackRadius)
+    if (_isAir && _bulletType == BulletType::Bomb)
     {
-        result = true;
+        auto arrivePosition = computeArrivePositionBy(enemy);
+        float distance = GameUtils::computeDistanceBetween(_position, arrivePosition);
+
+        Vec2 verticalAxisXVector(0.0f, -1.0f);
+        Vec2 targetVector((arrivePosition.x - _position.x) / distance, (arrivePosition.y - _position.y) / distance);
+
+        float dot = verticalAxisXVector.dot(targetVector);
+        if (dot > cos(CC_DEGREES_TO_RADIANS(10)) && distance <= _maxAttackRadius)
+        {
+            result = true;
+        }
+    }
+    else
+    {
+        float distance = getDistanceFrom(enemy);
+        if (distance <= _maxAttackRadius + extraAttackRadius)
+        {
+            result = true;
+        }
     }
 
     return result;
@@ -796,13 +839,24 @@ void Npc::tryChase(GameObject* enemy)
     auto enemyPosition = computeArrivePositionBy(enemy);
 
     _gotoTargetPositionPathList.clear();
-    if (enemy->getGameObjectType() == GameObjectType::Npc)
+    if (_isAir)
     {
-        _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, false);
+        auto npcTemplate = TemplateManager::getInstance()->getNpcTemplateBy(_templateName);
+        float yDelta = _contentSize.height / 2.0f - npcTemplate->shadowYPosition;
+        enemyPosition.y += yDelta;
+
+        _gotoTargetPositionPathList.push_back(enemyPosition);
     }
     else
     {
-        _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, true);
+        if (enemy->getGameObjectType() == GameObjectType::Npc)
+        {
+            _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, false);
+        }
+        else
+        {
+            _gotoTargetPositionPathList = _gameWorld->_computePathList(npcPosition, enemyPosition, true);
+        }
     }
 
     if (_gotoTargetPositionPathList.empty())
@@ -1159,17 +1213,33 @@ void Npc::moveTo(const Vec2& targetPosition, bool isAllowEndTileNodeToMoveIn /* 
 {
     _isReadyToMove = false;
 
-    auto startPosition = getPosition();
-    _gotoTargetPositionPathList.clear();
-    _gotoTargetPositionPathList = _gameWorld->_computePathList(startPosition, targetPosition, isAllowEndTileNodeToMoveIn);
-
-    if (_gotoTargetPositionPathList.empty())
+    if (_isAir)
     {
-        tryUpdateStatus(NpcStatus::Stand);
+        Vec2 localCenterPosition(_contentSize.width / 2.0f, _contentSize.height / 2.0f);
+        auto npcTemplate = TemplateManager::getInstance()->getNpcTemplateBy(_templateName);
+        float yDelta = localCenterPosition.y - npcTemplate->shadowYPosition;
+
+        Vec2 newTargetPosition(targetPosition.x, targetPosition.y + yDelta);
+
+        _gotoTargetPositionPathList.clear();
+        _gotoTargetPositionPathList.push_back(newTargetPosition);
+
+        tryUpdateStatus(NpcStatus::Move);
     }
     else
     {
-        tryUpdateStatus(NpcStatus::Move);
+        auto startPosition = getPosition();
+        _gotoTargetPositionPathList.clear();
+        _gotoTargetPositionPathList = _gameWorld->_computePathList(startPosition, targetPosition, isAllowEndTileNodeToMoveIn);
+
+        if (_gotoTargetPositionPathList.empty())
+        {
+            tryUpdateStatus(NpcStatus::Stand);
+        }
+        else
+        {
+            tryUpdateStatus(NpcStatus::Move);
+        }
     }
 }
 
@@ -1424,4 +1494,29 @@ void Npc::updateLevelRepresentTexture(const string& spriteFrameName)
 {
     auto levelRepresentSpriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(spriteFrameName);
     _levelRepresentTexture->setSpriteFrame(levelRepresentSpriteFrame);
+}
+
+bool Npc::isAir()
+{
+    return _isAir;
+}
+
+bool Npc::canAirAttack()
+{
+    return _canAirAttack;
+}
+
+void Npc::setEnemyUniqueID(int uniqueID)
+{
+    auto enemy = GameObjectManager::getInstance()->getGameObjectBy(uniqueID);
+    if (enemy && enemy->getGameObjectType() == GameObjectType::Npc)
+    {
+        auto npcObject = static_cast<Npc*>(enemy);
+        if (npcObject->isAir() && !_canAirAttack)
+        {
+            return;
+        }
+    }
+
+    GameObject::setEnemyUniqueID(uniqueID);
 }

@@ -62,6 +62,11 @@ public:
     bool isExecutingMopUpCommand();
 
     void setSelected(bool isSelect) override;
+
+    bool isAir();
+    bool canAirAttack();
+
+    void setEnemyUniqueID(int uniqueID) override;
 private:
     bool init(ForceType forceType, GameObjectType npcType, const string& templateName, const Vec2& position, int uniqueID, int level);
     void clear();
@@ -189,4 +194,7 @@ private:
     float _maxAttackRangeWhenCollision = 0.0f;
 
     MopUpCommand _mopUpCommand; // 扫荡指令，即A过去的功能
+
+    bool _isAir = false;
+    bool _canAirAttack = false;
 };

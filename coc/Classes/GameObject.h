@@ -23,6 +23,7 @@ enum class BulletType
 
     Arrow,
     Magic,
+    Bomb,
 };
 
 enum class DamageType

@@ -46,6 +46,8 @@ bool GameObjectSelectBox::init()
 
     _color = Color4F(0.0f, 0.0f, 1.0f, 0.2f);
 
+    setPositionZ(MAX_GAME_OBJECT_COUNT);
+
     scheduleUpdate();
 
     return true;

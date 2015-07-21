@@ -131,6 +131,7 @@ void ForceManager::onEnemyReinforcementArrive()
         ReinforceData(reinforceConfig->archerTemplateName, reinforceConfig->archerReinforceCount * difficultyLevelFactor),
         ReinforceData(reinforceConfig->barbarianTemplateName, reinforceConfig->barbarianReinforceCount * difficultyLevelFactor),
         ReinforceData(reinforceConfig->enchanterTemplateName, reinforceConfig->enchanterReinforceCount * difficultyLevelFactor),
+        ReinforceData(reinforceConfig->balloonTemplateName, reinforceConfig->balloonReinforceCount * difficultyLevelFactor),
     };
 
     auto listIndex = rand() % (int)enemyNpcReinforceDataList.size();
