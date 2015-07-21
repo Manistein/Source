@@ -66,7 +66,9 @@ bool GameConfigManager::initReinforcementConfig()
             reinforceConfig->enchanterTowerTemplateName = tabFileReader.getString(i, "EnchanterTowerTemplateName");
             reinforceConfig->archerTowerTemplateName = tabFileReader.getString(i, "ArcherTowerTempalteName");
             reinforceConfig->balloonTemplateName = tabFileReader.getString(i, "BalloonTemplateName");
-            reinforceConfig->balloonReinforceCount = tabFileReader.getInteger(i, "RedBalloonReinforceCount");
+            reinforceConfig->balloonReinforceCount = tabFileReader.getInteger(i, "BalloonReinforceCount");
+            reinforceConfig->gargTemplateName = tabFileReader.getString(i, "GargTemplateName");
+            reinforceConfig->gargReinforceCount = tabFileReader.getInteger(i, "GargReinforceCount");
 
             string forceTypeString = tabFileReader.getString(i, "ForceType");
             if (forceTypeString == "Player")

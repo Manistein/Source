@@ -16,6 +16,9 @@ struct ReinforceConfig
 
     string balloonTemplateName;
     int balloonReinforceCount = 0;
+
+    string gargTemplateName;
+    int gargReinforceCount = 0;
 };
 
 struct GameObjectLevelConfig
