@@ -65,6 +65,8 @@ bool GameWorld::init()
     GameWorldCallBackFunctionsManager::getInstance()->registerCallBackFunctions(this);
 
     _forceManager = ForceManager::getInstance();
+    _forceManager->initGameObjectLevelMap();
+
     _gameUI = GameUICallbackFunctionsManager::getInstance();
 
     auto mouseListener = EventListenerMouse::create();
@@ -895,6 +897,9 @@ void GameWorld::clear()
         GameObjectManager::destroyInstance();
         _gameObjectManager = nullptr;
     }
+
+    _playerBaseCampUniqueID = GAME_OBJECT_UNIQUE_ID_INVALID;
+    _aiBaseCampUniqueID = GAME_OBJECT_UNIQUE_ID_INVALID;
 
     auto director = Director::getInstance();
     director->getEventDispatcher()->removeCustomEventListeners("GameWorldMouseLeftButtonDownEvent");

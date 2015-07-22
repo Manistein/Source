@@ -27,9 +27,11 @@ public:
 
     void addTechnologyPoint(ForceType type, int technologyPoint);
     void costTechnologyPoint(ForceType type, int technologyPoint);
+
+    bool initGameObjectLevelMap();
 private:
     bool init();
-    bool initGameObjectLevelMap();
+    
     void onEnemyLaunchAttack();
     void onEnemyReinforcementArrive();
     Vec2 computeEnemyMoveToPosition();

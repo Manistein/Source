@@ -32,6 +32,7 @@ bool LoadingScene::init()
 
     initGameObjectResources();
 
+    Director::getInstance()->resume();
     scheduleUpdate();
 
     return true;

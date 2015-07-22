@@ -44,6 +44,11 @@ void AutoFindPathHelper::initTileNodeTable(const vector<vector<TileNode*>>& tile
     g_tileNodeTable = tileNodeTable;
     g_maxColumnCount = (int)tileNodeTable.size();
     g_maxRowCount = (int)tileNodeTable[0].size();
+
+    g_currentNode = nullptr;
+    g_endNode = nullptr;
+    g_openList.clear();
+    g_closeList.clear();
 }
 
 list<TileNode*> AutoFindPathHelper::computeTileNodePathListBetween(TileNode* startNode, TileNode* endNode)
