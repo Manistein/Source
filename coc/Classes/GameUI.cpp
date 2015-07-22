@@ -726,6 +726,8 @@ void GameUI::onOpenOptionPanel(Ref* sender, Widget::TouchEventType type)
     {
         SoundManager::getInstance()->playUIEffect(UIEffectType::ButtonClick);
         _optionPanel->setVisible(true);
+
+        Director::getInstance()->pause();
     }
 }
 
@@ -735,6 +737,8 @@ void GameUI::onGameContinue(Ref* sender, Widget::TouchEventType type)
     {
         SoundManager::getInstance()->playUIEffect(UIEffectType::ButtonClick);
         _optionPanel->setVisible(false);
+
+        Director::getInstance()->resume();
     }
 }
 
