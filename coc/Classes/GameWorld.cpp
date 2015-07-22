@@ -877,12 +877,16 @@ void GameWorld::onWin()
     storageManager->save();
 
     _gameUI->_showGameWinTips();
+
+    unscheduleUpdate();
 }
 
 void GameWorld::onLost()
 {
     pauseGame();
     _gameUI->_showGameLostTips();
+
+    unscheduleUpdate();
 }
 
 void GameWorld::clear()
