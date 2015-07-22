@@ -25,7 +25,7 @@ const string REINFORCEMENT_RANK = "reinforcementRank";
 
 GameUI::~GameUI()
 {
-
+    clear();
 }
 
 bool GameUI::init()
