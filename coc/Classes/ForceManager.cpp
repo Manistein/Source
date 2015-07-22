@@ -48,12 +48,16 @@ bool ForceManager::initGameObjectLevelMap()
     _gameObjectLevelMap[playerReinforceConfig->barbarianTemplateName] = 0;
     _gameObjectLevelMap[playerReinforceConfig->archerTowerTemplateName] = 0;
     _gameObjectLevelMap[playerReinforceConfig->enchanterTowerTemplateName] = 0;
+    _gameObjectLevelMap[playerReinforceConfig->balloonTemplateName] = 0;
+    _gameObjectLevelMap[playerReinforceConfig->gargTemplateName] = 0;
 
     _gameObjectLevelMap[aiReinforceConfig->archerTemplateName] = 0;
     _gameObjectLevelMap[aiReinforceConfig->enchanterTemplateName] = 0;
     _gameObjectLevelMap[aiReinforceConfig->barbarianTemplateName] = 0;
     _gameObjectLevelMap[aiReinforceConfig->archerTowerTemplateName] = 0;
     _gameObjectLevelMap[aiReinforceConfig->enchanterTowerTemplateName] = 0;
+    _gameObjectLevelMap[aiReinforceConfig->balloonTemplateName] = 0;
+    _gameObjectLevelMap[aiReinforceConfig->gargTemplateName] = 0;
 
     return true;
 }

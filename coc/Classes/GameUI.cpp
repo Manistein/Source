@@ -135,6 +135,8 @@ void GameUI::initReinforcementSelectPanel()
     auto selectBarbarianButton = reinforcementSelectPanel->getChildByName<Button*>("Button_SelectBarbarian");
     auto selectArcherTowerButton = reinforcementSelectPanel->getChildByName<Button*>("Button_SelectArcherTower");
     auto selectEnchanterTowerButton = reinforcementSelectPanel->getChildByName<Button*>("Button_SelectEnchanterTower");
+    auto selectBalloonButton = reinforcementSelectPanel->getChildByName<Button*>("Button_SelectBalloon");
+    auto selectGargButton = reinforcementSelectPanel->getChildByName<Button*>("Button_SelectGarg");
 
     auto reinforceConfig = GameConfigManager::getInstance()->getReinforceConfigBy(ForceType::Player);
     initSelectReinforcementButton(selectEnchanterButton, reinforceConfig->enchanterTemplateName, GameObjectType::Npc, reinforceConfig->enchanterReinforceCount);
@@ -142,6 +144,8 @@ void GameUI::initReinforcementSelectPanel()
     initSelectReinforcementButton(selectBarbarianButton, reinforceConfig->barbarianTemplateName, GameObjectType::Npc, reinforceConfig->barbarianReinforceCount);
     initSelectReinforcementButton(selectArcherTowerButton, reinforceConfig->archerTowerTemplateName, GameObjectType::Building, 1);
     initSelectReinforcementButton(selectEnchanterTowerButton, reinforceConfig->enchanterTowerTemplateName, GameObjectType::Building, 1);
+    initSelectReinforcementButton(selectBalloonButton, reinforceConfig->balloonTemplateName, GameObjectType::Npc, reinforceConfig->balloonReinforceCount);
+    initSelectReinforcementButton(selectGargButton, reinforceConfig->gargTemplateName, GameObjectType::Npc, reinforceConfig->gargReinforceCount);
 
     disableAllReinforcementButtons();
 
@@ -424,12 +428,16 @@ void GameUI::initUpgradePanel()
     auto upgradeBarbarianButton = upgradePanel->getChildByName<Button*>("Button_UpgradeBarbarian");
     auto upgradeArcherTowerButton = upgradePanel->getChildByName<Button*>("Button_UpgradeArcherTower");
     auto upgradeEnchanterTowerButton = upgradePanel->getChildByName<Button*>("Button_UpgradeEnchanterTower");
+    auto upgradeBalloonButton = upgradePanel->getChildByName<Button*>("Button_UpgradeBalloon");
+    auto upgradeGargButton = upgradePanel->getChildByName<Button*>("Button_UpgradeGarg");
 
     initUpgradeButton(upgradeEnchanterButton, reinforcementConfig->enchanterTemplateName);
     initUpgradeButton(upgradeArcherButton, reinforcementConfig->archerTemplateName);
     initUpgradeButton(upgradeBarbarianButton, reinforcementConfig->barbarianTemplateName);
     initUpgradeButton(upgradeArcherTowerButton, reinforcementConfig->archerTowerTemplateName);
     initUpgradeButton(upgradeEnchanterTowerButton, reinforcementConfig->enchanterTowerTemplateName);
+    initUpgradeButton(upgradeBalloonButton, reinforcementConfig->balloonTemplateName);
+    initUpgradeButton(upgradeGargButton, reinforcementConfig->gargTemplateName);
 }
 
 void GameUI::initUpgradeButton(Button* button, const string& gameObjectTemplateName)
@@ -441,7 +449,7 @@ void GameUI::initUpgradeButton(Button* button, const string& gameObjectTemplateN
 
     auto upgradeProgressBarBG = Sprite::create("HPBarBackground.png");
     auto progressBarBGSize = upgradeProgressBarBG->getContentSize();
-    upgradeProgressBarBG->setPosition(buttonSize.width / 2.0f, -8.0f);
+    upgradeProgressBarBG->setPosition(buttonSize.width / 2.0f, -4.0f);
     upgradeProgressBarBG->setScale(0.3f);
     upgradeProgressBarBG->setCascadeOpacityEnabled(true);
     upgradeProgressBarBG->setVisible(false);
@@ -615,6 +623,8 @@ void GameUI::updateUpgradeButtonStatus()
         if (gameObjectLevel < MAX_LEVEL)
         {
             auto gameObjectLevelConfig = GameConfigManager::getInstance()->getGameObjectLevelConfig(gameObjectTemplateName, gameObjectLevel + 1);
+            CCASSERT(gameObjectLevelConfig, "");
+
             if (playerTechnologyPoint >= gameObjectLevelConfig->costTechnologyPoint &&
                 !isUpgrading(button))
             {
