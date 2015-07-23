@@ -40,6 +40,7 @@ struct TileNode
 
 const float MAP_MOVE_SPEED = 20.0f;
 const float MAP_BORDER_MARGIN = 10.0f;
+const float MAP_BOTTOM_MARGIN = 200.0F;
 const float MAP_MIN_SCALE = 0.3f;
 const float MAP_MAX_SCALE = 1.0f;
 const int LINEUP_MAX_NPC_COUNT_PER_LINE = 5;

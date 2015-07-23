@@ -136,6 +136,7 @@ void GameWorld::initEditedGameObjects()
             float inTileMapEditorXPosition = 0.0f;
             float inTileMapEditorYPosition = 0.0f;
             string gameObjectTemplateName;
+            int level = 0;
 
             auto editedObjectValueMap = editedObjectInfo.asValueMap();
             for (auto& valueIter : editedObjectValueMap)
@@ -152,6 +153,10 @@ void GameWorld::initEditedGameObjects()
                 {
                     gameObjectTemplateName = valueIter.second.asString();
                 }
+                else if (valueIter.first == "level")
+                {
+                    level = valueIter.second.asInt();
+                }
             }
 
             int columnIndex = inTileMapEditorXPosition / tileSize.height;
@@ -159,10 +164,15 @@ void GameWorld::initEditedGameObjects()
             auto tileNode = _mapManager->getTileNodeAt(columnIndex, rowIndex);
             auto gameObject = createGameObject(gameObjectType, forceType, gameObjectTemplateName, tileNode->leftTopPosition);
 
-            if (forceType == ForceType::Player && gameObjectType == GameObjectType::Building)
+            if (gameObjectType == GameObjectType::Building)
             {
                 auto building = static_cast<Building*>(gameObject);
-                building->updateStatus(BuildingStatus::Working);
+                building->upgradePropertyBy(level);
+
+                if (forceType == ForceType::Player)
+                {  
+                    building->updateStatus(BuildingStatus::Working);     
+                }
             }
 
             if (gameObjectTemplateName == "BaseCamp")

@@ -298,11 +298,16 @@ void GameObject::upgrade()
     _level = std::max(_level, 0);
     _level = std::min(_level, MAX_LEVEL);
 
-    updatePropertyBy(_level);
+    upgradePropertyBy(_level);
 }
 
-void GameObject::updatePropertyBy(int level)
+void GameObject::upgradePropertyBy(int level)
 {
+    if (level <= _level)
+    {
+        return;
+    }
+
     auto gameObjectLevelConfig = GameConfigManager::getInstance()->getGameObjectLevelConfig(_templateName, level);
     if (gameObjectLevelConfig)
     {

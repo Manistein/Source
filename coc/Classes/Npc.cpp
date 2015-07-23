@@ -75,7 +75,7 @@ bool Npc::init(ForceType forceType, GameObjectType npcType, const string& templa
 
     if (_level < level)
     {
-        updatePropertyBy(level);
+        upgradePropertyBy(level);
     }
 
     return true;

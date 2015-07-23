@@ -97,7 +97,7 @@ void MapManager::updateMapPosition()
     titleMapPosition.x = std::max(titleMapPosition.x, mapMinXPosition);
     titleMapPosition.y = std::max(titleMapPosition.y, mapMinYPosition);
     titleMapPosition.x = std::min(titleMapPosition.x, 0.0f);
-    titleMapPosition.y = std::min(titleMapPosition.y, 0.0f);
+    titleMapPosition.y = std::min(titleMapPosition.y, MAP_BOTTOM_MARGIN);
 
     _tileMap->setPosition(titleMapPosition);
 }

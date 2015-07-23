@@ -72,7 +72,7 @@ bool Building::init(ForceType forceType, const string& buildingTemplateName, con
 
     if (_level < level)
     {
-        updatePropertyBy(level);
+        upgradePropertyBy(level);
     }
 
     scheduleUpdate();

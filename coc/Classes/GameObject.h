@@ -87,7 +87,7 @@ public:
     void onAddEnemyTechnologyPoint();
 
     void upgrade();
-    void updatePropertyBy(int level);
+    void upgradePropertyBy(int level);
 protected:
     GameObject();
     bool init() override;
