@@ -526,7 +526,7 @@ void Npc::runFightWithEnemyAI(float delta)
     if (_enemyUniqueID != ENEMY_UNIQUE_ID_INVALID)
     {
         auto enemy = GameObjectManager::getInstance()->getGameObjectBy(_enemyUniqueID);
-        if (!enemy || enemy->isReadyToRemove() || enemy->getForceType() == _forceType)
+        if (isEnemyDisappear(enemy))
         {
             setEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
 
@@ -593,7 +593,7 @@ void Npc::runDefenceInBuildingAI(float delta)
     if (_enemyUniqueID != ENEMY_UNIQUE_ID_INVALID)
     {
         auto enemy = GameObjectManager::getInstance()->getGameObjectBy(_enemyUniqueID);
-        if (!enemy || enemy->isReadyToRemove())
+        if (isEnemyDisappear(enemy))
         {
             setEnemyUniqueID(ENEMY_UNIQUE_ID_INVALID);
             tryUpdateStatus(NpcStatus::Stand);
@@ -707,6 +707,18 @@ GameObject* Npc::searchNearestNeedReinforceGameObject()
 
     needReinforceGameObject = GameObjectManager::getInstance()->getGameObjectBy(needReinforceGameObjectID);
     return needReinforceGameObject;
+}
+
+bool Npc::isEnemyDisappear(GameObject* enemy)
+{
+    bool result = false;
+
+    if (!enemy || enemy->isReadyToRemove() || enemy->getForceType() == _forceType)
+    {
+        result = true;
+    }
+
+    return result;
 }
 
 bool Npc::isEnemyInAttackRange(GameObject* enemy)

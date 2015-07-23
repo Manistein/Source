@@ -94,6 +94,7 @@ private:
     bool canSearchEnemy();
     void searchNearbyEnemy();
     GameObject* searchNearestNeedReinforceGameObject();
+    bool isEnemyDisappear(GameObject* enemy);
 
     bool isEnemyInAttackRange(GameObject* enemy);
     bool isEnemyInAlertRange(GameObject* enemy);
