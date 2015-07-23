@@ -36,6 +36,8 @@ bool SoundManager::init()
     initBuildingSoundEffectData();
     initUISoundEffectData();
 
+    srand(::timeGetTime());
+
     return true;
 }
 

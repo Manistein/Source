@@ -10,6 +10,7 @@
 #include "GameObject.h"
 #include "GameConfigManager.h"
 #include "MenuScene.h"
+#include "WindowsHelper.h"
 
 cocos2d::Scene* SelectStageScene::createScene()
 {
@@ -40,6 +41,7 @@ bool SelectStageScene::init()
     runAction(sequenceAction);
     // SoundManager::getInstance()->playMusic("SelectStageDialog2.ogg", true);
 
+    WindowsHelper::getInstance()->switchToNormalCursor();
     Director::getInstance()->resume();
 
     return true;
