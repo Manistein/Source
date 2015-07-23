@@ -33,7 +33,7 @@ struct MopUpCommand
 };
 
 const float HANDLE_ENEMY_IN_ALERT_RANGE_SITUATION_TIME_INTERVAL = 1.0f;
-const float SEARCH_ENEMY_COOL_DOWN_TIME_INTERVAL = 0.17f;    //Ã¿ÃëËÑË÷10´Î
+const float SEARCH_ENEMY_COOL_DOWN_TIME_INTERVAL = 1.0f;
 
 class GameWorldCallBackFunctionsManager;
 class Building;

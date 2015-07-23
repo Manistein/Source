@@ -16,7 +16,6 @@ ForceManager* ForceManager::getInstance()
     if (!s_forceManager)
     {
         s_forceManager = new ForceManager();
-        s_forceManager->init();
     }
 
     return s_forceManager;

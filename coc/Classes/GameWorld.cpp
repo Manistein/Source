@@ -65,7 +65,7 @@ bool GameWorld::init()
     GameWorldCallBackFunctionsManager::getInstance()->registerCallBackFunctions(this);
 
     _forceManager = ForceManager::getInstance();
-    _forceManager->initGameObjectLevelMap();
+    _forceManager->init();
 
     _gameUI = GameUICallbackFunctionsManager::getInstance();
 

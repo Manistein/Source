@@ -30,9 +30,9 @@ public:
     void addTechnologyPoint(ForceType type, int technologyPoint);
     void costTechnologyPoint(ForceType type, int technologyPoint);
 
-    bool initGameObjectLevelMap();
-private:
     bool init();
+private:
+    bool initGameObjectLevelMap();
     
     void onEnemyLaunchAttack();
     void onEnemyReinforcementArrive();

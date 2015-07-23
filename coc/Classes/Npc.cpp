@@ -469,7 +469,8 @@ void Npc::collisionTest()
             }
         }
 
-        auto unitMoveVector = _position - gameObject->getPosition();
+        auto& gameObjectPosition = gameObject->getPosition();
+        auto unitMoveVector = _position - gameObjectPosition;
         float dot = selfFaceDirectionVector.dot(unitMoveVector);
 
         float gameObjectCollisionRadius = gameObject->getCollisionRadius();
