@@ -55,6 +55,7 @@ struct NpcTemplate
 struct BulletTemplate
 {
     string bulletFileName;
+    string specialEffectTemplateName;
 };
 
 struct BuildingTemplate

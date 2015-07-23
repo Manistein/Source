@@ -4,6 +4,7 @@
 #include "TemplatesManager.h"
 #include "GameObjectManager.h"
 #include "Utils.h"
+#include "GameWorldCallBackFunctionsManager.h"
 
 static BulletManager* s_bulletManager = nullptr;
 
@@ -53,11 +54,17 @@ Node* BulletManager::createBullet(BulletType bulletType, int attackerID, int att
         CallFunc* onMoveEnd = nullptr;
         if (attacker->getDamageType() == DamageType::AreaOfEffect)
         {
-            onMoveEnd = CallFunc::create(CC_CALLBACK_0(BulletManager::onAOEDamageBulletMoveEnd, this, bullet, attacker, targetPosition));
+            onMoveEnd = CallFunc::create(CC_CALLBACK_0(BulletManager::onAOEDamageBulletMoveEnd, this, bullet, bulletType, attacker, targetPosition));
         }
         else
         {
-            onMoveEnd = CallFunc::create(CC_CALLBACK_0(BulletManager::onNormalDamageBulletMoveEnd, this, bullet, target->getUniqueID(), attacker->getAttackPower()));
+            onMoveEnd = CallFunc::create(
+                CC_CALLBACK_0(BulletManager::onNormalDamageBulletMoveEnd, 
+                this, 
+                bullet, 
+                bulletType, 
+                target->getUniqueID(), 
+                attacker->getAttackPower()));
         }
 
         auto sequenceAction = Sequence::create(moveTo, onMoveEnd, nullptr);
@@ -67,12 +74,13 @@ Node* BulletManager::createBullet(BulletType bulletType, int attackerID, int att
     return bullet;
 }
 
-void BulletManager::onNormalDamageBulletMoveEnd(Node* bullet, int attackTargetID, int damageAmount)
+void BulletManager::onNormalDamageBulletMoveEnd(Node* bullet, BulletType bulletType, int attackTargetID, int damageAmount)
 {
     auto attackTarget = GameObjectManager::getInstance()->getGameObjectBy(attackTargetID);
     if (attackTarget && !attackTarget->isReadyToRemove())
     {
         attackTarget->costHP(damageAmount);
+        onCreateSpecialEffect(bulletType, attackTarget->getPosition());
     }
 
     bullet->retain();
@@ -80,7 +88,7 @@ void BulletManager::onNormalDamageBulletMoveEnd(Node* bullet, int attackTargetID
     bullet->autorelease();
 }
 
-void BulletManager::onAOEDamageBulletMoveEnd(Node* bullet, GameObject* attacker, const Vec2& endPosition)
+void BulletManager::onAOEDamageBulletMoveEnd(Node* bullet, BulletType bulletType, GameObject* attacker, const Vec2& endPosition)
 {
     auto attackerForceType = attacker->getForceType();
     auto attackerAoeDamageRadius = attacker->getAoeDamageRadius();
@@ -113,7 +121,18 @@ void BulletManager::onAOEDamageBulletMoveEnd(Node* bullet, GameObject* attacker,
         gameObjectIter->second->costHP(attackerDamagePower);
     }
 
+    onCreateSpecialEffect(bulletType, endPosition);
+
     bullet->retain();
     bullet->removeFromParent();
     bullet->autorelease();
+}
+
+void BulletManager::onCreateSpecialEffect(BulletType bulletType, const Vec2& inMapPosition)
+{
+    auto bulletTemplate = TemplateManager::getInstance()->getBulletTemplateBy(bulletType);
+    if (bulletTemplate)
+    {
+        GameWorldCallBackFunctionsManager::getInstance()->_createSpecialEffect(bulletTemplate->specialEffectTemplateName, inMapPosition, false);
+    }
 }

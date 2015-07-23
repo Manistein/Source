@@ -246,6 +246,7 @@ bool TemplateManager::initBulletTemplates()
 
             BulletTemplate* bulletTemplate = new BulletTemplate();
             bulletTemplate->bulletFileName = tabFileReader.getString(i, "BulletFileName");
+            bulletTemplate->specialEffectTemplateName = tabFileReader.getString(i, "SpecialEffectTemplateName");
 
             auto bulletTypeIter = s_bulletTypeStringToEnum.find(bulletTypeName);
             CCASSERT(bulletTypeIter != s_bulletTypeStringToEnum.end(), StringUtils::format("%s is invalid type", bulletTypeName.c_str()).c_str());

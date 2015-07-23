@@ -364,7 +364,7 @@ void GameWorld::createSpecialEffect(const string& templateName, const Vec2& inMa
     auto specialEffect = _specialEffectManager->createSpecialEffect(templateName, inMapPosition, isRepeat);
     if (specialEffect)
     {
-        _mapManager->addChildInGameObjectLayer(specialEffect, 10);
+        _mapManager->addChildInGameObjectLayer(specialEffect);
     }
 }
 

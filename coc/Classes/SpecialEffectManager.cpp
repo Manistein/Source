@@ -25,6 +25,10 @@ bool SpecialEffectManager::init()
 Sprite* SpecialEffectManager::createSpecialEffect(const string& templateName, const Vec2& inMapPosition, bool isRepeat)
 {
     auto specialEffectTemplate = TemplateManager::getInstance()->getSpecialEffectTemplateBy(templateName);
+    if (specialEffectTemplate == nullptr)
+    {
+        return nullptr;
+    }
 
     auto effectSprite = Sprite::create();
     effectSprite->setPosition(inMapPosition);

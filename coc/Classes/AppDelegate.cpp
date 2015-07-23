@@ -55,6 +55,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     searchPaths.push_back("Resources/publish/npc/garg");
     searchPaths.push_back("Resources/publish/npc/common");
     searchPaths.push_back("Resources/publish/bullet");
+    searchPaths.push_back("Resources/publish/specialEffect");
     searchPaths.push_back("Resources/publish/building");
     searchPaths.push_back("Resources/publish/ui");
     searchPaths.push_back("Resources/publish/ui/GameScene");
