@@ -59,6 +59,14 @@ bool ForceManager::initGameObjectLevelMap()
     _gameObjectLevelMap[aiReinforceConfig->balloonTemplateName] = 0;
     _gameObjectLevelMap[aiReinforceConfig->gargTemplateName] = 0;
 
+    _aiUpgradeTemplateNameList = {
+        aiReinforceConfig->archerTemplateName,
+        aiReinforceConfig->enchanterTemplateName,
+        aiReinforceConfig->barbarianTemplateName,
+        aiReinforceConfig->balloonTemplateName,
+        aiReinforceConfig->gargTemplateName
+    };
+
     return true;
 }
 
@@ -207,6 +215,13 @@ void ForceManager::update(float delta)
             }
         }
     }
+
+    if (canTryAIForceUpgrade(delta))
+    {
+        tryAIForceUpgrade();
+
+        launchForbidTryAIForceUpgradeTimer();
+    }
 }
 
 const ForceData& ForceManager::getForceDataBy(ForceType forceType)
@@ -273,5 +288,45 @@ void ForceManager::costTechnologyPoint(ForceType type, int technologyPoint)
         auto& forceData = iter->second;
         forceData.technologyPoint -= technologyPoint;
         forceData.technologyPoint = std::max(forceData.technologyPoint, 0);
+    }
+}
+
+void ForceManager::launchForbidTryAIForceUpgradeTimer()
+{
+    _tryAIForceUpgradeCoolDownTime = TRY_AI_FORCE_UPGRADE_COOL_DOWN_TIME;
+}
+
+bool ForceManager::canTryAIForceUpgrade(float delta)
+{
+    _tryAIForceUpgradeCoolDownTime -= delta;
+    return _tryAIForceUpgradeCoolDownTime <= 0;
+}
+
+void ForceManager::tryAIForceUpgrade()
+{
+    auto gameConfigManager = GameConfigManager::getInstance();
+    int& technologyPoint = _forceDataMap[ForceType::AI].technologyPoint;
+
+    for (auto& templateName : _aiUpgradeTemplateNameList)
+    {
+        auto levelIter = _gameObjectLevelMap.find(templateName);
+        if (levelIter == _gameObjectLevelMap.end())
+        {
+            continue;
+        }
+
+        int& level = levelIter->second;
+        if (level >= MAX_LEVEL)
+        {
+            continue;
+        }
+
+        auto levelConfig = gameConfigManager->getGameObjectLevelConfig(templateName, level + 1);
+        if (technologyPoint >= levelConfig->costTechnologyPoint)
+        {
+            technologyPoint -= levelConfig->costTechnologyPoint;
+
+            level++;
+        }
     }
 }

@@ -10,6 +10,8 @@ const float ENEMY_LAUNCH_ATTACK_TIME_INTERVAL = 60;
 const float ENEMY_REINFORCE_TIME_INTERVAL = 20;
 const float PLAYER_REINFORCE_TIME_INTERVAL = 30;
 
+const float TRY_AI_FORCE_UPGRADE_COOL_DOWN_TIME = 180.0f;
+
 class GameWorldCallBackFunctionsManager;
 
 class ForceManager
@@ -36,6 +38,10 @@ private:
     void onEnemyReinforcementArrive();
     Vec2 computeEnemyMoveToPosition();
 
+    void launchForbidTryAIForceUpgradeTimer();
+    bool canTryAIForceUpgrade(float delta);
+    void tryAIForceUpgrade();
+
     float _enemyLaunchAttackCoolDownTime = 0.0f;
     float _enemyReinforceCoolDownTime = 0.0f;
 
@@ -49,6 +55,8 @@ private:
     typedef string TemplateName;
     typedef int Level;
     map<TemplateName, Level> _gameObjectLevelMap;
+    vector<string> _aiUpgradeTemplateNameList;
+    float _tryAIForceUpgradeCoolDownTime = 0;
 
     ForceManager(){}
     ForceManager(const ForceManager&);
