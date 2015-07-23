@@ -445,6 +445,7 @@ void Npc::collisionTest()
     }
 
     bool hasCollision = false;
+    GameObject* attackTarget = nullptr;
 
     auto& gameObjectMap = GameObjectManager::getInstance()->getGameObjectMap();
     for (auto& gameObjectIter : gameObjectMap)
@@ -458,9 +459,9 @@ void Npc::collisionTest()
             continue;
         }
 
-        // 空军只和空军碰撞，陆军只和陆军碰撞
         if (gameObject->getGameObjectType() == GameObjectType::Npc)
         {
+            // 空军只和空军碰撞，陆军只和陆军碰撞
             auto npcObject = static_cast<Npc*>(gameObject);
             if (npcObject->isAir() != _isAir)
             {
@@ -485,6 +486,8 @@ void Npc::collisionTest()
             sumDifference += constraintDistance - realDistance;
 
             collisionCount++;
+
+            attackTarget = gameObject;
         }
     }
 
@@ -507,6 +510,11 @@ void Npc::collisionTest()
 
         // 应策划要求，处于后排，无法跑到前面的npc攻击距离增加，目的是为了多几排npc能够发动攻击。
         setAttackRange(_maxAttackRangeWhenCollision);
+
+        if (attackTarget && _oldStatus != NpcStatus::Attack)
+        {
+            setEnemyUniqueID(attackTarget->getUniqueID());
+        }
     }
     else
     {
