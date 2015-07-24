@@ -233,7 +233,7 @@ void GameWorld::update(float deltaTime)
 
     _forceManager->update(deltaTime);
 
-    _soundManager->checkBackgroundMusicStatus();
+    // _soundManager->checkBackgroundMusicStatus();
 
     updateCursor();
 }
