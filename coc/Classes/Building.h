@@ -30,6 +30,8 @@ public:
 
     void setEnemyUniqueID(int uniqueID) override;
     int getEnemyUniqueID() override;
+
+    void ajustBuildingPosition(const Vec2& inMapPosition);
 private:
     bool init(ForceType forceType, const string& buildingTemplateName, const Vec2& position, int uniqueID, int level);
 
@@ -53,7 +55,6 @@ private:
     void debugDraw() override;
 
     void followCursorInPrepareToBuildStatus();
-    void ajustBuildingPosition(const Vec2& inMapPosition);
     bool isBottomGridCoverNpc(const Vec2& bottomGridInMapPosition);
     vector<Sprite*> getInObstacleTileNodeBottomGidSpriteList();
     void updateBottomGridTextureInPrepareToBuildStatus();

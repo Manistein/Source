@@ -171,6 +171,7 @@ void GameWorld::initEditedGameObjects()
 
                 if (forceType == ForceType::Player)
                 {  
+                    building->ajustBuildingPosition(tileNode->leftTopPosition);
                     building->updateStatus(BuildingStatus::Working);     
                 }
             }
