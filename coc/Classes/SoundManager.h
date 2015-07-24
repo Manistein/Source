@@ -55,6 +55,7 @@ public:
     void playUIEffect(UIEffectType type);
 
     void stopAll();
+    void checkBackgroundMusicStatus();
 private:
     bool init();
     bool initBackgroundMusicData();

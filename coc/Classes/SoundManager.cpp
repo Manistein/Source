@@ -222,3 +222,25 @@ void SoundManager::stopAll()
 
     _musicAudioID = AudioEngine::INVALID_AUDIO_ID;
 }
+
+void SoundManager::checkBackgroundMusicStatus()
+{
+    static float lastTimeBySecond = ::timeGetTime() / 1000.0f;
+    static float currentTimeBySecond = lastTimeBySecond;
+
+    currentTimeBySecond = ::timeGetTime() / 1000.0f;
+    if (currentTimeBySecond - lastTimeBySecond > 30.0f)
+    {
+        auto audioStatus = AudioEngine::getState(_musicAudioID);
+        if (audioStatus == AudioEngine::AudioState::PAUSED)
+        {
+            AudioEngine::resume(_musicAudioID);
+        }
+        else if (audioStatus == AudioEngine::AudioState::ERROR)
+        {
+            playRandomBackgroundMusicOneByOne();
+        }
+
+        lastTimeBySecond = currentTimeBySecond;
+    }
+}
