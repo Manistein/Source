@@ -87,8 +87,6 @@ bool GameWorld::init()
     _soundManager->playRandomBackgroundMusicOneByOne();
     scheduleUpdate();
 
-    onJumpToPlayerBaseCamp();
-
     return true;
 }
 
@@ -195,6 +193,8 @@ void GameWorld::initEditedGameObjects()
         }
     }
 
+    // 要等待AI势力的Building，完成位置调整后，再进行缩放，否则在TileEditor编辑的物体，在游戏中会错位
+    delayAjustScreen();
     _holdingBuildingID = GAME_OBJECT_UNIQUE_ID_INVALID;
 }
 
@@ -925,4 +925,15 @@ void GameWorld::clear()
     director->getEventDispatcher()->removeCustomEventListeners("GameWorldMouseRightButtonUpEvent");
     director->getEventDispatcher()->removeCustomEventListeners("MouseMove");
     director->getEventDispatcher()->removeCustomEventListeners("ClearDebugDraw");
+}
+
+void GameWorld::delayAjustScreen()
+{
+    auto sequenceAction = Sequence::create(DelayTime::create(BUILDING_DELAY_AJUST_POSITION_TIME + 0.017f),
+        CallFunc::create(CC_CALLBACK_0(MapManager::setMapScale, _mapManager, MAP_MIN_SCALE)),
+        CallFunc::create(CC_CALLBACK_0(GameWorld::onJumpToPlayerBaseCamp, this)),
+        nullptr
+        );
+
+    runAction(sequenceAction);
 }

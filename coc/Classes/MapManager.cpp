@@ -224,6 +224,12 @@ float MapManager::getMapScale()
     return _tileMap->getScale();
 }
 
+void MapManager::setMapScale(float scaleValue)
+{
+    _mapScale = scaleValue;
+    _tileMap->setScale(scaleValue);
+}
+
 const Vec2& MapManager::getMapPosition()
 {
     return _tileMap->getPosition();

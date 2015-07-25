@@ -581,7 +581,7 @@ void Building::updateCoveredByBuildingTileNodesGID(int tileNodeGID)
 void Building::delayUpdateAIForceBuildingToBeingBuiltStatus(const Vec2& inMapPosition)
 {
     auto onInitBuildingStatus = CallFunc::create(CC_CALLBACK_0(Building::onUpdateAIForceBuildingStatus, this, inMapPosition, BuildingStatus::BeingBuilt));
-    auto sequenceAction = Sequence::create(DelayTime::create(0.017f), onInitBuildingStatus, nullptr);
+    auto sequenceAction = Sequence::create(DelayTime::create(BUILDING_DELAY_AJUST_POSITION_TIME), onInitBuildingStatus, nullptr);
     runAction(sequenceAction);
 }
 

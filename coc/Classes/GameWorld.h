@@ -85,6 +85,8 @@ private:
 
     void clear();
 
+    void delayAjustScreen();
+
     GameObjectManager* _gameObjectManager = nullptr;
     GameObjectSelectBox* _gameObjectSelectBox = nullptr;
     BulletManager* _bulletManager = nullptr;

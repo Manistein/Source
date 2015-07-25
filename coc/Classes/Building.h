@@ -12,6 +12,8 @@ enum class BuildingStatus
     Total
 };
 
+const float BUILDING_DELAY_AJUST_POSITION_TIME = 0.017f;
+
 class Npc;
 
 class Building : public GameObject

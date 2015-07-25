@@ -68,6 +68,7 @@ public:
     Point getTileSubscript(const Vec2& inMapPosition);
     MapDebugInfo getMapDebugInfo(TileMapLayerType tileMapLayerType);
     float getMapScale();
+    void setMapScale(float scaleValue);
     const Vec2& getMapPosition();
     const Vector<TMXObjectGroup*>&  getEditedGameObjectGroup();
 
@@ -93,7 +94,7 @@ private:
     void initMoveCommandTips();
 
     cocos2d::experimental::TMXTiledMap* _tileMap = nullptr;
-    float _mapScale = 0.5f;
+    float _mapScale = 0.5f; // 由于设计上的问题，这个值不能改，一旦修改，编辑后的建筑物位置会错位
 
     RECT _clientRect;
     Vec2 _cursorPoint;
