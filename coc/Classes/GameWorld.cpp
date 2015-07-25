@@ -324,7 +324,11 @@ void GameWorld::onMouseRightButtonDown()
         _gameObjectManager->npcSelectedByPlayerMoveTo(inMapCursorPosition, false, isAllowEndTileNodeToMoveIn);
 
         _mapManager->hideMopUpCommandTips();
-        _mapManager->showMoveCommandTips();
+
+        if (WindowsHelper::getInstance()->getCursorType() == CursorType::Normal)
+        {
+            _mapManager->showMoveCommandTips();
+        }
     }
 }
 

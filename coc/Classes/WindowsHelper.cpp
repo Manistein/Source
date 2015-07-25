@@ -24,8 +24,8 @@ WindowsHelper* WindowsHelper::getInstance()
 bool WindowsHelper::init()
 {
     _systemDefaultCursor = CopyCursor(LoadCursor(nullptr, IDC_ARROW));
-    _attackCursorHandle = LoadCursorFromFile(L"Resources/publish/cursor/cursor_attack.cur");
-    _normalCursorHandle = LoadCursorFromFile(L"Resources/publish/cursor/cursor_normal.cur");
+    _attackCursorHandle = LoadCursorFromFile(L"../Resources/publish/cursor/cursor_attack.cur");
+    _normalCursorHandle = LoadCursorFromFile(L"../Resources/publish/cursor/cursor_normal.cur");
 
     return true;
 }
@@ -42,10 +42,19 @@ void WindowsHelper::switchToAttackCursor()
 {
     auto attackCursorHandle = CopyCursor(_attackCursorHandle);
     SetSystemCursor(attackCursorHandle, SYSTEM_NORMAL_CURSOR);
+
+    _cursorType = CursorType::Attack;
 }
 
 void WindowsHelper::switchToNormalCursor()
 {
     auto normalCursorHandle = CopyCursor(_normalCursorHandle);
     SetSystemCursor(normalCursorHandle, SYSTEM_NORMAL_CURSOR);
+
+    _cursorType = CursorType::Normal;
+}
+
+CursorType WindowsHelper::getCursorType()
+{
+    return _cursorType;
 }

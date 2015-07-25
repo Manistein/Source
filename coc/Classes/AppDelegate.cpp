@@ -29,7 +29,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLViewImpl::create("Conqueror Of Clan");
+        glview = GLViewImpl::createWithFullScreen("Conqueror Of Clan");
 		glview->setFrameSize(1280, 720);
 		auto windowHandle = glview->getWin32Window();
 		MoveWindow(windowHandle, 0, 0, 1280, 720, false);
@@ -42,28 +42,28 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
 
     vector<string> searchPaths;
-    searchPaths.push_back("Resources");
-    searchPaths.push_back("Resources/publish");
-    searchPaths.push_back("Resources/publish/map");
-    searchPaths.push_back("Resources/publish/fonts");
-    searchPaths.push_back("Resources/publish/data");
-    searchPaths.push_back("Resources/publish/npc");
-    searchPaths.push_back("Resources/publish/npc/archer");
-    searchPaths.push_back("Resources/publish/npc/barbarian");
-    searchPaths.push_back("Resources/publish/npc/enchanter");
-    searchPaths.push_back("Resources/publish/npc/balloon");
-    searchPaths.push_back("Resources/publish/npc/garg");
-    searchPaths.push_back("Resources/publish/npc/common");
-    searchPaths.push_back("Resources/publish/bullet");
-    searchPaths.push_back("Resources/publish/specialEffect");
-    searchPaths.push_back("Resources/publish/building");
-    searchPaths.push_back("Resources/publish/ui");
-    searchPaths.push_back("Resources/publish/ui/GameScene");
-    searchPaths.push_back("Resources/publish/ui/MenuScene");
-    searchPaths.push_back("Resources/publish/ui/SelectStageScene");
-    searchPaths.push_back("Resources/publish/ui/CocosProject/res");
-    searchPaths.push_back("Resources/publish/sound/effect");
-    searchPaths.push_back("Resources/publish/sound/music");
+    searchPaths.push_back("../Resources");
+    searchPaths.push_back("../Resources/publish");
+    searchPaths.push_back("../Resources/publish/map");
+    searchPaths.push_back("../Resources/publish/fonts");
+    searchPaths.push_back("../Resources/publish/data");
+    searchPaths.push_back("../Resources/publish/npc");
+    searchPaths.push_back("../Resources/publish/npc/archer");
+    searchPaths.push_back("../Resources/publish/npc/barbarian");
+    searchPaths.push_back("../Resources/publish/npc/enchanter");
+    searchPaths.push_back("../Resources/publish/npc/balloon");
+    searchPaths.push_back("../Resources/publish/npc/garg");
+    searchPaths.push_back("../Resources/publish/npc/common");
+    searchPaths.push_back("../Resources/publish/bullet");
+    searchPaths.push_back("../Resources/publish/specialEffect");
+    searchPaths.push_back("../Resources/publish/building");
+    searchPaths.push_back("../Resources/publish/ui");
+    searchPaths.push_back("../Resources/publish/ui/GameScene");
+    searchPaths.push_back("../Resources/publish/ui/MenuScene");
+    searchPaths.push_back("../Resources/publish/ui/SelectStageScene");
+    searchPaths.push_back("../Resources/publish/ui/CocosProject/res");
+    searchPaths.push_back("../Resources/publish/sound/effect");
+    searchPaths.push_back("../Resources/publish/sound/music");
     FileUtils::getInstance()->setSearchPaths(searchPaths);
 
     director->setDisplayStats(false);
