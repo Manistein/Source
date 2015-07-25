@@ -23,6 +23,8 @@ const string UPGRADE_PROGRESS_BAR = "upgradeProgressBar";
 const string UPGRADE_NEXT_RANK = "nextRank";
 const string REINFORCEMENT_RANK = "reinforcementRank";
 
+static float s_gameStartTime = 0.0f;
+
 GameUI::~GameUI()
 {
     clear();
@@ -35,6 +37,7 @@ bool GameUI::init()
         return false;
     }
 
+    s_gameStartTime = ::timeGetTime() / 1000.0f;
     setPositionZ(MAX_GAME_OBJECT_COUNT);
 
     _debugInfoLayer = DebugInfoLayer::create();
@@ -398,8 +401,7 @@ void GameUI::updateTechnologyPoint()
 
 void GameUI::updateGamePassTime()
 {
-    static float gameStartTime = ::timeGetTime() / 1000.0f;
-    float timeDelta = ::timeGetTime() / 1000.0f - gameStartTime;
+    float timeDelta = ::timeGetTime() / 1000.0f - s_gameStartTime;
     time_t passSecond(timeDelta);
 
     tm* passTime = gmtime(&passSecond);
