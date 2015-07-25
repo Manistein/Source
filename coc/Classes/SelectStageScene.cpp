@@ -57,10 +57,6 @@ void SelectStageScene::initFrontUI()
     auto normalLevel = _frontUI->getChildByName<CheckBox*>("CheckBox_NormalLevel");
     auto hardLevel = _frontUI->getChildByName<CheckBox*>("CheckBox_HardLevel");
 
-    easyLevel->addEventListener(CC_CALLBACK_2(SelectStageScene::onSelectDifficultyLevelCheckBoxTouch, this));
-    normalLevel->addEventListener(CC_CALLBACK_2(SelectStageScene::onSelectDifficultyLevelCheckBoxTouch, this));
-    hardLevel->addEventListener(CC_CALLBACK_2(SelectStageScene::onSelectDifficultyLevelCheckBoxTouch, this));
-
     _difficultyLevelMap[easyLevel] = DifficultyLevel::Easy;
     _difficultyLevelMap[normalLevel] = DifficultyLevel::Normal;
     _difficultyLevelMap[hardLevel] = DifficultyLevel::Hard;
@@ -142,31 +138,13 @@ void SelectStageScene::onStageCheckBoxTouch(Ref* sender, CheckBox::EventType typ
     }
 }
 
-void SelectStageScene::onSelectDifficultyLevelCheckBoxTouch(Ref* sender, CheckBox::EventType type)
-{
-    if (type == CheckBox::EventType::SELECTED || type == CheckBox::EventType::UNSELECTED)
-    {
-        auto currentCheckBox = static_cast<CheckBox*>(sender);
-        for (auto& iter : _difficultyLevelMap)
-        {
-            if (iter.first == currentCheckBox)
-            {
-                iter.first->setSelected(true);
-                g_setting.difficultyLevel = iter.second;
-            }
-            else
-            {
-                iter.first->setSelected(false);
-            }
-        }
-    }
-}
-
 void SelectStageScene::onGameStart(Ref* sender, Widget::TouchEventType type)
 {
     if (type == Widget::TouchEventType::ENDED)
     {
         SoundManager::getInstance()->stopAll();
+
+        g_setting.difficultyLevel = getSelectedDifficultyLevel();
 
         auto loadingScene = LoadingScene::createScene();
         Director::getInstance()->replaceScene(loadingScene);
@@ -182,4 +160,20 @@ void SelectStageScene::onBackToMenuScene(Ref* sender, Widget::TouchEventType typ
         auto menuScene = MenuScene::createScene();
         Director::getInstance()->replaceScene(menuScene);
     }
+}
+
+DifficultyLevel SelectStageScene::getSelectedDifficultyLevel()
+{
+    DifficultyLevel result = DifficultyLevel::Normal;
+
+    for (auto& iter : _difficultyLevelMap)
+    {
+        if (iter.first->isSelected())
+        {
+            result = iter.second;
+            break;
+        }
+    }
+
+    return result;
 }
