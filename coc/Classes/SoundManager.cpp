@@ -2,6 +2,9 @@
 #include "audio/include/AudioEngine.h"
 #include "SoundManager.h"
 #include "TabFileReader.h"
+#include  <io.h>
+#include  <stdio.h>
+#include  <stdlib.h>
 
 using namespace experimental;
 
@@ -118,7 +121,10 @@ float SoundManager::getMusicVolume()
 
 void SoundManager::playMusic(const string& musicName, bool isLoop)
 {
-    _musicAudioID = AudioEngine::play2d(musicName, isLoop, _musicVolume);
+    if (canPlay(musicName))
+    {
+        _musicAudioID = AudioEngine::play2d(musicName, isLoop, _musicVolume);
+    }
 }
 
 void SoundManager::playRandomBackgroundMusicOneByOne()
@@ -131,10 +137,13 @@ void SoundManager::playRandomBackgroundMusicOneByOne()
     int randomIndex = rand() % (int)_backgroundMusicNameList.size();
     auto backgroundMusicName = _backgroundMusicNameList[randomIndex];
 
-    int audioID = AudioEngine::play2d(backgroundMusicName, false, _musicVolume);
-    AudioEngine::setFinishCallback(audioID, CC_CALLBACK_0(SoundManager::playRandomBackgroundMusicOneByOne, this));
+    if (canPlay(backgroundMusicName))
+    {
+        int audioID = AudioEngine::play2d(backgroundMusicName, false, _musicVolume);
+        AudioEngine::setFinishCallback(audioID, CC_CALLBACK_0(SoundManager::playRandomBackgroundMusicOneByOne, this));
 
-    _musicAudioID = audioID;
+        _musicAudioID = audioID;
+    }
 }
 
 void SoundManager::playNpcEffect(const string& templateName, NpcSoundEffectType type)
@@ -162,7 +171,10 @@ void SoundManager::playNpcEffect(const string& templateName, NpcSoundEffectType 
         default:    break;
         }
 
-        AudioEngine::play2d(soundEffectName, false, _effectVolume);
+        if (canPlay(soundEffectName))
+        {
+            AudioEngine::play2d(soundEffectName, false, _effectVolume);
+        }
     }
 }
 
@@ -170,11 +182,17 @@ void SoundManager::playBuildingEffect(BuildingSoundEffectType type)
 {
     if (type == BuildingSoundEffectType::Construct)
     {
-        AudioEngine::play2d(_buildingSoundEffectData.constructName, false, _effectVolume);
+        if (canPlay(_buildingSoundEffectData.constructName))
+        {
+            AudioEngine::play2d(_buildingSoundEffectData.constructName, false, _effectVolume);
+        }
     }
     else
     {
-        AudioEngine::play2d(_buildingSoundEffectData.destroyedName, false, _effectVolume);
+        if (canPlay(_buildingSoundEffectData.destroyedName))
+        {
+            AudioEngine::play2d(_buildingSoundEffectData.destroyedName, false, _effectVolume);
+        }
     }
 }
 
@@ -196,7 +214,10 @@ void SoundManager::playUIEffect(UIEffectType type)
         break;
     }
 
-    AudioEngine::play2d(effectName, false, _effectVolume);
+    if (canPlay(effectName))
+    {
+        AudioEngine::play2d(effectName, false, _effectVolume);
+    }
 }
 
 bool SoundManager::initUISoundEffectData()
@@ -243,4 +264,17 @@ void SoundManager::checkBackgroundMusicStatus()
 
         lastTimeBySecond = currentTimeBySecond;
     }
+}
+
+bool SoundManager::canPlay(const string& fileName)
+{
+    bool result = false;
+
+    auto fullPath = FileUtils::getInstance()->fullPathForFilename(fileName);
+    if (_access(fullPath.c_str(), 0) != -1)
+    {
+        result = true;
+    }
+
+    return result;
 }

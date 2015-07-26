@@ -63,6 +63,8 @@ private:
     bool initBuildingSoundEffectData();
     bool initUISoundEffectData();
 
+    bool canPlay(const string& fileName);
+
     vector<string> _backgroundMusicNameList;
     BuildingSoundEffectData _buildingSoundEffectData;
 
