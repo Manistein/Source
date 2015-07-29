@@ -38,6 +38,14 @@ void WindowsHelper::uninitInstane()
     SetSystemCursor(_systemDefaultCursor, SYSTEM_NORMAL_CURSOR);
 }
 
+void WindowsHelper::switchToDefaultCursor()
+{
+    auto defaultCursorHandle = CopyCursor(_systemDefaultCursor);
+    SetSystemCursor(defaultCursorHandle, SYSTEM_NORMAL_CURSOR);
+
+    _cursorType = CursorType::Default;
+}
+
 void WindowsHelper::switchToAttackCursor()
 {
     auto attackCursorHandle = CopyCursor(_attackCursorHandle);

@@ -2,6 +2,7 @@
 #include "AppDelegate.h"
 #include "GameScene.h"
 #include "MenuScene.h"
+#include "WindowsHelper.h"
 
 USING_NS_CC;
 
@@ -81,6 +82,8 @@ void AppDelegate::applicationDidEnterBackground() {
 
     // if you use SimpleAudioEngine, it must be pause
     // SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+
+    WindowsHelper::getInstance()->switchToDefaultCursor();
 }
 
 // this function will be called when the app is active again
@@ -89,4 +92,6 @@ void AppDelegate::applicationWillEnterForeground() {
 
     // if you use SimpleAudioEngine, it must resume here
     // SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+
+    WindowsHelper::getInstance()->switchToNormalCursor();
 }

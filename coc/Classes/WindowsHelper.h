@@ -3,6 +3,7 @@
 enum class CursorType
 {
     Invalid,
+    Default,
     Normal,
     Attack,
 };
@@ -13,6 +14,7 @@ public:
     ~WindowsHelper();
     static WindowsHelper* getInstance();
 
+    void switchToDefaultCursor();
     void switchToAttackCursor();
     void switchToNormalCursor();
     void uninitInstane();
