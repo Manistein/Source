@@ -32,9 +32,17 @@ void main()
 	{
 		if (!connectSuccess && isTimeForReconnectAgain())
 		{
-			connectSuccess = client.connectToServer("180.88.45.10", 8001);
+			connectSuccess = client.connectToServer("192.168.1.105", 8001);
 
 			cout << "Try connect server agian..." << endl;
 		}
+
+        string receiveString;
+        auto receiveResult = client.receiveFromServer(receiveString, 255);
+        if (receiveResult == ExecuteResult::Success)
+        {
+            cout << "Server: " << endl;
+            cout << receiveString << endl;
+        }
 	}
 }

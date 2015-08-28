@@ -1,4 +1,14 @@
 #pragma once
+
+enum class ExecuteResult
+{
+    Invalid = 0,
+
+    LostConnectServer,
+    Error,
+    Success
+};
+
 class GameClient
 {
 public:
@@ -6,7 +16,7 @@ public:
 	~GameClient();
 
 	bool connectToServer(const string& ipAddress, int port);
-
+    ExecuteResult receiveFromServer(string& receiveString, int readPackagePerTime);
 private:
 	bool init();
 	void uninit();

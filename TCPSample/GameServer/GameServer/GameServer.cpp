@@ -94,3 +94,49 @@ SOCKET GameServer::serverAccept(sockaddr_in* clientInfo)
 
 	return INVALID_SOCKET;
 }
+
+SendResult GameServer::sendData(SOCKET clientSocket, const string& data)
+{
+    if (m_serverSocket == INVALID_SOCKET)
+    {
+        return SendResult::Invalid;
+    }
+
+    int sendSize = send(clientSocket, data.c_str(), data.size(), 0);
+    if (sendSize == 0)
+    {
+        return SendResult::LostConnect;
+    }
+    else if (sendSize != (int)data.length())
+    {
+        return SendResult::SendDataError;
+    }
+
+    return SendResult::Success;
+}
+
+int GameServer::receiveData(string& receiveData, int readPackageAmountPerTime)
+{
+    if (m_serverSocket == INVALID_SOCKET)
+    {
+        return SOCKET_ERROR;
+    }
+
+    char receiveBuffer[4096];
+
+    int receiveResult = recv(m_serverSocket, receiveBuffer, readPackageAmountPerTime, 0);
+
+    // 和服务器断开连接
+    if (receiveResult == 0)
+    {
+        return SOCKET_ERROR;
+    }
+    else if (receiveResult == SOCKET_ERROR) // 套接字接收过程中，出现错误
+    {
+        return WSAGetLastError();
+    }
+
+    receiveData.assign(receiveBuffer);
+
+    return 1;
+}

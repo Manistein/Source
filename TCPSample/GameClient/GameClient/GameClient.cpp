@@ -63,3 +63,26 @@ bool GameClient::connectToServer(const string& ipAddress, int port)
 
 	return true;
 }
+
+ExecuteResult GameClient::receiveFromServer(string& receiveString, int readPackagePerTime)
+{
+    if (m_clientSocket == INVALID_SOCKET)
+    {
+        return ExecuteResult::Invalid;
+    }
+
+    char receiveBuffer[4096] = {};
+    int result = recv(m_clientSocket, receiveBuffer, readPackagePerTime, 0);
+    if (result == 0)
+    {
+        return ExecuteResult::LostConnectServer;
+    }
+    else if (result < 0) // 数据包传送过程中出错
+    {
+        return ExecuteResult::Error;
+    }
+
+    receiveString.assign(receiveBuffer);
+
+    return ExecuteResult::Success;
+}
